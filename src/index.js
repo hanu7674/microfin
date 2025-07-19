@@ -3,11 +3,24 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import { ThemeProvider } from './components/Theme/theme';
+import { Provider } from 'react-redux';
+import { NotificationsProvider } from 'reapop';
+import configureStore from './redux/configureStore';
+import { BrowserRouter as Router } from 'react-router-dom';
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const store = configureStore();
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+      <Provider store={store}>
+        <NotificationsProvider>
+          <Router>
+            <App />
+          </Router>
+        </NotificationsProvider>
+      </Provider>
+    </ThemeProvider>
   </React.StrictMode>
 );
 
