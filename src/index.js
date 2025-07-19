@@ -16,7 +16,7 @@ root.render(
       <Provider store={store}>
         <NotificationsProvider>
           <Router>
-            <App />
+          <App />
           </Router>
         </NotificationsProvider>
       </Provider>

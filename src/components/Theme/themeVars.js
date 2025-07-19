@@ -23,5 +23,6 @@ export function getThemeVars(theme) {
     muted: isDark ? '#aaa' : '#666',
     whitesmoke: isDark ? '#18191A' : '#F7F8FA',
     buttonAppearance: isDark ? 'subtle' : 'default',
+    cardBorderBottomColor: isDark ? '#333' : '#eee',
   };
 } 

@@ -11,7 +11,7 @@ import { getThemeVars } from '../../Theme/themeVars';
 
 const QuickActions = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, ctaBg, ctaText } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, ctaBg, muted , cardBorderBottomColor} = getThemeVars(theme);
 
   const actions = [
     {
@@ -37,35 +37,39 @@ const QuickActions = () => {
   ];
 
   return (
-    <Panel 
-      style={{ 
-        background: cardBg, 
-        color: cardText, 
-        border: `1px solid ${borderColor}`,
-        boxShadow: shadow,
-        borderRadius: 8,
-        padding: '24px'
-      }}
+    <div 
+    style={{ 
+      background: cardBg, 
+      color: cardText, 
+      border: `1px solid ${borderColor}`,
+      boxShadow: shadow,
+      borderRadius: 8,
+      paddingBottom: '15px'
+     }}
     >
       <h3 style={{ 
         fontSize: 18, 
         fontWeight: 600, 
         margin: 0, 
+        padding: '10px 16px',
         marginBottom: 20,
-        color: cardText
+        color: cardText,
+        borderBottom: `3px solid ${cardBorderBottomColor}`,
+        borderBottomWidth: 1
       }}>
         Quick Actions
       </h3>
-      
-      <Stack direction="column" spacing={12}>
-        {actions.map((action, index) => (
+        
+         {actions.map((action, index) => (
+
           <Button
             key={index}
             appearance="ghost"
             style={{
-              width: '100%',
+              margin: "5%",
+              width: '90%',
               padding: '12px 16px',
-              border: `1px solid ${borderColor}`,
+              border: `1px solid ${muted}`,
               borderRadius: 6,
               background: 'transparent',
               color: cardText,
@@ -77,14 +81,6 @@ const QuickActions = () => {
               fontWeight: 500,
               transition: 'all 0.2s ease'
             }}
-            onMouseEnter={(e) => {
-              e.target.style.background = ctaBg;
-              e.target.style.color = ctaText;
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'transparent';
-              e.target.style.color = cardText;
-            }}
           >
             <div style={{ fontSize: 16 }}>
               {action.icon}
@@ -93,14 +89,11 @@ const QuickActions = () => {
               <div style={{ fontWeight: 600, marginBottom: 2 }}>
                 {action.title}
               </div>
-              <div style={{ fontSize: 12, opacity: 0.7 }}>
-                {action.description}
-              </div>
+               
             </div>
           </Button>
         ))}
-      </Stack>
-    </Panel>
+     </div>
   );
 };
 

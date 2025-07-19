@@ -148,20 +148,20 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
               <Form.Control name="lastName" placeholder="Last Name" style={{ flex: 1 }} />
             </Stack.Item>
           </Stack>
-          </Form.Group>
+      </Form.Group>
         <Form.Group >
           <Form.ControlLabel>Email</Form.ControlLabel>
           <Form.Control name="email" type="email" placeholder="john@example.com" style={{ flex: 1 }} />
-        </Form.Group>
+      </Form.Group>
         <Form.Group >
           <Form.ControlLabel>Phone</Form.ControlLabel>
           <Form.Control name="phone" placeholder="+1 (555) 123-4567" />
-        </Form.Group>
-        <Form.Group>
+      </Form.Group>
+      <Form.Group>
           <Form.ControlLabel>Business Name</Form.ControlLabel>
           <Form.Control name="businessName" placeholder="Your Business Name" />
-        </Form.Group>
-        <Form.Group>
+      </Form.Group>
+      <Form.Group>
           <Form.ControlLabel>Business Type</Form.ControlLabel>
           <Field
             name="businessType"
@@ -171,32 +171,32 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
             data={businessTypes}
             error={formError.businessType}
           />
-        </Form.Group>
-        <Form.Group>
+      </Form.Group>
+      <Form.Group>
           <Form.ControlLabel>Password</Form.ControlLabel>
           <Form.Control name="password" type="password" placeholder="Create a strong password" autoComplete="new-password" />
-        </Form.Group>
-        <Form.Group>
+      </Form.Group>
+      <Form.Group>
           <Form.ControlLabel>Confirm Password</Form.ControlLabel>
           <Form.Control name="confirmPassword" type="password" placeholder="Confirm your password" autoComplete="new-password" />
-        </Form.Group>
+      </Form.Group>
            <Checkbox name="agree" checked={formValue.agree} onChange={(v, checked) => setFormValue({ ...formValue, agree: checked })} errorMessage={formError.agree}>
-            I agree to the &nbsp;
+          I agree to the &nbsp;
             <a style={{ color: themeVars.textLink, cursor: 'pointer' }} onClick={() => setShowTerms(true)}>Terms of Service</a>
-            &nbsp;and &nbsp;
+          &nbsp;and &nbsp;  
             <a style={{ color: themeVars.textLink, cursor: 'pointer' }} onClick={() => setShowPrivacy(true)}>Privacy Policy</a>
-          </Checkbox>
+        </Checkbox>
             
              <Checkbox name="marketing" checked={formValue.marketing} onChange={(v, checked) => setFormValue({ ...formValue, marketing: checked })} errorMessage={formError.marketing}>
-              I would like to receive updates and promotional emails from MicroFin
-            </Checkbox>
+          I would like to receive updates and promotional emails from MicroFin
+        </Checkbox>
            
-        {error && <Message type="error" showIcon>{error}</Message>}
+      {error && <Message type="error" showIcon>{error}</Message>}
         {auth.error && <Message type="error" showIcon>{auth.error}</Message>}
 
         <Button appearance="primary" type="submit" block style={{ marginTop: 8, marginBottom: 8, background: themeVars.ctaBg, color: themeVars.ctaText }} loading={auth.loading} disabled={auth.loading}>
           {auth.loading ? 'Creating Account...' : 'Create Account'}
-        </Button>
+      </Button>
         <div style={{ textAlign: 'center', marginBottom: 8, marginTop: 8 }}>
           Already have an account?{' '}
           <NavLink to="/login" style={{ color: themeVars.textLink, textDecoration: 'underline' }}>
@@ -238,7 +238,7 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
           <div style={{ marginTop: 16, textAlign: 'center' }}>
             <Button appearance="primary" onClick={() => setShowTerms(false)} style={{ background: themeVars.ctaBg, color: themeVars.ctaText }}>Close</Button>
           </div>
-        </Modal.Body>
+         </Modal.Body>
       </Modal>
       <Modal open={showPrivacy} onClose={() => setShowPrivacy(false)} size='lg' style={{ color: themeVars.textMain }}>
         <Modal.Body style={{ background: themeVars.cardBg, color: themeVars.cardText }}>

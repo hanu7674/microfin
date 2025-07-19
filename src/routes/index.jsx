@@ -5,7 +5,22 @@ import { LoginComponent } from '../components/ui/Auth/Login';
 import TermsOfService from '../components/ui/Auth/Terms/TermsOfService';
 import PrivacyPolicy from '../components/ui/Auth/Privacy/PrivacyPolicy';
 import Dashboard from '../components/ui/Dashboard';
-
+import DashboardFrame from '../components/ui/Dashboard/DashboardFrame';
+import { dashboardNavItems } from './dashboardNavs';
+import TransactionsPage from '../components/ui/Dashboard/Transactions';
+import FinancialReportsPage from '../components/ui/Dashboard/Finance';
+import LoanDashboardPage from '../components/ui/Dashboard/Loans';
+import LoanApplicationPage from '../components/ui/Dashboard/Loans/NewLoan';
+import InvoiceDashboardPage from '../components/ui/Dashboard/Invoices';
+import CreateInvoice from '../components/ui/Dashboard/Invoices/New';
+import PaymentProcessing from '../components/ui/Dashboard/Payments';
+import ClientManagement from '../components/ui/Dashboard/Clients';
+import BusinessProfile from '../components/ui/Dashboard/BusinessProfile';
+import Analytics from '../components/ui/Dashboard/Analytics';
+import AccountSettings from '../components/ui/Dashboard/AccountSettings';
+import SystemPreferences from '../components/ui/Dashboard/SystemPreferences';
+import Support from '../components/ui/Dashboard/Support';
+ 
 const Home = lazy(() => import('../components/ui/Home'));
 const Signup = lazy(() => import('../components/ui/Auth/Signup'));
 
@@ -33,6 +48,22 @@ export default function AppRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/error-403" element={<Error403 />} />
         <Route path="/error-500" element={<Error500 />} />
+        <Route path="/dashboard" element={<DashboardFrame navs={dashboardNavItems}  />}>
+          <Route index element={<Dashboard />} />
+          <Route path="/dashboard/transactions" element={<TransactionsPage />} />
+          <Route path="/dashboard/reports" element={<FinancialReportsPage />} />
+          <Route path="/dashboard/loans" element={<LoanDashboardPage />} />
+          <Route path="/dashboard/loans/new" element={<LoanApplicationPage />} />
+          <Route path="/dashboard/invoices" element={<InvoiceDashboardPage />} />
+          <Route path="/dashboard/invoices/create" element={<CreateInvoice />} />
+          <Route path="/dashboard/payments" element={<PaymentProcessing />} />
+          <Route path="/dashboard/clients" element={<ClientManagement />} />
+          <Route path="/dashboard/business-profile" element={<BusinessProfile />} />
+          <Route path="/dashboard/analytics" element={<Analytics />} />
+          <Route path="/dashboard/account-settings" element={<AccountSettings />} />
+          <Route path="/dashboard/system-preferences" element={<SystemPreferences />} />
+          <Route path="/dashboard/support" element={<Support />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

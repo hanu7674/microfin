@@ -3,9 +3,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../Firebase/firebase";
 import { userRef } from "../Firebase/firebase";
 import { getDoc } from "firebase/firestore";
-import Loading from "../components/Loading/loading";
-import { useNavigate, useLocation } from "react-router-dom";
-import * as ROUTES from "../assets/constants";
+ import { useNavigate, useLocation } from "react-router-dom";
+import { Loader } from "rsuite";
 
 const withAuthorization = (condition) => (Component) => {
   const WithAuthorization = (props) => {
@@ -42,14 +41,14 @@ const withAuthorization = (condition) => (Component) => {
             navigate("/error-403");
           }
         } else {
-          navigate(ROUTES.LOGIN, { state: { from: location.pathname } });
+          navigate('/login', { state: { from: location.pathname } });
         }
       };
 
       fetchData();
     }, [condition, location.pathname, navigate]);
 
-    return currentUser ? <Component {...props} /> : <Loading />;
+    return currentUser ? <Component {...props} /> : <Loader content="Loading..."  />;
   };
 
   return WithAuthorization;

@@ -3,7 +3,7 @@ import { useTheme } from './components/Theme/theme';
 import 'rsuite/dist/rsuite.min.css';
 import '@fontsource/pt-sans';
 import { Container, Header, Content, Footer as RSFooter} from 'rsuite';
- import './App.css';
+import './App.css';
 import Footer from './components/ui/Footer/Footer';
  import NavbarSection from './components/ui/NavBar/NavbarSection';
 import ThemeToggle from './components/Theme/ThemeToggle';
@@ -17,6 +17,7 @@ import NotificationsSystem, {
   FadeTransition,
   setUpNotifications
 } from "reapop";
+import { useLocation } from 'react-router-dom';
 function App() {
   const { theme } = useTheme();
   const {
@@ -41,6 +42,16 @@ setUpNotifications({
     showDismissButton: true,
   },
 });
+const location = useLocation();
+const path = location.pathname;
+
+// Define routes that have a sidebar
+const routesWithSidebar = ['/dashboard'];
+
+// Check if the current route is one of the routes with a sidebar
+const hasSidebar = routesWithSidebar.some(route => path.startsWith(route));
+
+
   return (
     <Container style={{ background: bgMain, color: textMain }}>
       <Header >
@@ -57,7 +68,9 @@ setUpNotifications({
         <AppRoutes />
       </Content>
       <RSFooter>
-      <Footer footerBg={footerBg} footerText={footerText} subText={subText} />
+        {!hasSidebar && (
+          <Footer footerBg={footerBg} footerText={footerText} subText={subText} />
+        )}
       </RSFooter>
     </Container>
   );

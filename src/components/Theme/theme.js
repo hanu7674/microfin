@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-
+import { CustomProvider } from 'rsuite';
 const ThemeContext = createContext();
 
 // Robust loader, can be called from anywhere
@@ -55,7 +55,9 @@ export const ThemeProvider = ({ children }) => {
   // Expose setTheme, toggleTheme, and theme
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
-      {children}
+      <CustomProvider theme={theme}>
+        {children}
+      </CustomProvider>
     </ThemeContext.Provider>
   );
 };

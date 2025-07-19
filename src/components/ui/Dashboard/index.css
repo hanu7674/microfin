@@ -1,0 +1,31 @@
+.rs-sidebar {
+    height: 100vh;
+    
+  }
+  .rs-sidenav-nav {
+    padding: 0;
+  }
+  .rs-sidenav-subtle .rs-sidenav-item{
+    color: white;
+  }
+
+  .page-container {
+    padding-left: 260px;
+    transition: padding 1s;
+    &.container-full {
+      padding-left: 60px;
+    }
+  }  
+  .nav-toggle {
+    border-top: 1pt solid #ddd;
+    position: fixed;
+     bottom: 0;
+    opacity: 1;
+  }
+.rs-dropdown-item>.rs-icon {
+margin-right: 20px;
+}
+.rs-active-link {
+  font-weight: bold !important;
+  color: #007bff !important; /* Or another color */
+}

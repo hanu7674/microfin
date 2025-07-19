@@ -1,10 +1,10 @@
 import React from 'react';
-import { Col, FlexboxGrid, Grid, Panel, Row, Stack } from 'rsuite';
+import { Col, Grid, Panel, Row, Stack } from 'rsuite';
 import { 
-  FaHandHoldingUsd, 
-  FaUsers, 
-  FaFileInvoiceDollar, 
-  FaExclamationTriangle 
+  FaHandHoldingUsd,
+  FaUsers,
+  FaFileInvoiceDollar,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 import { useTheme } from '../../Theme/theme';
 import { getThemeVars } from '../../Theme/themeVars';
@@ -16,7 +16,7 @@ const FinancialOverview = () => {
   const overviewCards = [
     {
       title: 'Total Loans',
-      value: '$1,245,678',
+      value: '₹1,245,678',
       change: '+12.5%',
       changeType: 'positive',
       icon: <FaHandHoldingUsd />,
@@ -32,7 +32,7 @@ const FinancialOverview = () => {
     },
     {
       title: 'Collections',
-      value: '$89,456',
+      value: '₹89,456',
       change: '-2.1%',
       changeType: 'negative',
       icon: <FaFileInvoiceDollar />,
@@ -52,22 +52,26 @@ const FinancialOverview = () => {
     <Grid fluid>
       <Row gutter={16}>
         {overviewCards.map((card, index) => (
-          <Col key={index} xs={24} sm={12} md={6}>
-            <Panel 
-              style={{ 
-                background: cardBg, 
-                color: cardText, 
+          <Col key={index} xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} style={{marginBottom: '10px'}}>
+            <Panel
+              style={{
+                background: cardBg,
+                color: cardText,
                 border: `1px solid ${borderColor}`,
                 boxShadow: shadow,
                 borderRadius: 8,
-                padding: '20px'
+                padding: '20px',
+                height: '100%',
+                display: 'flex', // Use flexbox
+                flexDirection: 'column', // Stack children vertically
+                justifyContent: 'space-between' // Distribute space
               }}
             >
               <Stack justifyContent="space-between" alignItems="flex-start" wrap>
                 <div style={{ flex: 1 }}>
-                  <div style={{ 
-                    fontSize: 14, 
-                    color: muted, 
+                  <div style={{
+                    fontSize: 14,
+                    color: muted,
                     marginBottom: 8,
                     display: 'flex',
                     alignItems: 'center',
@@ -76,16 +80,16 @@ const FinancialOverview = () => {
                     {card.icon}
                     {card.title}
                   </div>
-                  <div style={{ 
-                    fontSize: 28, 
-                    fontWeight: 700, 
+                  <div style={{
+                    fontSize: 28,
+                    fontWeight: 700,
                     marginBottom: 4,
                     color: cardText
                   }}>
                     {card.value}
                   </div>
-                  <div style={{ 
-                    fontSize: 12, 
+                  <div style={{
+                    fontSize: 12,
                     color: card.changeType === 'positive' ? '#10b981' : '#ef4444',
                     display: 'flex',
                     alignItems: 'center',
@@ -104,4 +108,4 @@ const FinancialOverview = () => {
   );
 };
 
-export default FinancialOverview; 
+export default FinancialOverview;

@@ -332,7 +332,7 @@ export const createUserDataonSignup = (data, form) => {
       accessToken: user.accessToken,
       creationTime: new Date(),
       lastSignInTime: user.metadata.lastSignInTime,
-        }
+    }
     dispatch(
       notify({
         id: "loading",
@@ -366,7 +366,7 @@ export const createUserDataonSignup = (data, form) => {
                 status: "success",
               })
             );
-          
+
           })
           .catch((error) => {
             dispatch(createNewUserFailure(error));
@@ -503,8 +503,8 @@ export const signupUser = (form) => async (dispatch, getState) => {
       creationTime: new Date(),
       lastSignInTime: user.metadata.lastSignInTime,
         }
-    dispatch(
-      notify({
+          dispatch(
+            notify({
         id: "loading",
         message: "logging in...",
         status: "loading",
@@ -513,14 +513,14 @@ export const signupUser = (form) => async (dispatch, getState) => {
     );
     getDoc(userRef(userId)).then((info) => {
       if (info.exists()) {
-        dispatch(
-          notify({
+          dispatch(
+            notify({
             message: "User already exists!.",
             status: "success",
             dismissAfter: 5000,
           })
         );
-      } else {
+        } else {
         batch.set(userRef(userId), userData);
         updateProfile(auth.currentUser, {
           displayName: formInfo.firstName + ' ' + formInfo.lastName
@@ -529,16 +529,16 @@ export const signupUser = (form) => async (dispatch, getState) => {
           .commit()
           .then(() => {
             dispatch(createNewUserSuccess(userData));
-            dispatch(
-              notify({
+    dispatch(
+      notify({
                 message: "Account created successfully!.",
                 status: "success",
-              })
-            );
-            dispatch(dismissNotification("loading"));
+      })
+      );
+      dispatch(dismissNotification("loading"));
             dispatch(getCurrentUserData(user.uid));
-          })
-          .catch((error) => {
+        })
+        .catch((error) => {
             dispatch(createNewUserFailure(error));
             dispatch(
               notify({ id: "error", message: error.message, status: "error" })
@@ -547,10 +547,10 @@ export const signupUser = (form) => async (dispatch, getState) => {
       }
     }).catch((error) => {
       dispatch(loginFailure(error));
-      dispatch(
+    dispatch(
         notify({ id: "error", message: error.message, status: "error" })
       );
-      dispatch(dismissNotification("loading"));
+        dispatch(dismissNotification("loading"));
     })
   } catch (error) {
     dispatch(createNewUserFailure(error.message));
