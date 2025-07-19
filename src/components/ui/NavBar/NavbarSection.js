@@ -13,9 +13,11 @@ const NavbarSection = ({ textMain, borderColor, bgMain, isDark, ThemeToggle, mut
   const handleLogout = () => {
     dispatch(logoutUser());
   };
-  const userDisplay = auth.user?.firstName
-    ? `${auth.user.firstName} ${auth.user.lastName || ''}`.trim()
-    : auth.user?.email;
+  const userDisplay = auth.user?.displayName || auth.user?.email || 'User';
+  
+  // Debug: Log user data to console
+  console.log('Auth state:', auth);
+  console.log('User data:', auth.user);
   return (
     <Container>
       <Header>

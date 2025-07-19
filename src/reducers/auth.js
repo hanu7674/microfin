@@ -53,7 +53,8 @@ export const authReducer = (state = initialState, action) => {
           user: {
             ...state.user,
             ...payload
-          }
+          },
+          isAuthenticated: true
         };
     case types.LOGIN_FAILURE:
       return {
@@ -66,6 +67,15 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: payload
+      };
+    
+    case 'SET_AUTH_STATE':
+      return {
+        ...state,
+        isAuthenticated: payload.isAuthenticated,
+        user: payload.user,
+        loading: false,
+        error: null
       };
     
  default:

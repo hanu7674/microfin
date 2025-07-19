@@ -69,8 +69,7 @@ const SupportOverview = () => {
                       alignItems: 'center',
                       gap: 6
                     }}>
-                      {stat.icon}
-                      {stat.title}
+                       {stat.title}
                     </div>
                     <div style={{
                       fontSize: 28,

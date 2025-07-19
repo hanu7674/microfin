@@ -603,3 +603,11 @@ export const logoutUser = () => {
   };
 };
 
+export const setAuthState = (isAuthenticated, user = null) => ({
+  type: 'SET_AUTH_STATE',
+  payload: {
+    isAuthenticated,
+    user
+  }
+});
+

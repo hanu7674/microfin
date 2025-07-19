@@ -44,8 +44,10 @@ export const ThemeProvider = ({ children }) => {
 
   // Toggle theme
   const toggleTheme = useCallback(() => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  }, [setTheme]);
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme) // Store the value, not the function
+  }, [theme, setTheme]);
 
   // On mount, ensure theme is loaded
   useEffect(() => {
