@@ -7,7 +7,7 @@ import ClientPagination from './ClientPagination';
 
 const { Column, HeaderCell, Cell } = Table;
 
-const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, onView, onEdit, onEmail }) => {
+const ClientTable = ({ data, selectedClients, onSelectClient, onSelectAll, onView, onEdit, onEmail }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, success, danger, cardBorderBottomColor } = getThemeVars(theme);
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,16 +65,16 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
       status: 'Active'
     }
   ];
-    const pageSize = 10;
-    const totalResults = 247;
+    const pageSize=Math.ceil(data.length / 10);
+
+    const totalResults = data.length;
     const totalPages = Math.ceil(totalResults / pageSize);
-  
+
+  const clientData = data || defaultClients;
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    console.log('Page changed to:', page);
-  };
-
-  const clientData = clients || defaultClients;
+   };
 
   const getStatusTag = (status) => (
     <Tag color={status === 'Active' ? 'green' : 'red'} style={{ 
@@ -131,8 +131,6 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
           boxShadow: shadow
         }}
       >
-         
-        
         <div style={{ margin: '2%' }}>
           <Table
             data={clientData}
@@ -165,7 +163,7 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
               </Cell>
             </Column>
 
-            <Column flexGrow={2} minWidth={200}>
+            <Column flexGrow={2} minWidth={300} >
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Client</HeaderCell>
               <Cell>
                 {(rowData) => (
@@ -230,7 +228,7 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
               </Cell>
             </Column>
 
-            <Column flexGrow={1} minWidth={100}>
+            <Column flexGrow={1} minWidth={150}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Type</HeaderCell>
               <Cell>
                 {(rowData) => getTypeTag(rowData.type)}
@@ -241,8 +239,8 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Total Transactions</HeaderCell>
               <Cell>
                 {(rowData) => (
-                  <span style={{ fontWeight: 600, color: cardText }}>
-                    {rowData.transactions}
+                  <span style={{ color: cardText , opacity: 0.8}}>
+                    {rowData?.transactions || 'N/A'}
                   </span>
                 )}
               </Cell>
@@ -253,7 +251,7 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
               <Cell>
                 {(rowData) => (
                   <span style={{ color: cardText, opacity: 0.8 }}>
-                    {rowData.lastActivity}
+                    {rowData?.lastActivity || 'N/A'}
                   </span>
                 )}
               </Cell>
@@ -262,7 +260,7 @@ const ClientTable = ({ clients, selectedClients, onSelectClient, onSelectAll, on
             <Column flexGrow={1} minWidth={100}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Status</HeaderCell>
               <Cell>
-                {(rowData) => getStatusTag(rowData.status)}
+                {(rowData) => getStatusTag(rowData?.status || 'N/A')}
               </Cell>
             </Column>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from 'rsuite';
+import { Container, Loader, Message, Stack, Grid, Row, Col } from 'rsuite';
 import PaymentDashboardHeader from './PaymentDashboardHeader';
 import PaymentSummaryCards from './PaymentSummaryCards';
 import PaymentMethods from './PaymentMethods';
@@ -7,10 +7,12 @@ import QuickPaymentLink from './QuickPaymentLink';
 import RecentTransactions from './RecentTransactions';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { usePayments } from '../../../../hooks/useDataService';
 
 const PaymentProcessing = () => {
   const { theme } = useTheme();
   const { pageBg } = getThemeVars(theme);
+  const { payments, paymentMethods, loading, error } = usePayments();
 
   return (
     <div style={{ 
@@ -19,23 +21,23 @@ const PaymentProcessing = () => {
       padding: '2%',
       marginTop: '5%'
     }}>
-      <Container>
+      <>
         <PaymentDashboardHeader />
-        
-        <PaymentSummaryCards />
-        
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 24,
-          marginBottom: 32
-        }}>
-          <PaymentMethods />
-          <QuickPaymentLink />
-        </div>
-        
-        <RecentTransactions />
-      </Container>
+        {loading && <Loader content="Loading payments..." />}
+        {error && <Message type="error">{error}</Message>}
+        <PaymentSummaryCards payments={payments} />
+        <Grid fluid>
+          <Row>
+            <Col xs={24} md={24} lg={14} xl={14}>
+              <PaymentMethods methods={paymentMethods} />
+            </Col>
+            <Col xs={24} md={24} lg={10} xl={10}>
+              <QuickPaymentLink />
+            </Col>
+          </Row>
+        </Grid>
+        <RecentTransactions transactions={payments} />
+      </>
     </div>
   );
 };

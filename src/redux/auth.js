@@ -1,10 +1,11 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, reauthenticateWithCredential, EmailAuthProvider, updatePassword, deleteUser, linkWithCredential, GoogleAuthProvider, linkWithPopup, updateProfile, signInWithPopup } from "firebase/auth";
-import { auth, usersRef, userRef, usermetadata, usernameRef, batch, imageUploadPath, usermetadataRef, ipDataRef, reviewCollection, testimonialCollection, reviewById, testimonialById, userSignupLogsById, firestoreDb, securityQuestionsRef, userLogCollectionRef, userLogRef, contactUsCollection, profileFilesUploadPath, fileRef, educationCollection, educationById, projectsCollection, projectsById, experienceById, experienceCollection, certificationsCollection, certificationsById, appStatusDocRef, emailDocRef, emailCollection, emailCollectionRef, tokensRef } from "../Firebase/firebase";
+import { auth, usersRef, userRef, usermetadata, usernameRef, batch, imageUploadPath, usermetadataRef, ipDataRef, reviewCollection, testimonialCollection, reviewById, testimonialById, userSignupLogsById, firestoreDb, securityQuestionsRef, userLogCollectionRef, userLogRef, contactUsCollection, profileFilesUploadPath, fileRef, educationCollection, educationById, projectsCollection, projectsById, experienceById, experienceCollection, certificationsCollection, certificationsById, appStatusDocRef, emailDocRef, emailCollection, emailCollectionRef, tokensRef, userBusinessProfileRef } from "../Firebase/firebase";
 import * as authActionTypes from '../reducers/types';
 import { dismissNotification, notify } from "reapop";
-import { addDoc, arrayRemove, arrayUnion, deleteDoc, FieldValue, getDoc, getDocs, onSnapshot, orderBy, query, runTransaction, setDoc, Transaction, updateDoc, where } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, deleteDoc, FieldValue, getDoc, getDocs, onSnapshot, orderBy, query, runTransaction, serverTimestamp, setDoc, Transaction, updateDoc, where } from "firebase/firestore";
 import { deleteObject, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { onDisconnect, onValue, set } from "firebase/database";
+import { fetchBusinessProfile } from "./businessProfile";
 
 
 
@@ -319,13 +320,12 @@ export const createUserDataonSignup = (data, form) => {
   return (dispatch, getState) => {
     let userId = data.user.uid;
     let user = data.user;
-    const { password, verifyPassword, ...formInfo } = form;
+    const { password, confirmPassword, ...formInfo } = form;
     const userData = {
       ...formInfo,
       email: user.email,
       id: user.uid,
-      userSecurityQuestionEnabled: false,
-      photoURL: user.photoURL,
+       photoURL: user.photoURL,
       providerData: user.providerData,
       emailVerified: user.emailVerified,
       phoneNumber: user.phoneNumber,
@@ -354,6 +354,20 @@ export const createUserDataonSignup = (data, form) => {
         batch.set(userRef(userId), userData);
         updateProfile(auth.currentUser, {
           displayName: formInfo.firstName + ' ' + formInfo.lastName
+        })
+        setDoc(userBusinessProfileRef(userId), {
+          ...formInfo,
+          email: user.email,
+          id: user.uid,
+          photoURL: user.photoURL,
+          providerData: user.providerData,
+          emailVerified: user.emailVerified,
+          phoneNumber: user.phoneNumber,
+          accessToken: user.accessToken,
+          creationTime: new Date(),
+          lastSignInTime: user.metadata.lastSignInTime,
+          businessType: formInfo.businessType,
+          businessName: formInfo.businessName,
         })
         batch
           .commit()
@@ -490,7 +504,7 @@ export const signupUser = (form) => async (dispatch, getState) => {
      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
     const user = userCredential.user;
     let userId = user.uid;
-    const { password, verifyPassword, ...formInfo } = form;
+    const { password, confirmPassword, ...formInfo } = form;
     const userData = {
       ...formInfo,
       email: user.email,
@@ -611,3 +625,40 @@ export const setAuthState = (isAuthenticated, user = null) => ({
   }
 });
 
+// This function uploads user data to the business profile document
+export const uploadUserDataToBusinessProfile = () => async (dispatch) => {
+  try {
+    // 1. Fetch user data from the user collection
+    const userId = auth.currentUser.uid;
+    const userDoc = await getDoc(userRef(userId));
+    if (!userDoc.exists()) {
+      dispatch(notify({ message: "User not found!", status: "error" }));
+      return;
+    }
+    const userData = userDoc.data();
+
+    // 2. Prepare business profile data (customize as needed)
+    const businessProfileData = {
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      userId: userId,
+      creationTime: userData.creationTime,
+      businessType: userData.businessType || "",
+      businessName: userData.businessName || "",
+      // ...add any other fields you want to sync
+    };
+
+    // 3. Upload to business profile (create or update)
+    const profileRef = userBusinessProfileRef(userId);
+    const profileDoc = await getDoc(profileRef);
+    if (profileDoc.exists()) {
+      await updateDoc(profileRef, businessProfileData);
+    } else {
+      await setDoc(profileRef, businessProfileData);
+    }
+    dispatch(fetchBusinessProfile(userId))
+    dispatch(notify({ message: "Business profile updated from user data!", status: "success" }));
+  } catch (error) {
+    dispatch(notify({ message: error.message, status: "error" }));
+  }
+};

@@ -4,29 +4,49 @@ import { getThemeVars } from '../../../Theme/themeVars';
 import { FaTrendingUp, FaClock, FaCheckCircle } from 'react-icons/fa';
 import { IoTrendingUpOutline } from 'react-icons/io5';
 
-const PaymentSummaryCards = () => {
+const PaymentSummaryCards = ({ payments = [] }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, success, warning, info } = getThemeVars(theme);
+
+  // Calculate today's payments
+  const today = new Date();
+  const isToday = (date) => {
+    const d = new Date(date);
+    return d.getDate() === today.getDate() &&
+      d.getMonth() === today.getMonth() &&
+      d.getFullYear() === today.getFullYear();
+  };
+  const todaysPayments = payments.filter(p => p.status === 'Success' && p.date && isToday(p.date));
+  const todaysAmount = todaysPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // Pending payments
+  const pendingPayments = payments.filter(p => p.status === 'Pending');
+  const pendingAmount = pendingPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+  // Success rate
+  const totalPayments = payments.length;
+  const successPayments = payments.filter(p => p.status === 'Success').length;
+  const successRate = totalPayments > 0 ? ((successPayments / totalPayments) * 100).toFixed(1) : '0.0';
 
   const cards = [
     {
       title: "Today's Payments",
-      amount: "₹12,450",
-      trend: "+8.5% from yesterday",
+      amount: `₹${todaysAmount.toLocaleString()}`,
+      trend: `${todaysPayments.length} transactions today`,
       icon: <IoTrendingUpOutline style={{ color: success }} />,
       color: success
     },
     {
       title: "Pending Payments",
-      amount: "₹3,200",
-      trend: "5 transactions",
+      amount: `₹${pendingAmount.toLocaleString()}`,
+      trend: `${pendingPayments.length} pending`,
       icon: <FaClock style={{ color: warning }} />,
       color: warning
     },
     {
       title: "Success Rate",
-      amount: "97.8%",
-      trend: "Excellent performance",
+      amount: `${successRate}%`,
+      trend: `${successPayments} of ${totalPayments} successful`,
       icon: <FaCheckCircle style={{ color: success }} />,
       color: success
     }

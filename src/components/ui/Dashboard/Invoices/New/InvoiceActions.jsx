@@ -20,23 +20,7 @@ const InvoiceActions = ({ onSaveDraft, onDownloadPDF, onCancel, onSendInvoice })
         alignItems: 'center'
       }}>
         <div style={{ display: 'flex', gap: 12 }}>
-          <Button
-            appearance="ghost"
-            size="md"
-            style={{
-              border: `1px solid ${borderColor}`,
-              borderRadius: 8,
-              padding: '12px 24px',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8
-            }}
-            onClick={onSaveDraft}
-          >
-            <FaLock />
-            Save as Draft
-          </Button>
+          
           <Button
             appearance="ghost"
             size="md"

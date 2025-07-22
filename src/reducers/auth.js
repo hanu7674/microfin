@@ -47,12 +47,12 @@ export const authReducer = (state = initialState, action) => {
         error: payload
       };
     case types.GET_CURRENT_USER_DATA_SUCCESS:
-        return {
-          ...state,
-          loading: false,
-          user: {
-            ...state.user,
-            ...payload
+      return {
+        ...state,
+        loading: false,
+        user: {
+          ...state.user,
+          ...payload
           },
           isAuthenticated: true
         };
@@ -68,7 +68,7 @@ export const authReducer = (state = initialState, action) => {
         loading: false,
         error: payload
       };
-    
+
     case 'SET_AUTH_STATE':
       return {
         ...state,
@@ -78,7 +78,7 @@ export const authReducer = (state = initialState, action) => {
         error: null
       };
     
- default:
+    default:
       return state;
   }
 };

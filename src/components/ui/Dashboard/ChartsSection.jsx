@@ -3,20 +3,50 @@ import { FlexboxGrid, Panel } from 'rsuite';
 import { useTheme } from '../../Theme/theme';
 import { getThemeVars } from '../../Theme/themeVars';
 
-const ChartsSection = () => {
+const ChartsSection = ({ data = null }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, muted } = getThemeVars(theme);
 
-  const charts = [
-    {
+  // Generate charts based on available data
+  const generateCharts = (dashboardData) => {
+    const charts = [];
+    
+    // Always show loan portfolio overview
+    charts.push({
       title: 'Loan Portfolio Overview',
-      description: 'Chart: Monthly Loan Distribution'
-    },
-    {
+      description: 'Chart: Monthly Loan Distribution',
+      hasData: dashboardData?.activeLoans > 0
+    });
+    
+    // Always show payment trends
+    charts.push({
       title: 'Payment Trends',
-      description: 'Chart: Payment Collection Trends'
+      description: 'Chart: Payment Collection Trends',
+      hasData: dashboardData?.activeLoans > 0
+    });
+    
+    // Show revenue overview if there's revenue data
+    if (dashboardData?.totalRevenue > 0) {
+      charts.push({
+        title: 'Revenue Overview',
+        description: 'Chart: Monthly Revenue Trends',
+        hasData: true
+      });
     }
-  ];
+    
+    // Show client growth if there are clients
+    if (dashboardData?.totalClients > 0) {
+      charts.push({
+        title: 'Client Growth',
+        description: 'Chart: Client Acquisition Trends',
+        hasData: true
+      });
+    }
+    
+    return charts;
+  };
+
+  const charts = generateCharts(data);
 
   return (
     <div>
@@ -53,21 +83,44 @@ const ChartsSection = () => {
                 </p>
               </div>
               
-              {/* Chart Placeholder */}
-              <div style={{
-                width: '100%',
-                height: '200px',
-                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                borderRadius: 8,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: muted,
-                fontSize: 16,
-                fontWeight: 500
-              }}>
-                Chart Placeholder
-              </div>
+              {/* Chart Content */}
+              {chart.hasData ? (
+                <div style={{
+                   height: '200px',
+                  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                  borderRadius: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: muted,
+                  fontSize: 16,
+                  fontWeight: 500
+                }}>
+                  Chart Placeholder
+                </div>
+              ) : (
+                <div style={{
+                   height: '200px',
+                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  borderRadius: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: muted,
+                  fontSize: 14,
+                  textAlign: 'center',
+                  padding: '20px'
+                }}>
+                  <div>
+                    <div style={{ marginBottom: 8, fontWeight: 500 }}>
+                      No data available
+                    </div>
+                    <div style={{ fontSize: 12, opacity: 0.8 }}>
+                      Start adding loans to see charts
+                    </div>
+                  </div>
+                </div>
+              )}
             </Panel>
           </FlexboxGrid.Item>
         ))}

@@ -2,31 +2,52 @@ import React from 'react';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { FaCheckCircle, FaClock } from 'react-icons/fa';
-
-const VerificationStatus = () => {
+import { useDispatch } from 'react-redux';
+import { updateBusinessProfile } from '../../../../redux/businessProfile';
+import { Button } from 'rsuite';
+import { notify } from 'reapop';
+const VerificationStatus = ({ emailVerified, phoneVerified, documentVerification, userId }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, success, warning, cardBorderBottomColor } = getThemeVars(theme);
-
+  const dispatch = useDispatch();
   const verificationItems = [
     {
+      id:'email',
       title: 'Email Verified',
-      status: 'Completed',
-      icon: <FaCheckCircle style={{ color: success }} />,
-      color: success
+      status: emailVerified ? 'Completed' : 'Pending',
+      icon: emailVerified ? <FaCheckCircle style={{ color: success }} /> : <FaClock style={{ color: warning }} />,
+      color: emailVerified ? success : warning
     },
     {
+      id:'phone',
       title: 'Phone Verified',
-      status: 'Completed',
-      icon: <FaCheckCircle style={{ color: success }} />,
-      color: success
+      status: phoneVerified ? 'Completed' : 'Pending',
+      icon: phoneVerified ? <FaCheckCircle style={{ color: success }} /> : <FaClock style={{ color: warning }} />,
+      color: phoneVerified ? success : warning
     },
     {
+      id:'document',
       title: 'Document Verification',
-      status: 'Pending',
-      icon: <FaClock style={{ color: warning }} />,
-      color: warning
+      status: documentVerification ? 'Completed' : 'Pending',
+      icon: documentVerification ? <FaCheckCircle style={{ color: success }} /> : <FaClock style={{ color: warning }} />,
+      color: documentVerification ? success : warning
     }
   ];
+
+  const handleVerify = (title) => {
+    console.log(title);
+    dispatch(notify({
+      title: 'Notification',
+      message: 'Verification request sent',
+      status: 'success',
+      dismissible: true,
+      dismissAfter: 3000,
+      position: 'top-right'
+    }))
+    // dispatch(updateBusinessProfile(userId, {
+    //   [title.toLowerCase()]: true
+    // }));
+  };
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -90,7 +111,9 @@ const VerificationStatus = () => {
                   color: item.color,
                   fontWeight: 500
                 }}>
-                  {item.status}
+                  {item.status === 'Completed' ? 'Verified' : 'Pending'} &nbsp; 
+                  {item.status === 'Pending' && <a style={{color: 'blue', textDecoration: 'none', cursor: 'pointer'}} onClick={() => handleVerify(item.id)}> Verify</a>}
+                  
                 </div>
               </div>
             </div>

@@ -1,37 +1,37 @@
 import React from 'react';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { FaUsers, FaUser, FaUserPlus, FaRupeeSign } from 'react-icons/fa';
+import { FaUsers, FaUser, FaUserPlus, FaUserTimes } from 'react-icons/fa';
 import { Grid, Row, Col, Panel, Stack, IconButton } from 'rsuite';
 
-const ClientSummaryCards = () => {
+const ClientSummaryCards = ({ data = {} }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, muted, success, info, warning } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, muted, success, info, warning, danger } = getThemeVars(theme);
 
   const cards = [
     {
       title: "Total Clients",
-      value: "247",
+      value: data.totalClients || 0,
       icon: <FaUsers style={{ color: info }} />,
       color: info
     },
     {
       title: "Active Clients",
-      value: "189",
+      value: data.activeClients || 0,
       icon: <FaUser style={{ color: success }} />,
       color: success
     },
     {
       title: "New This Month",
-      value: "23",
+      value: data.newClients || 0,
       icon: <FaUserPlus style={{ color: warning }} />,
       color: warning
     },
     {
-      title: "Total Revenue",
-      value: "₹8.9L",
-      icon: <FaRupeeSign style={{ color: success }} />,
-      color: success
+      title: "Inactive Clients",
+      value: data.inactiveClients || 0,
+      icon: <FaUserTimes style={{ color: danger }} />,
+      color: danger
     }
   ];
 
@@ -44,7 +44,7 @@ const ClientSummaryCards = () => {
           cards.map((card, index) => (
 
          
-        <Col md={6} lg={6} sm={12} xs={24} xl={6} >
+        <Col md={6} lg={6} sm={12} xs={24} xl={6} key={index}>
           <Panel shaded style={{backgroundColor: cardBg}}>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <div >

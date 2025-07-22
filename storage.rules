@@ -1,0 +1,142 @@
+rules_version = '2';
+
+// Firebase Storage Security Rules for MicroFin Loan Application System
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // =============================================
+    // LOAN APPLICATION DOCUMENTS
+    // =============================================
+    match /loan-applications/{userId}/{fileName} {
+      // Allow users to upload their own loan application documents
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && validateLoanDocument(fileName);
+        
+      // Also allow read access for download URL generation
+      allow read: if request.auth != null 
+        && request.auth.uid == userId;
+    }
+    
+    // =============================================
+    // PROFILE IMAGES
+    // =============================================
+    match /images/profile/{userId}/{fileName} {
+      // Users can read/write their own profile images
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && validateImageFile(fileName);
+    }
+    
+    // =============================================
+    // CHAT FILES
+    // =============================================
+    match /chats/{userId}/files/{fileName} {
+      // Users can read/write their own chat files
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && validateChatFile(fileName);
+    }
+    
+    // =============================================
+    // BLOG IMAGES
+    // =============================================
+    match /blogs/{fileName} {
+      // Allow authenticated users to upload blog images
+      allow read: if true; // Public read access for blog images
+      allow write: if request.auth != null 
+        && validateImageFile(fileName);
+    }
+    
+    // =============================================
+    // CAROUSEL IMAGES
+    // =============================================
+    match /carousel/{fileName} {
+      // Allow authenticated users to upload carousel images
+      allow read: if true; // Public read access for carousel
+      allow write: if request.auth != null 
+        && validateImageFile(fileName);
+    }
+    
+    // =============================================
+    // TEMPLATE FILES
+    // =============================================
+    match /files/templates/{templateId}/{fileName} {
+      // Allow authenticated users to upload template files
+      allow read: if request.auth != null;
+      allow write: if request.auth != null 
+        && validateDocumentFile(fileName);
+    }
+    
+    // =============================================
+    // USER DATA FILES
+    // =============================================
+    match /files/{userId}/{fileName} {
+      // Users can read/write their own data files
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        && validateDocumentFile(fileName);
+    }
+    
+    // =============================================
+    // PROFILE FILES
+    // =============================================
+    match /profile/{fileName} {
+      // Allow authenticated users to upload profile files
+      allow read: if request.auth != null;
+      allow write: if request.auth != null 
+        && validateImageFile(fileName);
+    }
+    
+    // =============================================
+    // CHAT PROFILE IMAGES
+    // =============================================
+    match /images/chats/{fileName} {
+      // Allow authenticated users to upload chat profile images
+      allow read: if request.auth != null;
+      allow write: if request.auth != null 
+        && validateImageFile(fileName);
+    }
+    
+    // =============================================
+    // VALIDATION FUNCTIONS
+    // =============================================
+    
+    // Validate loan application documents
+    function validateLoanDocument(fileName) {
+      return fileName.matches('^[a-zA-Z0-9_-]+\\.(pdf|doc|docx|jpg|jpeg|png)$')
+        && request.resource.size < 10 * 1024 * 1024 // 10MB limit
+        && request.resource.contentType.matches('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|image/jpeg|image/png');
+    }
+    
+    // Validate image files
+    function validateImageFile(fileName) {
+      return fileName.matches('^[a-zA-Z0-9_-]+\\.(jpg|jpeg|png|gif|webp)$')
+        && request.resource.size < 5 * 1024 * 1024 // 5MB limit
+        && request.resource.contentType.matches('image/.*');
+    }
+    
+    // Validate document files
+    function validateDocumentFile(fileName) {
+      return fileName.matches('^[a-zA-Z0-9_-]+\\.(pdf|doc|docx|txt|rtf)$')
+        && request.resource.size < 20 * 1024 * 1024 // 20MB limit
+        && request.resource.contentType.matches('application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/.*|application/rtf');
+    }
+    
+    // Validate chat files
+    function validateChatFile(fileName) {
+      return fileName.matches('^[a-zA-Z0-9_-]+\\.(jpg|jpeg|png|gif|pdf|doc|docx|txt|mp3|mp4|wav)$')
+        && request.resource.size < 50 * 1024 * 1024 // 50MB limit
+        && request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document|text/.*|audio/.*|video/.*');
+    }
+    
+    // =============================================
+    // GENERAL SECURITY RULES
+    // =============================================
+    
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+} 

@@ -3,23 +3,14 @@ import { Input, Button, Tag } from 'rsuite';
 import { FaEdit, FaCheckCircle, FaClock, FaUniversity } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-
-const BankDetails = () => {
+import { useDispatch } from 'react-redux';
+import { updateBusinessProfile } from '../../../../redux/businessProfile';
+const BankDetails = ({ profile }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, success, warning, cardBorderBottomColor } = getThemeVars(theme);
-  
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    bankName: 'HDFC Bank',
-    accountNumber: '1234567890',
-    accountType: 'Current Account',
-    ifscCode: 'HDFC0001234',
-    branchName: 'Mumbai Main Branch',
-    accountHolderName: 'ABC Electronics Store',
-    micrCode: '400240123',
-    swiftCode: 'HDFCINBB',
-    verificationStatus: 'Verified'
-  });
+  const [formData, setFormData] = useState({...profile});
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -30,6 +21,13 @@ const BankDetails = () => {
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
+    if(isEditing){
+      handleSave();
+    }
+  };
+
+  const handleSave = () => {
+    dispatch(updateBusinessProfile(profile.userId, formData));
   };
 
   const getStatusTag = (status) => (
@@ -42,7 +40,7 @@ const BankDetails = () => {
       fontSize: 12,
       fontWeight: 500
     }}>
-      {status}
+      {status === 'Verified' ? 'Verified' : 'Pending'}
     </Tag>
   );
 
@@ -256,12 +254,7 @@ const BankDetails = () => {
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {getStatusTag(formData.verificationStatus)}
-                <div style={{
-                  fontSize: 16,
-                  color: formData.verificationStatus === 'Verified' ? success : warning
-                }}>
-                  {formData.verificationStatus === 'Verified' ? <FaCheckCircle /> : <FaClock />}
-                </div>
+                 
               </div>
             </div>
           </div>

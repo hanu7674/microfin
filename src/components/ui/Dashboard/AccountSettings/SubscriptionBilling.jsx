@@ -1,35 +1,59 @@
-import React from 'react';
-import { Stack, Grid, Row, Col, Panel, Button, Tag } from 'rsuite';
-import { FaCreditCard, FaDownload, FaDesktop, FaMobile } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Stack, Panel, Button, Loader, Message } from 'rsuite';
+import { FaCreditCard, FaDownload } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+ import { fetchSubscriptionDetails, subscribeToPlan, listenToSubscription } from '../../../../redux/businessProfile';
+import SubscribeModal from './SubscriptionModel';
 
 const SubscriptionBilling = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor, success } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
+  const dispatch = useDispatch();
+ 
+  const { subscription, subscriptionLoading, subscriptionError } = useSelector(state => state.businessProfile);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const billingHistory = [
-    {
-      plan: 'Professional Plan',
-      date: 'December 15, 2024',
-      amount: '$29.00'
-    },
-    {
-      plan: 'Professional Plan',
-      date: 'November 15, 2024',
-      amount: '$29.00'
-    },
-    {
-      plan: 'Professional Plan',
-      date: 'October 15, 2024',
-      amount: '$29.00'
-    },
-    {
-      plan: 'Professional Plan',
-      date: 'September 15, 2024',
-      amount: '$29.00'
-    }
-  ];
+  useEffect(() => {
+    dispatch(fetchSubscriptionDetails());
+    // Listen for real-time subscription changes
+    const unsubscribe = dispatch(listenToSubscription());
+    return () => { if (unsubscribe) unsubscribe(); };
+  }, [dispatch]);
+
+  const handleSubscribe = (plan) => {
+    dispatch(subscribeToPlan(plan));
+    setModalOpen(false);
+  };
+
+  if (subscriptionLoading) {
+    return <div style={{ padding: 32, textAlign: 'center' }}><Loader size="md" content="Loading subscription..." /></div>;
+  }
+  if (subscriptionError) {
+    return <div style={{ padding: 32 }}><Message type="error">{subscriptionError}</Message></div>;
+  }
+
+  // Show subscribe options if no subscription or not active
+  if (!subscription || subscription.status !== 'active') {
+    return (
+      <>
+        <div style={{ padding: 32, textAlign: 'center', color: '#888' }}>
+          <div style={{ marginBottom: 16 }}>No subscription found.</div>
+          <Button appearance="primary" onClick={() => setModalOpen(true)}>Subscribe Now</Button>
+        </div>
+        <SubscribeModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubscribe={handleSubscribe}
+           
+        />
+      </>
+    );
+  }
+
+  // Example: subscription.billingHistory = [{ plan, date, amount }]
+  const billingHistory = subscription.billingHistory || [];
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -65,7 +89,7 @@ const SubscriptionBilling = () => {
                   color: cardText,
                   marginBottom: 4
                 }}>
-                  Professional Plan
+                  {subscription.planName || 'No Plan'}
                 </div>
                 <div style={{
                   fontSize: 14,
@@ -73,14 +97,14 @@ const SubscriptionBilling = () => {
                   opacity: 0.8,
                   marginBottom: 4
                 }}>
-                  $29/month • Billed monthly
+                  {subscription.price ? `$${subscription.price}/month` : ''} {subscription.billingCycle ? `• Billed ${subscription.billingCycle}` : ''}
                 </div>
                 <div style={{
                   fontSize: 12,
                   color: cardText,
                   opacity: 0.7
                 }}>
-                  Next billing date: January 15, 2025
+                  Next billing date: {subscription.nextBillingDate || 'N/A'}
                 </div>
               </div>
               <Stack spacing={8}>
@@ -119,14 +143,14 @@ const SubscriptionBilling = () => {
                     color: cardText,
                     marginBottom: 2
                   }}>
-                    VISA •••• •••• 4567
+                    {subscription.paymentMethod || 'No payment method'}
                   </div>
                   <div style={{
                     fontSize: 12,
                     color: cardText,
                     opacity: 0.7
                   }}>
-                    Expires 12/26
+                    {subscription.paymentExpiry ? `Expires ${subscription.paymentExpiry}` : ''}
                   </div>
                 </div>
               </Stack>
@@ -147,7 +171,9 @@ const SubscriptionBilling = () => {
               Billing History
             </div>
             <Stack direction="column" spacing={12}>
-              {billingHistory.map((item, index) => (
+              {billingHistory.length === 0 ? (
+                <div style={{ color: '#888', fontSize: 14 }}>No billing history found.</div>
+              ) : billingHistory.map((item, index) => (
                 <Stack key={index} justifyContent="space-between" alignItems="center" style={{
                   padding: '12px 0',
                   borderBottom: index < billingHistory.length - 1 ? `1px solid ${borderColor}` : 'none'

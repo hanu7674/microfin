@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Tag, Button, Tooltip, Whisper, IconButton } from 'rsuite';
+import { Table, Tag, Button, Tooltip, Whisper, IconButton, Loader, Stack } from 'rsuite';
 import { 
   FaEye, 
   FaEdit, 
@@ -10,375 +10,255 @@ import {
 } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import InvoicePagination from './InvoicePagination';
 
 const { Column, HeaderCell, Cell } = Table;
 
-const InvoiceTable = ({ data = null, onView, onEdit, onDownload, onSend, onRemind }) => {
+const InvoiceTable = ({ 
+  data = [], 
+  loading = false, 
+  error = null,
+  selectedInvoices = [],
+  onSelectInvoice,
+  onSelectAll,
+  onView, 
+  onEdit, 
+  onDownload, 
+  onSend, 
+  onRemind 
+}) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
-  const [currentPage, setCurrentPage] = useState(1);
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    console.log('Page changed to:', page);
-    // Load invoices for the new page
-  };
-  // Default invoice data
-  const defaultData = [
-    {
-      id: 'INV-2025-001',
-      date: 'Jan 15, 2025',
-      client: 'ABC Corp',
-      email: 'contact@abc.com',
-      amount: '₹25,000',
-      status: 'Paid',
-      dueDate: 'Jan 30, 2025'
-    },
-    {
-      id: 'INV-2025-002',
-      date: 'Jan 12, 2025',
-      client: 'XYZ Ltd',
-      email: 'info@xyz.com',
-      amount: '₹15,750',
-      status: 'Pending',
-      dueDate: 'Jan 27, 2025'
-    },
-    {
-      id: 'INV-2025-003',
-      date: 'Jan 10, 2025',
-      client: 'Tech Solutions',
-      email: 'hello@tech.com',
-      amount: '₹8,500',
-      status: 'Overdue',
-      dueDate: 'Jan 20, 2025'
-    },
-    {
-      id: 'INV-2025-004',
-      date: 'Jan 8, 2025',
-      client: 'Global Systems',
-      email: 'admin@global.com',
-      amount: '₹32,000',
-      status: 'Paid',
-      dueDate: 'Jan 25, 2025'
-    },
-    {
-      id: 'INV-2025-005',
-      date: 'Jan 5, 2025',
-      client: 'Innovate Inc',
-      email: 'support@innovate.com',
-      amount: '₹12,300',
-      status: 'Pending',
-      dueDate: 'Jan 22, 2025'
-    }
-  ];
-
-  const invoiceData = data || defaultData;
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Paid':
-        return 'green';
-      case 'Pending':
-        return 'orange';
-      case 'Overdue':
-        return 'red';
-      default:
-        return 'default';
+      case 'Paid': return 'green';
+      case 'Pending': return 'orange';
+      case 'Overdue': return 'red';
+      case 'Draft': return 'default';
+      default: return 'default';
     }
   };
 
-  const getActionButtons = (invoice) => {
-    const buttonStyle = {
-      padding: '4px 8px',
-      margin: '0 2px',
-      fontSize: 12,
-      minWidth: '32px',
-      height: '32px'
-    };
-
-    switch (invoice?.status) {
-      case 'Paid':
-        return (
-          <div style={{ display: 'flex', gap: 4 }}>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>View</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onView(invoice)}
-              >
-                <FaEye />
-              </IconButton>
-            </Whisper>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>Edit</Tooltip>}
-            >
-              <IconButton 
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onEdit(invoice)}
-              >
-                <FaEdit />
-              </IconButton>
-            </Whisper>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>Download</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onDownload(invoice)}
-              >
-                <FaDownload />
-              </IconButton>
-            </Whisper>
-          </div>
-        );
-      case 'Pending':
-        return (
-          <div style={{ display: 'flex', gap: 4 }}>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>View</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onView(invoice)}
-              >
-                <FaEye />
-              </IconButton>
-            </Whisper>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>Edit</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onEdit(invoice)}
-              >
-                <FaEdit />
-              </IconButton>
-            </Whisper>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>Send</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onSend(invoice)}
-              >
-                <FaPaperPlane />
-              </IconButton>
-            </Whisper>
-          </div>
-        );
-      case 'Overdue':
-        return (
-          <div style={{ display: 'flex', gap: 4 }}>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>View</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onView(invoice)}
-              >
-                <FaEye />
-              </IconButton>
-            </Whisper>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>Edit</Tooltip>}
-            >
-              <IconButton
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onEdit(invoice)}
-              >
-                <FaEdit />
-              </IconButton>
-            </Whisper>
-            <Whisper
-              placement="top"
-              trigger="hover"
-              speaker={<Tooltip>Remind</Tooltip>}
-            >
-              <Button
-                size="xs"
-                appearance="subtle"
-                circle
-                style={buttonStyle}
-                onClick={() => onRemind(invoice)}
-              >
-                <FaBell />
-              </Button>
-            </Whisper>
-          </div>
-        );
-      default:
-        return <div>No actions</div>;
-    }
+  const formatAmount = (amount) => {
+    return `₹${(amount || 0).toLocaleString()}`;
   };
+
+  const formatDate = (date) => {
+    if (!date) return '';
+    const dateObj = date.toDate ? date.toDate() : new Date(date);
+    return dateObj.toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const renderActions = (invoice) => (
+    <Stack spacing={8}>
+      <Whisper
+        placement="top"
+        trigger="hover"
+        speaker={<Tooltip>View Invoice</Tooltip>}
+      >
+        <IconButton 
+          icon={<FaEye />} 
+          appearance="subtle" 
+          circle 
+          onClick={() => onView(invoice)}
+        />
+      </Whisper>
+      <Whisper
+        placement="top"
+        trigger="hover"
+        speaker={<Tooltip>Edit Invoice</Tooltip>}
+      >
+        <IconButton 
+          icon={<FaEdit />} 
+          appearance="subtle" 
+          circle 
+          onClick={() => onEdit(invoice)}
+        />
+      </Whisper>
+      <Whisper
+        placement="top"
+        trigger="hover"
+        speaker={<Tooltip>Download PDF</Tooltip>}
+      >
+        <IconButton 
+          icon={<FaDownload />} 
+          appearance="subtle" 
+          circle 
+          onClick={() => onDownload(invoice)}
+        />
+      </Whisper>
+      <Whisper
+        placement="top"
+        trigger="hover"
+        speaker={<Tooltip>Send Invoice</Tooltip>}
+      >
+        <IconButton 
+          icon={<FaPaperPlane />} 
+          appearance="subtle" 
+          circle 
+          onClick={() => onSend(invoice)}
+        />
+      </Whisper>
+      <Whisper
+        placement="top"
+        trigger="hover"
+        speaker={<Tooltip>Send Reminder</Tooltip>}
+      >
+        <IconButton 
+          icon={<FaBell />} 
+          appearance="subtle" 
+          circle 
+          onClick={() => onRemind(invoice)}
+        />
+      </Whisper>
+    </Stack>
+  );
+
+  if (loading) {
+    return (
+      <div style={{ 
+        textAlign: 'center', 
+        padding: '40px 20px',
+        background: cardBg,
+        border: `1px solid ${borderColor}`,
+        borderRadius: 8,
+        boxShadow: shadow
+      }}>
+        <Loader size="md" content="Loading invoices..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ 
+        textAlign: 'center', 
+        padding: '40px 20px',
+        background: cardBg,
+        border: `1px solid ${borderColor}`,
+        borderRadius: 8,
+        boxShadow: shadow,
+        color: '#ef4444'
+      }}>
+        <h4>Error loading invoices</h4>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div
-      style={{
+    <div style={{ marginBottom: 32 }}>
+      <div style={{
         background: cardBg,
-        color: cardText,
         border: `1px solid ${borderColor}`,
-        boxShadow: shadow,
-        padding: '1%',
         borderRadius: 8,
-         marginBottom: 24
-      }}
-    >
-      <h3 style={{
-        fontSize: 18, 
-        fontWeight: 600, 
-        margin: 0, 
-        padding: '10px 16px',
-        marginBottom: 20,
-        color: cardText,
-        borderBottom: `3px solid ${cardBorderBottomColor}`,
-        borderBottomWidth: 1
+        boxShadow: shadow
       }}>
-        Recent Invoices
-      </h3>
-
-      <Table
-        data={invoiceData}
-        autoHeight
-        rowHeight={70}
-        bordered
-        style={{
-          background: 'transparent',
+        <div style={{
+          fontSize: 18,
+          fontWeight: 600,
+          margin: 0,
+          marginBottom: 24,
           color: cardText,
-        }}
-      >
-        <Column flexGrow={1}>
-          <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Invoice</HeaderCell>
-          <Cell>
-            {(rowData) => (
-              <div>
-                <div style={{ fontWeight: 600, color: cardText }}>
-                  #{rowData.id}
-                </div>
-                <div style={{ fontSize: 12, color: muted }}>
-                  {rowData.date}
-                </div>
-              </div>
-            )}
-          </Cell>
-        </Column>
+          padding: '10px 16px',
+          borderBottom: `3px solid ${cardBorderBottomColor}`,
+          borderBottomWidth: 1
+        }}>
+          Invoice List
+        </div>
 
-        <Column flexGrow={2}>
-          <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Client</HeaderCell>
-          <Cell>
-            {(rowData) => (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  backgroundColor: '#e0e0e0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  color: muted
-                }}>
-                  <FaUser />
-                </div>
-                <div>
-                  <div style={{ fontWeight: 500, color: cardText }}>
-                    {rowData.client}
-                  </div>
-                  <div style={{ fontSize: 12, color: muted }}>
-                    {rowData.email}
-                  </div>
-                </div>
-              </div>
-            )}
-          </Cell>
-        </Column>
+        <div style={{ padding: '0 16px 16px' }}>
+          {data && data.length > 0 ? (
+            <Table
+              data={data}
+              autoHeight
+              style={{ background: 'transparent' }}
+              rowHeight={60}
+            >
+              <Column flexGrow={1}>
+                <HeaderCell>Invoice ID</HeaderCell>
+                <Cell dataKey="id" />
+              </Column>
 
-        <Column flexGrow={1}>
-          <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Amount</HeaderCell>
-          <Cell>
-            {(rowData) => (
-              <div style={{ fontWeight: 600, color: cardText }}>
-                {rowData.amount}
-              </div>
-            )}
-          </Cell>
-        </Column>
+              <Column flexGrow={1}>
+                <HeaderCell>Date</HeaderCell>
+                <Cell>
+                  {(rowData) => formatDate(rowData.date)}
+                </Cell>
+              </Column>
 
-        <Column flexGrow={1}>
-          <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Status</HeaderCell>
-          <Cell>
-            {(rowData) => (
-              <Tag color={getStatusColor(rowData.status)} size="sm">
-                {rowData.status}
-              </Tag>
-            )}
-          </Cell>
-        </Column>
+              <Column flexGrow={1}>
+                <HeaderCell>Client</HeaderCell>
+                <Cell>
+                  {(rowData) => (
+                    <div>
+                      <div style={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: cardText
+                      }}>
+                        {rowData.client}
+                      </div>
+                      <div style={{
+                        fontSize: 12,
+                        color: cardText,
+                        opacity: 0.7
+                      }}>
+                        {rowData.email}
+                      </div>
+                    </div>
+                  )}
+                </Cell>
+              </Column>
 
-        <Column flexGrow={1}>
-          <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Due Date</HeaderCell>
-          <Cell>
-            {(rowData) => (
-              <div style={{ color: cardText }}>
-                {rowData.dueDate}
-              </div>
-            )}
-          </Cell>
-        </Column>
+              <Column flexGrow={1}>
+                <HeaderCell>Amount</HeaderCell>
+                <Cell>
+                  {(rowData) => formatAmount(rowData.amount)}
+                </Cell>
+              </Column>
 
-        <Column flexGrow={1}>
-          <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Actions</HeaderCell>
-          <Cell>
-            {(rowData) => getActionButtons(rowData)}
-          </Cell>
-        </Column>
-      </Table>
-      <InvoicePagination currentPage={currentPage}
-        totalPages={3}
-        totalResults={247}
-        pageSize={10}
-        onPageChange={handlePageChange}/>
+              <Column flexGrow={1}>
+                <HeaderCell>Status</HeaderCell>
+                <Cell>
+                  {(rowData) => (
+                    <Tag color={getStatusColor(rowData.status)}>
+                      {rowData.status}
+                    </Tag>
+                  )}
+                </Cell>
+              </Column>
+
+              <Column flexGrow={1}>
+                <HeaderCell>Due Date</HeaderCell>
+                <Cell>
+                  {(rowData) => formatDate(rowData.dueDate)}
+                </Cell>
+              </Column>
+
+              <Column flexGrow={1}>
+                <HeaderCell>Actions</HeaderCell>
+                <Cell>
+                  {(rowData) => renderActions(rowData)}
+                </Cell>
+              </Column>
+            </Table>
+          ) : (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px 20px',
+              color: cardText,
+              opacity: 0.7
+            }}>
+              No invoices found
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

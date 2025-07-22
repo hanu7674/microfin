@@ -24,5 +24,14 @@ export function getThemeVars(theme) {
     whitesmoke: isDark ? '#18191A' : '#F7F8FA',
     buttonAppearance: isDark ? 'subtle' : 'default',
     cardBorderBottomColor: isDark ? '#333' : '#eee',
+    success: isDark ? '#1e7e34' : '#1e7e34',
+    warning: isDark ? '#f57c00' : '#f57c00',
+    selectedPlanTheme: isDark ? '#1677ff' : '#1677ff',
+    selectedPlanText: isDark ? '#fff' : '#fff',
+    selectedPlanBg: isDark ? '#1677ff' : '#1677ff',
+    selectedPlanBorder: isDark ? '#1677ff' : '#1677ff',
+    selectedPlanBorderHover: isDark ? '#0056b3' : '#0056b3',
+    selectedPlanTextHover: isDark ? '#fff' : '#fff',
+    selectedPlanBgHover: isDark ? '#1677ff' : '#1677ff',
   };
 } 

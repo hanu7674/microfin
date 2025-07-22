@@ -1,9 +1,8 @@
 import React from 'react';
-import { Breadcrumb } from 'rsuite';
-import { FaHome, FaHandHoldingUsd } from 'react-icons/fa';
+  import { FaHome, FaHandHoldingUsd } from 'react-icons/fa';
 import { useTheme } from '../../../../Theme/theme';
 import { getThemeVars } from '../../../../Theme/themeVars';
-
+import { Link } from 'react-router-dom';
 const LoanApplicationHeader = () => {
   const { theme } = useTheme();
   const { cardText, muted } = getThemeVars(theme);
@@ -11,15 +10,25 @@ const LoanApplicationHeader = () => {
   return (
     <div style={{ marginBottom: 32 }}>
       {/* Breadcrumbs */}
-      <Breadcrumb style={{ marginBottom: 16 }}>
-        <Breadcrumb.Item href="#" icon={<FaHome />}>
-          Home
-        </Breadcrumb.Item>
-        <Breadcrumb.Item href="#" icon={<FaHandHoldingUsd />}>
-          Loans
-        </Breadcrumb.Item>
-        <Breadcrumb.Item active>Apply for Loan</Breadcrumb.Item>
-      </Breadcrumb>
+      <nav aria-label="breadcrumb" style={{ marginBottom: 16 }} >
+         <ol style={{ display: 'flex', listStyle: 'none', padding: 0, margin: 0, fontSize: 13 }}>
+           <li>
+             <Link to="/dashboard" style={{ textDecoration: 'none', color: '#1677ff', display: 'flex', alignItems: 'center' }}>
+                 Home
+             </Link>
+           </li>
+           <li style={{ margin: '0 4px', color: '#aaa' }}>/</li>
+           <li>
+             <Link to="/dashboard/loans" style={{ textDecoration: 'none', color: '#1677ff', display: 'flex', alignItems: 'center' }}>
+               Loans
+             </Link>
+           </li>
+           <li style={{ margin: '0 4px', color: '#aaa' }}>/</li>
+           <li style={{ color: '#888', display: 'flex', alignItems: 'center' }}>
+              Apply for Loan
+           </li>
+         </ol>
+       </nav>
 
       {/* Title and Subtitle */}
       <div>

@@ -1,141 +1,197 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import TransactionsHeader from './TransactionsHeader';
 import TransactionsFilter from './TransactionsFilter';
 import FinancialOverview from './FinancialOverview';
 import TransactionsTable from './TransactionsTable';
+import { useTransactions } from '../../../../hooks/useDataService';
 
 const TransactionsPage = () => {
   const { theme } = useTheme();
   const { bgMain } = getThemeVars(theme);
   
-  // State management
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All Types');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Sample transactions data
-  const transactions = [
-    {
-      id: 1,
-      date: 'Jan 15, 2025',
-      description: 'Salary Payment',
-      category: 'Income',
-      account: 'Checking Account',
-      amount: '+₹2,500.00',
-      type: 'income'
-    },
-    {
-      id: 2,
-      date: 'Jan 14, 2025',
-      description: 'Grocery Shopping',
-      category: 'Food & Dining',
-      account: 'Credit Card',
-      amount: '-₹85.50',
-      type: 'expense'
-    },
-    {
-      id: 3,
-      date: 'Jan 13, 2025',
-      description: 'Gas Station',
-      category: 'Transportation',
-      account: 'Debit Card',
-      amount: '-₹45.00',
-      type: 'expense'
-    },
-    {
-      id: 4,
-      date: 'Jan 12, 2025',
-      description: 'Freelance Project',
-      category: 'Income',
-      account: 'Savings Account',
-      amount: '+₹800.00',
-      type: 'income'
-    },
-    {
-      id: 5,
-      date: 'Jan 11, 2025',
-      description: 'Movie Tickets',
-      category: 'Entertainment',
-      account: 'Credit Card',
-      amount: '-₹24.00',
-      type: 'expense'
+  const { 
+    transactions, 
+    loading, 
+    error, 
+    fetchTransactions 
+  } = useTransactions();
+
+  // Handle ResizeObserver errors
+  useEffect(() => {
+    const originalError = console.error;
+    console.error = (...args) => {
+      if (args[0] && typeof args[0] === 'string' && args[0].includes('ResizeObserver')) {
+        return; // Suppress ResizeObserver errors
+      }
+      originalError.apply(console, args);
+    };
+
+    return () => {
+      console.error = originalError;
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  // Monitor transactions state changes
+  useEffect(() => {
+    console.log('Transactions state changed:', transactions);
+    console.log('Transactions count:', transactions?.length || 0);
+  }, [transactions]);
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+    console.log('Searching for:', value);
+    fetchTransactions({ search: value });
+  };
+
+  const handleTypeChange = (value) => {
+    setSelectedType(value);
+    console.log('Type filter:', value);
+    const filters = {};
+    if (value !== 'All Types') {
+      filters.type = value.toLowerCase();
     }
-  ];
-
-  // Event handlers
-  const handleAddTransaction = () => {
-    console.log('Add transaction clicked');
-    // Add transaction logic here
+    fetchTransactions(filters);
   };
 
-  const handleMoreFilter = () => {
-    console.log('More filter clicked');
-    // Additional filter logic here
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+    console.log('Category filter:', value);
+    const filters = {};
+    if (value !== 'All Categories') {
+      filters.category = value;
+    }
+    fetchTransactions(filters);
   };
 
-  const handleEditTransaction = (transaction) => {
-    console.log('Edit transaction:', transaction);
-    // Edit transaction logic here
-  };
-
-  const handleDeleteTransaction = (transaction) => {
-    console.log('Delete transaction:', transaction);
-    // Delete transaction logic here
-  };
-
-  const handleDownload = () => {
-    console.log('Download transactions');
-    // Download logic here
-  };
-
-  const handleViewChange = () => {
-    console.log('Change view');
-    // View change logic here
+  const handleDateChange = (value) => {
+    setSelectedDate(value);
+    console.log('Date filter:', value);
+    const filters = {};
+    if (value) {
+      filters.date = value;
+    }
+    fetchTransactions(filters);
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Fetch data for new page
+    console.log('Page changed to:', page);
+    fetchTransactions({ page, limit: 10 });
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setSelectedType('All Types');
+    setSelectedCategory('All Categories');
+    setSelectedDate(null);
+    setCurrentPage(1);
+    fetchTransactions();
+  };
+
+  const handleTransactionSuccess = () => {
+    console.log('Transaction added successfully! Refreshing data...');
+    setTimeout(() => {
+      fetchTransactions();
+    }, 100);
+  };
+
+  const handleEditSuccess = () => {
+    console.log('Transaction edited successfully! Refreshing data...');
+    setTimeout(() => {
+      fetchTransactions();
+    }, 100);
+  };
+
+  const handleDeleteSuccess = () => {
+    console.log('Transaction deleted successfully! Refreshing data...');
+    setTimeout(() => {
+      fetchTransactions();
+    }, 100);
+  };
+
+   const calculateFinancialData = () => {
+    console.log('Calculating financial data with transactions:', transactions);
+    
+    const totalIncome = transactions?.filter(t => t.type === 'income')?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
+    const totalExpenses = transactions?.filter(t => t.type === 'expense')?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
+    const netBalance = totalIncome - totalExpenses;
+    
+    console.log('Financial data calculated:', { totalIncome, totalExpenses, netBalance });
+    
+    return {
+      totalIncome,
+      totalExpenses,
+      netBalance
+    };
+  };
+
+  const financialData = calculateFinancialData();
+
+  const filteredTransactions = transactions ? transactions.filter(transaction => {
+    const matchesSearch = !searchTerm || 
+      transaction.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.category?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesType = selectedType === 'All Types' || 
+      transaction.type === selectedType.toLowerCase();
+    
+    const matchesCategory = selectedCategory === 'All Categories' || 
+      transaction.category === selectedCategory;
+    
+    return matchesSearch && matchesType && matchesCategory;
+  }) : [];
+
+  console.log('Current transactions state:', transactions);
+  console.log('Filtered transactions:', filteredTransactions);
+  console.log('Financial data being passed to overview:', financialData);
+
   return (
-    <div style={{marginTop: '5%', backgroundColor: bgMain, padding: "2%"}}>
-       <TransactionsHeader 
+    <div style={{ marginTop: '5%', backgroundColor: bgMain, padding: "2%" }}>
+      <TransactionsHeader 
         title="Transactions"
-        subtitle="Manage your income and expense transactions"
-        actionText="Add Transaction"
-        onActionClick={handleAddTransaction}
+        subtitle="View and manage all your financial transactions"
+        onExport={() => console.log('Export transactions')}
+        exportText="Export"
+        onTransactionSuccess={handleTransactionSuccess}
       />
 
-       <TransactionsFilter
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+       
+
+      <TransactionsFilter
+        searchValue={searchTerm}
         selectedType={selectedType}
-        onTypeChange={setSelectedType}
         selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
         selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
-        onMoreFilter={handleMoreFilter}
+        onSearchChange={handleSearchChange}
+        onTypeChange={handleTypeChange}
+        onCategoryChange={handleCategoryChange}
+        onDateChange={handleDateChange}
+        onClearFilters={handleClearFilters}
       />
 
-       <FinancialOverview />
+      <FinancialOverview data={financialData} />
 
-       <TransactionsTable
-        transactions={transactions}
-        title="Recent Transactions"
-        onEdit={handleEditTransaction}
-        onDelete={handleDeleteTransaction}
-        onDownload={handleDownload}
-        onViewChange={handleViewChange}
+      <TransactionsTable 
+        data={filteredTransactions}
+        loading={loading}
+        error={error}
         currentPage={currentPage}
-        totalItems={47}
-        itemsPerPage={5}
         onPageChange={handlePageChange}
+        onView={(transaction) => console.log('View transaction:', transaction)}
+        onEdit={handleEditSuccess}
+        onDelete={handleDeleteSuccess}
       />
     </div>
   );

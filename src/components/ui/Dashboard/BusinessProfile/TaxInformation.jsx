@@ -3,29 +3,24 @@ import { Input, Button, Tag } from 'rsuite';
 import { FaEdit, FaCheckCircle, FaClock, FaFileAlt } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-
-const TaxInformation = () => {
+import { useDispatch } from 'react-redux';
+import { updateBusinessProfile } from '../../../../redux/businessProfile';
+const TaxInformation = ({ profile }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, success, warning, cardBorderBottomColor } = getThemeVars(theme);
-  
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    gstNumber: '27ABCDE1234F1Z5',
-    panNumber: 'ABCDE1234F',
-    taxCategory: 'Regular',
-    gstRegistrationType: 'Regular',
-    businessCategory: 'Electronics Retail',
-    taxFilingFrequency: 'Monthly',
-    lastFilingDate: 'January 31, 2025',
-    nextFilingDate: 'February 28, 2025',
-    complianceStatus: 'Compliant'
-  });
+    const [formData, setFormData] = useState({...profile});
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleSave = () => {
+    dispatch(updateBusinessProfile(profile.userId, formData));
   };
 
   const handleEdit = () => {
@@ -42,7 +37,7 @@ const TaxInformation = () => {
       fontSize: 12,
       fontWeight: 500
     }}>
-      {status}
+      {status === 'Compliant' ? 'Verified' : 'Pending'}
     </Tag>
   );
 
@@ -256,12 +251,7 @@ const TaxInformation = () => {
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {getStatusTag(formData.complianceStatus)}
-                <div style={{
-                  fontSize: 16,
-                  color: formData.complianceStatus === 'Compliant' ? success : warning
-                }}>
-                  {formData.complianceStatus === 'Compliant' ? <FaCheckCircle /> : <FaClock />}
-                </div>
+                
               </div>
             </div>
           </div>

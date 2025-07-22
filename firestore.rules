@@ -1,0 +1,303 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+    
+    function isValidUserData() {
+      return request.resource.data.keys().hasAll(['email', 'displayName', 'createdAt']);
+    }
+    
+    function isValidTransaction() {
+      return request.resource.data.keys().hasAll(['amount', 'type', 'category', 'date', 'userId']);
+    }
+    
+    function isValidLoan() {
+      return request.resource.data.keys().hasAll(['amount', 'interestRate', 'term', 'status', 'userId']);
+    }
+    
+    function isValidInvoice() {
+      return request.resource.data.keys().hasAll(['amount', 'dueDate', 'status', 'userId']);
+    }
+    
+    function isValidClient() {
+      return request.resource.data.keys().hasAll(['name', 'email', 'phone', 'userId']);
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow create: if isAuthenticated() && request.auth.uid == userId && isValidUserData();
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+      
+      // User subcollections
+      match /transactions/{transactionId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidTransaction();
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /loans/{loanId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidLoan();
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /invoices/{invoiceId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidInvoice();
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /clients/{clientId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidClient();
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /analytics/{analyticsId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /financial_reports/{reportId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /payments/{paymentId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /dashboard_data/{dataId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /kpi_data/{kpiId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /charts_data/{chartId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      match /business_documents/{docId} {
+    allow read, write: if isOwner(userId);
+  }
+   match /business_subscription/{docId} {
+    		allow read, write: if isOwner(userId);
+      }
+      match /business_profile/data {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /account_settings/{settingsId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /system_preferences/{prefId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /logs/{logId} {
+        allow read, write: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+    
+    // Global collections (admin access)
+    match /transactions/{transactionId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /loans/{loanId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /invoices/{invoiceId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /clients/{clientId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /business_profiles/{profileId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /analytics/{analyticsId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /financial_reports/{reportId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /payments/{paymentId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /dashboard_data/{dataId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /kpi_data/{kpiId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /charts_data/{chartId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /account_settings/{settingsId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /system_preferences/{prefId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Support tickets
+    match /tickets/{ticketId} {
+      allow read, write: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.assignedTo ||
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.assignedTo ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+    
+    // Public collections (read-only for authenticated users)
+    match /blogs/{blogId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /reviews/{reviewId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+    
+    match /testimonials/{testimonialId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /events/{eventId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow write: if isAdmin();
+    }
+    
+    // Configuration and settings (admin only)
+    match /config/{configId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Contact and support
+    match /contactUS/{contactId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
+    }
+    
+    // Security and authentication
+    match /securityQuestions/{questionId} {
+      allow read, write: if isOwner(questionId);
+    }
+    
+    match /userSignupLogs/{logId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /tokens/{tokenId} {
+      allow read, write: if isOwner(tokenId);
+    }
+    
+    // Traffic and analytics (admin only)
+    match /traffic/{trafficId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /pageViews/{viewId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /webapp/{webappId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Email and templates
+    match /mail/{mailId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /templates/{templateId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

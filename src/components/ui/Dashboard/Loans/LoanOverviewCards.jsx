@@ -8,79 +8,103 @@ const LoanOverviewCards = ({ data = null }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
 
-  // Default loan overview data
-  const defaultData = [
+  // Use backend data or fallback to default data
+  const overviewData = data ? [
     {
       title: 'Total Loan Amount',
-      value: '₹2,50,000',
+      value: `₹${data.totalLoanAmount?.toLocaleString() || '0'}`,
       icon: <FaDollarSign />,
       color: '#4CAF50'
     },
     {
       title: 'Outstanding Balance',
-      value: '₹1,85,000',
+      value: `₹${data.outstandingBalance?.toLocaleString() || '0'}`,
       icon: <FaBalanceScale />,
       color: '#FF9800'
     },
     {
       title: 'Monthly EMI',
-      value: '₹12,500',
+      value: `₹${data.monthlyEMI?.toLocaleString() || '0'}`,
       icon: <FaCalendar />,
       color: '#2196F3'
     },
     {
-      title: 'Next Payment',
-      value: '15 Jan',
+      title: 'Active Loans',
+      value: data.activeLoans?.toString() || '0',
+      icon: <FaClock />,
+      color: '#9C27B0'
+    }
+  ] : [
+    {
+      title: 'Total Loan Amount',
+      value: '₹0',
+      icon: <FaDollarSign />,
+      color: '#4CAF50'
+    },
+    {
+      title: 'Outstanding Balance',
+      value: '₹0',
+      icon: <FaBalanceScale />,
+      color: '#FF9800'
+    },
+    {
+      title: 'Monthly EMI',
+      value: '₹0',
+      icon: <FaCalendar />,
+      color: '#2196F3'
+    },
+    {
+      title: 'Active Loans',
+      value: '0',
       icon: <FaClock />,
       color: '#9C27B0'
     }
   ];
 
-  const overviewData = data || defaultData;
-
   return (
     <div style={{ marginBottom: 32 }}>
-       
       <Grid fluid>
-        <Row gutter={16}>
-          {
-            overviewData.map((card, index) => (
-
-           
-          <Col md={6} lg={6} sm={12} xs={24} xl={6} >
-            <Panel shaded style={{backgroundColor: cardBg}}>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <div >
-                <div>
-                  <div style={{
-                  color: muted
-
-                  }}>
-                    {card.title}
-                  </div>
-                  <div style={{
-                    fontSize: 28,
-                    fontWeight: 700,
-                    color: cardText
-                  }}>
+        <Row>
+          {overviewData.map((card, index) => (
+            <Col key={index} xs={24} sm={12} md={12} lg={6} xl={6} xxl={6} style={{marginBottom: 16}}>
+              <Panel
+                style={{
+                  background: cardBg,
+                  border: `1px solid ${borderColor}`,
+                  borderRadius: 8,
+                  boxShadow: shadow,
+                  height: '100%'
+                }}
+              >
+                <Stack justifyContent="space-between" alignItems="flex-start" style={{ marginBottom: 16 }}>
+                  <Stack direction="column" spacing={8} alignItems='flex-start'>
+                    <div style={{
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: cardText,
+                      opacity: 0.8
+                    }}>
+                      {card.title}
+                    </div>
+                    <div style={{
+                      fontSize: 28,
+                      fontWeight: 700,
+                      color: cardText
+                    }}>
                       {card.value}
                     </div>
-                </div>
-              </div>
-              <div style={{
-                fontSize: 28,
-                fontWeight: 700,
-                color: card.color,
-                 
-              }}>
-                <IconButton circle appearance="default" color="white" icon={card.icon} disabled />
-              </div>
-            </Stack>
-
-            </Panel>
-          </Col>
-           ))
-          }
+                  </Stack>
+                  <div style={{
+                    fontSize: 24,
+                    color: card.color,
+                    opacity: 0.2
+                  }}>
+                    {card.icon}
+                  </div>
+                </Stack>
+              </Panel>
+            </Col>
+          ))}
         </Row>
       </Grid>
     </div>

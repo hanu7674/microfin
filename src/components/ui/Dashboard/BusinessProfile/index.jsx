@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Container, Message } from 'rsuite';
+import React, { useState, useEffect } from 'react';
+import { Container, Message, Loader, Button, Stack } from 'rsuite';
 import BusinessProfileHeader from './BusinessProfileHeader';
 import GeneralInfo from './GeneralInfo';
 import BankDetails from './BankDetails';
@@ -9,40 +9,23 @@ import BusinessDocuments from './BusinessDocuments';
 import SubscriptionPlan from './SubscriptionPlan';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-
+import { useBusinessProfile } from '../../../../hooks/useDataService';
+import { uploadUserDataToBusinessProfile } from '../../../../redux/auth';
+import { useDispatch } from 'react-redux';
 const BusinessProfile = () => {
   const { theme } = useTheme();
   const { pageBg } = getThemeVars(theme);
-  
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('general');
   const [message, setMessage] = useState(null);
+  const { profile, loading, error, fetchProfile } = useBusinessProfile();
 
-  const handleTabChange = (key) => {
-    setActiveTab(key);
+   useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+  const handleCreateBusinessProfile = () => {
+    dispatch(uploadUserDataToBusinessProfile());
   };
-
-  const handleEdit = () => {
-    setMessage({
-      type: 'success',
-      content: 'Information updated successfully!'
-    });
-  };
-
-  const handleUploadDocument = () => {
-    setMessage({
-      type: 'info',
-      content: 'Document upload functionality will be implemented here'
-    });
-  };
-
-  const handleManagePlan = () => {
-    setMessage({
-      type: 'info',
-      content: 'Plan management will be implemented here'
-    });
-  };
-
-  // Clear message after 3 seconds
   React.useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(null), 3000);
@@ -50,19 +33,46 @@ const BusinessProfile = () => {
     }
   }, [message]);
 
+  if (loading) {
+    return <Stack justifyContent="center" alignItems="center" style={{ marginTop: 40, padding: '5%' }}><Loader content="Loading business profile..." /></Stack>;
+  }
+
+  if (error === 'Business profile not found') {
+    return (
+      <div style={{ marginTop: 40, padding: '5%' }}>
+        <Message type="warning" style={{ marginBottom: 24 }}>
+          No business profile found for your account. <Button appearance="link" onClick={handleCreateBusinessProfile}>Create Business Profile</Button>
+        </Message>
+         
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <Message type="error" style={{ marginBottom: 24 }}>
+        {error}
+      </Message>
+    );
+  }
+
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
+
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'general':
-        return <GeneralInfo />;
+        return <GeneralInfo profile={profile} />;
       case 'bank':
-        return <BankDetails />;
+        return <BankDetails profile={profile}/>;
       case 'tax':
-        return <TaxInformation />;
+        return <TaxInformation profile={profile}/>;
       case 'verification':
         return (
           <>
-            <VerificationStatus />
-            <BusinessDocuments />
+            <VerificationStatus emailVerified={profile?.emailVerified} phoneVerified={profile?.phoneVerified} documentVerification={profile?.documentVerification} userId={profile?.userId} />
+            <BusinessDocuments/>
             <SubscriptionPlan />
           </>
         );
@@ -90,7 +100,7 @@ const BusinessProfile = () => {
           </Message>
         )}
 
-        <BusinessProfileHeader 
+        <BusinessProfileHeader  
           activeTab={activeTab}
           onTabChange={handleTabChange}
         />

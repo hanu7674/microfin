@@ -1,30 +1,62 @@
-import React, { useState } from 'react';
-import { Input, Button } from 'rsuite';
+import React, { useState, useEffect, useRef } from 'react';
+import { Input, Button, Form, Schema, Message, Stack } from 'rsuite';
 import { FaLink } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
-import { getThemeVars } from '../../../Theme/themeVars';
+import { getThemeVars } from '../../../Theme/themeVars'; 
+import { usePayments } from '../../../../hooks/useDataService';
+import dataService from '../../../../services/dataService';
+import { useDispatch } from 'react-redux';
+import { updatePaymentLinkStatus, setPaymentLinkError, clearPaymentLinkStatus } from '../../../../redux/payments';
+
+const { StringType, NumberType } = Schema.Types;
+
+const model = Schema.Model({
+  amount: StringType().isRequired('Amount is required').pattern(/^\d+(\.\d{1,2})?$/, 'Enter a valid amount'),
+  description: StringType().isRequired('Description is required'),
+  customerName: StringType().isRequired('Customer name is required'),
+  customerEmail: StringType().isEmail('Enter a valid email').isRequired('Customer email is required')
+});
 
 const QuickPaymentLink = () => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, ctaBg, cardBorderBottomColor } = getThemeVars(theme);
-  
-  const [formData, setFormData] = useState({
+  const { generatedLink, linkLoading, linkError, generatePaymentLink, expireOldPaymentLinks, listenToPaymentLink, clearPaymentLinkStatus } = usePayments();
+  const dispatch = useDispatch();
+
+  const [formValue, setFormValue] = useState({
     amount: '',
     description: '',
     customerName: '',
     customerEmail: ''
   });
+  const [formError, setFormError] = useState({});
+  const formRef = useRef();
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  useEffect(() => {
+    expireOldPaymentLinks();
+  }, [expireOldPaymentLinks]);
 
-  const handleGenerateLink = () => {
-    console.log('Generating payment link with:', formData);
-    // Implementation for generating payment link
+  useEffect(() => {
+    if (!generatedLink || !generatedLink.id) return;
+
+    const unsubscribe = dataService.paymentsService.listenToPaymentLink(
+      generatedLink.id,
+      (data) => dispatch(updatePaymentLinkStatus(data)),
+      (error) => dispatch(setPaymentLinkError(error.message))
+    );
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+      dispatch(clearPaymentLinkStatus());
+    };
+  }, [generatedLink, dispatch]);
+
+  const handleSubmit = () => {
+    if (!formRef.current.check()) {
+      setFormError(formRef.current.formError);
+      return;
+    }
+    generatePaymentLink(formValue);
   };
 
   return (
@@ -50,103 +82,59 @@ const QuickPaymentLink = () => {
         }}>
           Quick Payment Link
         </h3>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div>
-            <label style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: cardText,
-              marginBottom: 8,
-              display: 'block'
-            }}>
-              Amount
-            </label>
-            <Input
-              value={formData.amount}
-              onChange={(value) => handleInputChange('amount', value)}
-              placeholder="0.00"
-              style={{ width: '100%' }}
-            />
-          </div>
-          
-          <div>
-            <label style={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: cardText,
-              marginBottom: 8,
-              display: 'block'
-            }}>
-              Description
-            </label>
-            <Input
-              value={formData.description}
-              onChange={(value) => handleInputChange('description', value)}
-              placeholder="Payment for..."
-              style={{ width: '100%' }}
-            />
-          </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div>
-              <label style={{
-                fontSize: 14,
-                fontWeight: 500,
-                color: cardText,
-                marginBottom: 8,
-                display: 'block'
-              }}>
-                Customer Name
-              </label>
-              <Input
-                value={formData.customerName}
-                onChange={(value) => handleInputChange('customerName', value)}
-                placeholder="Customer Name"
-                style={{ width: '100%' }}
-              />
-            </div>
+        <Form
+          ref={formRef}
+          model={model}
+          formValue={formValue}
+          onChange={setFormValue}
+          formError={formError}
+          fluid
+        >
+          <Form.Group>
+            <Form.ControlLabel>Amount *</Form.ControlLabel>
+            <Form.Control name="amount" placeholder="0.00" />
+          </Form.Group>
+          <Form.Group>
+            <Form.ControlLabel>Description *</Form.ControlLabel>
+            <Form.Control name="description" placeholder="Payment for..." />
+          </Form.Group>
+          <Form.Group>
+            <Form.ControlLabel>Customer Name *</Form.ControlLabel>
+            <Form.Control name="customerName" placeholder="Customer Name" />
+          </Form.Group>
+          <Form.Group>
+            <Form.ControlLabel>Email *</Form.ControlLabel>
+            <Form.Control name="customerEmail" placeholder="customer@email.com" />
+          </Form.Group>
+          <Stack alignItems='center' justifyContent="center" wrap spacing={10}>
             
-            <div>
-              <label style={{
-                fontSize: 14,
-                fontWeight: 500,
-                color: cardText,
-                marginBottom: 8,
-                display: 'block'
-              }}>
-                Email
-              </label>
-              <Input
-                value={formData.customerEmail}
-                onChange={(value) => handleInputChange('customerEmail', value)}
-                placeholder="customer@email.com"
-                style={{ width: '100%' }}
-              />
-            </div>
-          </div>
-          
           <Button
             appearance="primary"
             size="md"
-            style={{
-              backgroundColor: ctaBg,
-              border: 'none',
-              borderRadius: 8,
-              padding: '12px 24px',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              marginTop: 8
-            }}
-            onClick={handleGenerateLink}
+            onClick={handleSubmit}
+            disabled={linkLoading}
+            startIcon={<FaLink />}
           >
-            <FaLink />
-            Generate Payment Link
+             {linkLoading ? 'Generating...' : 'Generate Payment Link'}
           </Button>
-        </div>
+          <Button  onClick={() => clearPaymentLinkStatus(generatedLink.id)} disabled={!generatedLink || !generatedLink.id}>
+            Clear Link
+          </Button>
+          </Stack>
+
+          {linkError && <Message type="error" style={{ marginTop: 8 }}>{linkError}</Message>}
+          {generatedLink && (
+            <div style={{ marginTop: 16 }}>
+               <strong>Payment Link:</strong>
+              <Button appearance="link" href={`/dashboard/payments/payment-link/${generatedLink.id}`} target="_blank" rel="noopener noreferrer">
+                Payment Link
+              </Button>
+
+              <div>Status: Pending</div>
+              <div style={{ color: 'red' }}>This link will expire in 10 minutes.</div>
+            </div>
+          )}
+        </Form>
       </div>
     </div>
   );

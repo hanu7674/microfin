@@ -78,7 +78,7 @@ const TransactionsFilter = ({
           format="MM/dd/yyyy"
           placeholder="Select date"
           style={{ minWidth: "25%" }}
-          appearance="ghost"
+          appearance="subtle"
         />
         <Button 
           appearance="ghost"

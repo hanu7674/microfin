@@ -1,22 +1,34 @@
-import React from 'react';
+import React, { use, useEffect } from 'react';
 import { Input, SelectPicker } from 'rsuite';
 import { useTheme } from '../../../../Theme/theme';
 import { getThemeVars } from '../../../../Theme/themeVars';
+import { useBusinessProfile, useClients } from '../../../../../hooks/useDataService';
 
 const SenderRecipientDetails = ({ formData, onFormChange }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { clients, clientsLoading, clientsError, fetchClients } = useClients();
+  const {profile, loading, error, fetchProfile} = useBusinessProfile();
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
-  // Client options for dropdown
-  const clientOptions = [
-    { label: 'Select Client', value: '' },
-    { label: 'ABC Corp', value: 'abc-corp' },
-    { label: 'XYZ Ltd', value: 'xyz-ltd' },
-    { label: 'Tech Solutions', value: 'tech-solutions' },
-    { label: 'Global Systems', value: 'global-systems' },
-    { label: 'Innovate Inc', value: 'innovate-inc' }
-  ];
-
+  useEffect(() => {
+    if(profile) {
+      onFormChange('senderBusinessName', profile?.businessName)
+      onFormChange('senderAddress', profile?.businessAddress)
+      onFormChange('senderEmail', profile?.contactEmail)
+      onFormChange('senderPhone', profile?.phoneNumber)
+    }
+  }, [profile]);
+  const clientOptions = clients?.map(client => ({
+    label: client.name,
+    value: client.id,
+    client
+  }));
   return (
     <div style={{ marginBottom: 32 }}>
       <div style={{
@@ -58,9 +70,9 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                 Your Business Name
               </label>
               <Input
-                value={formData.senderBusinessName || ''}
-                onChange={(value) => onFormChange('senderBusinessName', value)}
-                placeholder="Enter your business name"
+                disabled
+                value={profile?.businessName}
+                 placeholder="Enter your business name"
                 style={{ width: '100%' }}
               />
             </div>
@@ -76,8 +88,8 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                 Business Address
               </label>
               <Input as="textarea"
-                value={formData.senderAddress || ''}
-                onChange={(value) => onFormChange('senderAddress', value)}
+                disabled
+                value={profile?.businessAddress}
                 placeholder="Enter your business address"
                 rows={3}
                 style={{ width: '100%' }}
@@ -96,8 +108,8 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                   Email
                 </label>
                 <Input
-                  value={formData.senderEmail || ''}
-                  onChange={(value) => onFormChange('senderEmail', value)}
+                  disabled
+                  value={profile?.contactEmail}
                   placeholder="your@email.com"
                   style={{ width: '100%' }}
                 />
@@ -114,9 +126,9 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                   Phone
                 </label>
                 <Input
-                  value={formData.senderPhone || ''}
-                  onChange={(value) => onFormChange('senderPhone', value)}
-                  placeholder="+91 9876543210"
+                  disabled
+                  value={profile?.phoneNumber}
+                   placeholder="+91 9876543210"
                   style={{ width: '100%' }}
                 />
               </div>
@@ -158,9 +170,17 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                 Select Client
               </label>
               <SelectPicker
+                loading={clientsLoading}
+                error={clientsError}
+                disabled={clientsLoading}
                 data={clientOptions}
                 value={formData.selectedClient || ''}
-                onChange={(value) => onFormChange('selectedClient', value)}
+                onChange={(value, item) => {
+                   onFormChange('selectedClient', value)
+                  onFormChange('clientName', clientOptions?.find(client => client.value === value)?.client?.name)
+                  onFormChange('clientAddress', clientOptions?.find(client => client.value === value)?.client?.address)
+                  onFormChange('clientEmail', clientOptions?.find(client => client.value === value)?.client?.email)
+                 }}
                 placeholder="Select a client"
                 style={{ width: '100%' }}
               />
@@ -177,6 +197,7 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                 Client Name
               </label>
               <Input
+                disabled={formData.selectedClient}
                 value={formData.clientName || ''}
                 onChange={(value) => onFormChange('clientName', value)}
                 placeholder="Enter client name"
@@ -195,6 +216,7 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                 Client Address
               </label>
               <Input as="textarea"
+                disabled={formData.selectedClient}
                 value={formData.clientAddress || ''}
                 onChange={(value) => onFormChange('clientAddress', value)}
                 placeholder="Enter client address"
@@ -214,6 +236,7 @@ const SenderRecipientDetails = ({ formData, onFormChange }) => {
                 Client Email
               </label>
               <Input
+                disabled={formData.selectedClient}
                 value={formData.clientEmail || ''}
                 onChange={(value) => onFormChange('clientEmail', value)}
                 placeholder="client@email.com"

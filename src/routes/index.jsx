@@ -15,6 +15,7 @@ import InvoiceDashboardPage from '../components/ui/Dashboard/Invoices';
 import CreateInvoice from '../components/ui/Dashboard/Invoices/New';
 import PaymentProcessing from '../components/ui/Dashboard/Payments';
 import ClientManagement from '../components/ui/Dashboard/Clients';
+import NewClient from '../components/ui/Dashboard/Clients/NewClient';
 import BusinessProfile from '../components/ui/Dashboard/BusinessProfile';
 import Analytics from '../components/ui/Dashboard/Analytics';
 import AccountSettings from '../components/ui/Dashboard/AccountSettings';
@@ -53,11 +54,12 @@ export default function AppRoutes() {
           <Route path="/dashboard/transactions" element={<TransactionsPage />} />
           <Route path="/dashboard/reports" element={<FinancialReportsPage />} />
           <Route path="/dashboard/loans" element={<LoanDashboardPage />} />
-          <Route path="/dashboard/loans/new" element={<LoanApplicationPage />} />
+          <Route path="/dashboard/loans/apply" element={<LoanApplicationPage />} />
           <Route path="/dashboard/invoices" element={<InvoiceDashboardPage />} />
-          <Route path="/dashboard/invoices/create" element={<CreateInvoice />} />
+          <Route path="/dashboard/invoices/new" element={<CreateInvoice />} />
           <Route path="/dashboard/payments" element={<PaymentProcessing />} />
           <Route path="/dashboard/clients" element={<ClientManagement />} />
+          <Route path="/dashboard/clients/new" element={<NewClient />} />
           <Route path="/dashboard/business-profile" element={<BusinessProfile />} />
           <Route path="/dashboard/analytics" element={<Analytics />} />
           <Route path="/dashboard/account-settings" element={<AccountSettings />} />

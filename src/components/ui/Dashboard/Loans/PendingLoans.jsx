@@ -1,0 +1,146 @@
+import React from 'react';
+import { Tag, Progress } from 'rsuite';
+import { useTheme } from '../../../Theme/theme';
+import { getThemeVars } from '../../../Theme/themeVars';
+
+const PendingLoans = ({ data = null }) => {
+  const { theme } = useTheme();
+  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+
+  // Use processed loan data
+  const loansData = data && data.length > 0 ? data : [];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return 'green';
+      case 'pending': return 'orange';
+      case 'completed': return 'blue';
+      case 'defaulted': return 'red';
+      default: return 'default';
+    }
+  };
+
+  return (
+    <div style={{ marginBottom: 32 }}>
+      <div style={{
+        background: cardBg,
+        border: `1px solid ${borderColor}`,
+        borderRadius: 8,
+        boxShadow: shadow
+      }}>
+        <div style={{
+          fontSize: 18,
+          fontWeight: 600,
+          margin: 0,
+          marginBottom: 24,
+          color: cardText,
+          padding: '10px 16px',
+          borderBottom: `3px solid ${cardBorderBottomColor}`,
+          borderBottomWidth: 1
+        }}>
+          Pending Loans
+        </div>
+
+        <div style={{ padding: '0 16px 16px' }}>
+          {loansData.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {loansData.map((loan, index) => (
+                <div
+                  key={loan.id || index}
+                  style={{
+                    padding: '16px',
+                    border: `1px solid ${borderColor}`,
+                    borderRadius: 6,
+                    background: 'transparent'
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: 12
+                  }}>
+                    <div>
+                      <div style={{
+                        fontSize: 16,
+                        fontWeight: 600,
+                        color: cardText,
+                        marginBottom: 4
+                      }}>
+                        {loan.displayName}
+                      </div>
+                      <div style={{
+                        fontSize: 14,
+                        color: cardText,
+                        opacity: 0.7,
+                        marginBottom: 8
+                      }}>
+                        {loan.id} • ₹{loan.displayAmount.toLocaleString()} • {loan.displayInterestRate}% p.a.
+                      </div>
+                    </div>
+                    <Tag color={getStatusColor(loan.status)}>
+                      {loan.status}
+                    </Tag>
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 8
+                  }}>
+                    <div style={{
+                      fontSize: 12,
+                      color: cardText,
+                      opacity: 0.7
+                    }}>
+                      Application Date: {new Date(loan.applicationDate).toLocaleDateString('en-IN')}
+                    </div>
+                    <div style={{
+                      fontSize: 12,
+                      color: cardText,
+                      opacity: 0.7
+                    }}>
+                      {loan.term} months
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    fontSize: 12,
+                    color: cardText,
+                    opacity: 0.6
+                  }}>
+                    Expected EMI: ₹{loan.displayEMI.toLocaleString()} • Loan Purpose: {loan.loanPurpose}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px 20px',
+              color: cardText,
+              opacity: 0.7
+            }}>
+              <div style={{
+                fontSize: 16,
+                fontWeight: 500,
+                marginBottom: 8
+              }}>
+                No pending loans
+              </div>
+              <div style={{
+                fontSize: 14,
+                opacity: 0.8
+              }}>
+                You don't have any pending loan applications
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PendingLoans; 

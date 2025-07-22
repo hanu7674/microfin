@@ -1,42 +1,15 @@
 import React, { useState } from 'react';
-import { Stack, Grid, Row, Col, Panel, Tabs, Button } from 'rsuite';
+import { Stack, Grid, Row, Col, Panel, Button } from 'rsuite';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
-const FinancialPerformance = () => {
+// Accepts a 'data' prop: { monthly, quarterly, yearly }
+const FinancialPerformance = ({ data = {} }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
-  
-  const [activeTab, setActiveTab] = useState('quarterly');
+  const [activeTab, setActiveTab] = useState('Quarterly');
 
-  const financialData = {
-    monthly: {
-      totalIncome: '₹45,678',
-      totalExpenses: '₹32,456',
-      netProfit: '₹13,222',
-      incomeChange: '+15% vs last month',
-      expensesChange: '+8% vs last month',
-      profitChange: '+22% vs last month'
-    },
-    quarterly: {
-      totalIncome: '₹1,23,456',
-      totalExpenses: '₹87,654',
-      netProfit: '₹35,802',
-      incomeChange: '+18% vs last quarter',
-      expensesChange: '+12% vs last quarter',
-      profitChange: '+25% vs last quarter'
-    },
-    yearly: {
-      totalIncome: '₹4,56,789',
-      totalExpenses: '₹3,21,456',
-      netProfit: '₹1,35,333',
-      incomeChange: '+28% vs last year',
-      expensesChange: '+15% vs last year',
-      profitChange: '+35% vs last year'
-    }
-  };
-
-  const renderFinancialMetrics = (data) => (
+  const renderFinancialMetrics = (metrics) => (
     <Grid fluid>
       <Row>
         <Col xs={24} sm={8}>
@@ -55,18 +28,17 @@ const FinancialPerformance = () => {
               color: cardText,
               marginBottom: 4
             }}>
-              {data.totalIncome}
+              {metrics?.totalIncome ?? '-'}
             </div>
             <div style={{
               fontSize: 12,
               color: '#4CAF50',
               fontWeight: 500
             }}>
-              {data.incomeChange}
+              {metrics?.incomeChange ?? ''}
             </div>
           </div>
         </Col>
-        
         <Col xs={24} sm={8}>
           <div style={{ textAlign: 'center', padding: '16px' }}>
             <div style={{
@@ -83,18 +55,17 @@ const FinancialPerformance = () => {
               color: cardText,
               marginBottom: 4
             }}>
-              {data.totalExpenses}
+              {metrics?.totalExpenses ?? '-'}
             </div>
             <div style={{
               fontSize: 12,
               color: '#FF9800',
               fontWeight: 500
             }}>
-              {data.expensesChange}
+              {metrics?.expensesChange ?? ''}
             </div>
           </div>
         </Col>
-        
         <Col xs={24} sm={8}>
           <div style={{ textAlign: 'center', padding: '16px' }}>
             <div style={{
@@ -111,20 +82,22 @@ const FinancialPerformance = () => {
               color: cardText,
               marginBottom: 4
             }}>
-              {data.netProfit}
+              {metrics?.netProfit ?? '-'}
             </div>
             <div style={{
               fontSize: 12,
               color: '#4CAF50',
               fontWeight: 500
             }}>
-              {data.profitChange}
+              {metrics?.profitChange ?? ''}
             </div>
           </div>
         </Col>
       </Row>
     </Grid>
   );
+
+  const hasData = data && (data.monthly || data.quarterly || data.yearly);
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -150,28 +123,30 @@ const FinancialPerformance = () => {
             Financial Performance
           </div>
           <div>
-            {
-              ['Monthly', 'Quarterly', 'Yearly'].map((item, index) => (
-                <Button key={index} style={{
-                  fontSize: 12,
-                  color: cardText,
-                  opacity: 0.8,
-                  marginRight: 5,
-                }}
-                active={activeTab === item}
-                onClick={() => setActiveTab(item)}>
-                  {item}
-                </Button>
-              ))
-            }
+            {['Monthly', 'Quarterly', 'Yearly'].map((item, index) => (
+              <Button key={index} style={{
+                fontSize: 12,
+                color: cardText,
+                opacity: 0.8,
+                marginRight: 5,
+              }}
+              active={activeTab === item}
+              onClick={() => setActiveTab(item)}>
+                {item}
+              </Button>
+            ))}
           </div>
-          
         </Stack>
-        
         <div style={{ padding: '0 16px 16px' }}>
-          {activeTab === 'Monthly' && renderFinancialMetrics(financialData.monthly)}
-          {activeTab === 'Quarterly' && renderFinancialMetrics(financialData.quarterly)}
-          {activeTab === 'Yearly' && renderFinancialMetrics(financialData.yearly)}
+          {!hasData ? (
+            <div style={{ textAlign: 'center', color: '#666', fontSize: 16, marginTop: 16 }}>
+              No financial performance data available.
+            </div>
+          ) : (
+            activeTab === 'Monthly' ? renderFinancialMetrics(data.monthly) :
+            activeTab === 'Quarterly' ? renderFinancialMetrics(data.quarterly) :
+            renderFinancialMetrics(data.yearly)
+          )}
         </div>
       </Panel>
     </div>

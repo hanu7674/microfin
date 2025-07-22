@@ -1,24 +1,17 @@
 import React, { useState } from 'react';
-import { Input, Button } from 'rsuite';
+import { Input, Button, DatePicker } from 'rsuite';
 import { FaEdit } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-
-const GeneralInfo = () => {
+import { useDispatch } from 'react-redux';
+import { updateBusinessProfile } from '../../../../redux/businessProfile';
+const GeneralInfo = ({ profile }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
-  
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    businessName: 'ABC Electronics Store',
-    businessType: 'Retail Electronics',
-    registrationNumber: 'REG123456789',
-    establishedDate: 'January 15, 2020',
-    businessAddress: '',
-    contactEmail: 'contact@abcelectronics.com',
-    phoneNumber: '+91 98765 43210',
-    website: 'www.abcelectronics.com',
-    numberOfEmployees: '15-20'
+    ...profile  
   });
 
   const handleInputChange = (field, value) => {
@@ -30,6 +23,14 @@ const GeneralInfo = () => {
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
+    if(isEditing){
+      handleSave();
+    }
+    
+  };
+
+  const handleSave = () => {
+    dispatch(updateBusinessProfile(profile.userId, formData));
   };
 
   return (
@@ -147,9 +148,9 @@ const GeneralInfo = () => {
               }}>
                 Established Date
               </label>
-              <Input
-                value={formData.establishedDate}
-                onChange={(value) => handleInputChange('establishedDate', value)}
+              <DatePicker
+                value={formData.establishedDate ? new Date(formData.establishedDate?.seconds * 1000) : null}
+                onChange={value => handleInputChange('establishedDate', value ? value.toISOString() : null)}
                 disabled={!isEditing}
                 style={{ width: '100%' }}
               />
@@ -243,6 +244,7 @@ const GeneralInfo = () => {
                 Number of Employees
               </label>
               <Input
+                type="number"
                 value={formData.numberOfEmployees}
                 onChange={(value) => handleInputChange('numberOfEmployees', value)}
                 disabled={!isEditing}

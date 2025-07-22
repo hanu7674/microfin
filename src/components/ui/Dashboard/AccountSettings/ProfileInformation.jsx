@@ -1,33 +1,60 @@
-import React, { useState } from 'react';
-import { Stack, Grid, Row, Col, Panel, Button, Input } from 'rsuite';
+import React, { useState, useEffect } from 'react';
+import { Stack, Grid, Row, Col, Panel, Button, Input, Loader, Message } from 'rsuite';
 import { FaUser, FaCamera } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { useBusinessProfile } from '../../../../hooks/useDataService';
 
 const ProfileInformation = () => {
+  const { profile, loading, error, updateProfile } = useBusinessProfile();
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
-  
-  const [formData, setFormData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    businessName: 'Doe Enterprises LLC',
-    address: '123 Business Street, Suite 100\nNew York, NY 10001'
-  });
+
+  const [formData, setFormData] = useState({});
+  const [success, setSuccess] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [originalData, setOriginalData] = useState({});
+
+  useEffect(() => {
+    if (profile) {
+      setFormData(profile);
+      setOriginalData(profile);
+    }
+  }, [profile]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+    setSuccess(false);
   };
 
-  const handleSave = () => {
-    // Handle save functionality
-    console.log('Profile saved:', formData);
+  const handleEdit = () => {
+    setEditMode(true);
+    setSuccess(false);
   };
+
+  const handleCancel = () => {
+    setFormData(originalData);
+    setEditMode(false);
+    setSuccess(false);
+  };
+
+  const handleSave = async () => {
+    await updateProfile(formData);
+    setSuccess(true);
+    setEditMode(false);
+    setOriginalData(formData);
+  };
+
+  if (loading && !profile) {
+    return <div style={{ padding: 32, textAlign: 'center' }}><Loader size="md" content="Loading profile..." /></div>;
+  }
+
+  if (error) {
+    return <div style={{ padding: 32 }}><Message type="error">{error}</Message></div>;
+  }
 
   return (
     <Panel
@@ -51,11 +78,24 @@ const ProfileInformation = () => {
         }}>
           Profile Information
         </div>
-        <Button appearance="primary" onClick={handleSave}>
-          Save Changes
-        </Button>
+        <Stack spacing={8}>
+          {editMode ? (
+            <>
+              <Button appearance="primary" onClick={handleSave} disabled={loading}>
+                {loading ? 'Saving...' : 'Save Changes'}
+              </Button>
+              <Button appearance="subtle" onClick={handleCancel} disabled={loading}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button appearance="primary" onClick={handleEdit}>
+              Edit
+            </Button>
+          )}
+        </Stack>
       </Stack>
-
+      {success && <Message type="success" style={{ marginBottom: 16 }}>Profile updated successfully!</Message>}
       <div style={{ padding: '0 16px 16px' }}>
         {/* Profile Photo Section */}
         <Stack alignItems="center" spacing={16} style={{ marginBottom: 32 }}>
@@ -72,7 +112,7 @@ const ProfileInformation = () => {
             <FaUser style={{ fontSize: 32, color: '#666' }} />
           </div>
           <Stack direction="column" spacing={8}>
-            <Button appearance="ghost" size="sm">
+            <Button appearance="ghost" size="sm" disabled>
               <FaCamera style={{ marginRight: 8 }} />
               Change Photo
             </Button>
@@ -85,7 +125,6 @@ const ProfileInformation = () => {
             </div>
           </Stack>
         </Stack>
-
         {/* Form Fields */}
         <Grid fluid>
           <Row>
@@ -101,9 +140,10 @@ const ProfileInformation = () => {
                   First Name
                 </label>
                 <Input
-                  value={formData.firstName}
+                  value={formData.firstName || ''}
                   onChange={(value) => handleInputChange('firstName', value)}
                   style={{ width: '100%' }}
+                  disabled={!editMode}
                 />
               </div>
             </Col>
@@ -119,14 +159,14 @@ const ProfileInformation = () => {
                   Last Name
                 </label>
                 <Input
-                  value={formData.lastName}
+                  value={formData.lastName || ''}
                   onChange={(value) => handleInputChange('lastName', value)}
                   style={{ width: '100%' }}
+                  disabled={!editMode}
                 />
               </div>
             </Col>
           </Row>
-          
           <Row>
             <Col xs={24} sm={12}>
               <div style={{ marginBottom: 16 }}>
@@ -140,9 +180,10 @@ const ProfileInformation = () => {
                   Email Address
                 </label>
                 <Input
-                  value={formData.email}
+                  value={formData.email || ''}
                   onChange={(value) => handleInputChange('email', value)}
                   style={{ width: '100%' }}
+                  disabled={!editMode}
                 />
               </div>
             </Col>
@@ -158,14 +199,14 @@ const ProfileInformation = () => {
                   Phone Number
                 </label>
                 <Input
-                  value={formData.phone}
+                  value={formData.phone || ''}
                   onChange={(value) => handleInputChange('phone', value)}
                   style={{ width: '100%' }}
+                  disabled={!editMode}
                 />
               </div>
             </Col>
           </Row>
-          
           <Row>
             <Col xs={24}>
               <div style={{ marginBottom: 16 }}>
@@ -179,14 +220,14 @@ const ProfileInformation = () => {
                   Business Name
                 </label>
                 <Input
-                  value={formData.businessName}
+                  value={formData.businessName || ''}
                   onChange={(value) => handleInputChange('businessName', value)}
                   style={{ width: '100%' }}
+                  disabled={!editMode}
                 />
               </div>
             </Col>
           </Row>
-          
           <Row>
             <Col xs={24}>
               <div style={{ marginBottom: 16 }}>
@@ -200,10 +241,11 @@ const ProfileInformation = () => {
                   Address
                 </label>
                 <Input as='textarea'
-                  value={formData.address}
+                  value={formData.address || ''}
                   onChange={(value) => handleInputChange('address', value)}
                   rows={3}
                   style={{ width: '100%' }}
+                  disabled={!editMode}
                 />
               </div>
             </Col>

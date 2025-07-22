@@ -6,57 +6,58 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const { Column, HeaderCell, Cell } = Table;
 
-const RecentTransactions = () => {
+const RecentTransactions = ({ payments = [] }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, success, warning, cardBorderBottomColor } = getThemeVars(theme);
 
-  // Sample transaction data
-  const transactions = [
-    {
-      id: '#TXN001234',
-      customer: 'Rajesh Kumar',
-      amount: '₹2,500',
-      method: 'UPI',
-      methodIcon: <FaQrcode />,
-      status: 'Success',
-      statusColor: success,
-      date: 'Jan 15, 2025'
-    },
-    {
-      id: '#TXN001235',
-      customer: 'Priya Sharma',
-      amount: '₹1,200',
-      method: 'Card',
-      methodIcon: <FaCreditCard />,
-      status: 'Pending',
-      statusColor: warning,
-      date: 'Jan 15, 2025'
-    },
-    {
-      id: '#TXN001236',
-      customer: 'Amit Patel',
-      amount: '₹850',
-      method: 'Bank',
-      methodIcon: <FaUniversity />,
-      status: 'Success',
-      statusColor: success,
-      date: 'Jan 14, 2025'
+  // Map real payment data to table rows
+  const transactions = payments.map(payment => {
+    // Choose icon based on method
+    let methodIcon = <FaCreditCard />;
+    if (payment.method === 'UPI') methodIcon = <FaQrcode />;
+    if (payment.method === 'Bank') methodIcon = <FaUniversity />;
+    // Status color
+    let statusColor = warning;
+    if (payment.status === 'Success') statusColor = success;
+    if (payment.status === 'Pending') statusColor = warning;
+    if (payment.status === 'Failed') statusColor = 'red';
+    // Format date
+    let dateStr = '';
+    if (payment.date) {
+      const d = payment.date.toDate ? payment.date.toDate() : new Date(payment.date);
+      dateStr = d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
-  ];
+    return {
+      id: payment.id || '',
+      customer: payment.customer || payment.clientName || payment.payer || '',
+      amount: payment.amount ? `₹${payment.amount.toLocaleString()}` : '',
+      method: payment.method || '',
+      methodIcon,
+      status: payment.status || '',
+      statusColor,
+      date: dateStr
+    };
+  });
 
-  const getStatusTag = (status, color) => (
-    <Tag color={color === success ? 'green' : 'orange'} style={{ 
-      backgroundColor: color === success ? '#e6f4ea' : '#fff3e0',
-      color: color === success ? '#1e7e34' : '#f57c00',
-      border: 'none',
-      borderRadius: 12,
-      padding: '4px 12px',
-      fontSize: 12,
-      fontWeight: 500
-    }}>
-      {status}
-    </Tag>
-  );
+  const getStatusTag = (status) => {
+    const statusMap = {
+      Success: { color: 'green', bg: '#e6f4ea', text: '#1e7e34' },
+      Pending: { color: 'orange', bg: '#fff3e0', text: '#f57c00' },
+      Failed: { color: 'red', bg: '#fdecea', text: '#c82333' }
+    };
+    const { color, bg, text } = statusMap[status] || statusMap.Failed;
+    return (
+      <Tag color={color} style={{
+        backgroundColor: bg,
+        color: text,
+        border: 'none',
+        borderRadius: 12,
+        padding: '4px 12px',
+        fontSize: 12,
+        fontWeight: 500
+      }}>{status}</Tag>
+    );
+  };
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -75,8 +76,7 @@ const RecentTransactions = () => {
           alignItems: 'center',
           marginBottom: 20,
           padding: '10px 16px',
-          borderBottom: `3px solid ${cardBorderBottomColor}`,
-          borderBottomWidth: 1
+          borderBottom: `3px solid ${cardBorderBottomColor}`
         }}>
           <h3 style={{
             fontSize: 18,
@@ -84,19 +84,10 @@ const RecentTransactions = () => {
             margin: 0,
             color: cardText
           }}>
-            Recent Transactions
+            Recent Transactions (Last 10 Payments Only)
           </h3>
-          <a href="#" style={{
-            fontSize: 14,
-            color: cardText,
-            textDecoration: 'none',
-            fontWeight: 500,
-            opacity: 0.8
-          }}>
-            View All
-          </a>
+          
         </div>
-        
         <div style={{ margin: '2%' }}>
           <Table
             data={transactions}
@@ -117,7 +108,6 @@ const RecentTransactions = () => {
                 )}
               </Cell>
             </Column>
-
             <Column flexGrow={1}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Customer</HeaderCell>
               <Cell>
@@ -128,7 +118,6 @@ const RecentTransactions = () => {
                 )}
               </Cell>
             </Column>
-
             <Column flexGrow={1}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Amount</HeaderCell>
               <Cell>
@@ -139,7 +128,6 @@ const RecentTransactions = () => {
                 )}
               </Cell>
             </Column>
-
             <Column flexGrow={1}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Method</HeaderCell>
               <Cell>
@@ -159,14 +147,12 @@ const RecentTransactions = () => {
                 )}
               </Cell>
             </Column>
-
             <Column flexGrow={1}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Status</HeaderCell>
               <Cell>
-                {(rowData) => getStatusTag(rowData.status, rowData.statusColor)}
+                {(rowData) => getStatusTag(rowData.status)}
               </Cell>
             </Column>
-
             <Column flexGrow={1}>
               <HeaderCell style={{ color: cardText, fontWeight: 600 }}>Date</HeaderCell>
               <Cell>

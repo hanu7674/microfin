@@ -1,55 +1,55 @@
-import React from 'react';
-import { Stack, Panel, Button, Tag } from 'rsuite';
-import { FaShieldAlt, FaDesktop, FaMobile, FaTablet, FaLaptop } from 'react-icons/fa';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Stack, Panel, Button, Tag, Loader, Message } from 'rsuite';
+import { FaDesktop } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { fetchSessions, revokeSession, sendPasswordReset, fetch2FAStatus } from '../../../../redux/security';
 
 const SecuritySettings = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor, success } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
 
-  const activeSessions = [
-    {
-      device: 'Desktop - Chrome',
-      location: 'New York, US',
-      time: 'Current session',
-      icon: <FaDesktop style={{ fontSize: 16, color: '#666' }} />,
-      status: 'active',
-      action: null
-    },
-    {
-      device: 'Mobile - Safari',
-      location: 'New York, US',
-      time: '2 hours ago',
-      icon: <FaMobile style={{ fontSize: 16, color: '#666' }} />,
-      status: 'inactive',
-      action: 'revoke'
-    },
-    {
-      device: 'Laptop - Firefox',
-      location: 'San Francisco, US',
-      time: '1 day ago',
-      icon: <FaLaptop style={{ fontSize: 16, color: '#666' }} />,
-      status: 'inactive',
-      action: 'revoke'
-    },
-    {
-      device: 'Tablet - Safari',
-      location: 'London, UK',
-      time: '3 days ago',
-      icon: <FaTablet style={{ fontSize: 16, color: '#666' }} />,
-      status: 'inactive',
-      action: 'revoke'
-    },
-    {
-      device: 'Desktop - Edge',
-      location: 'Toronto, CA',
-      time: '1 week ago',
-      icon: <FaDesktop style={{ fontSize: 16, color: '#666' }} />,
-      status: 'inactive',
-      action: 'revoke'
+  const dispatch = useDispatch();
+  const { sessions, loading, error, twoFAEnabled, passwordResetSuccess } = useSelector(state => state.security);
+  const user = getAuth().currentUser;
+
+  // Helper to get device info
+  const getDeviceInfo = () => {
+    return window.navigator.userAgent;
+  };
+
+  // Register current session in Firestore if not already present
+   
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchSessions(user.uid));
+      dispatch(fetch2FAStatus());
     }
-  ];
+  }, [dispatch, user]);
+
+  const handleRevoke = (sessionId) => {
+    dispatch(revokeSession(user.uid, sessionId));
+  };
+
+  const handlePasswordReset = () => {
+    dispatch(sendPasswordReset(user.email));
+  };
+
+  const onEnable2FA = () => {
+    console.log('2FA enrollment not implemented in this demo. See Firebase docs for multi-factor auth.');
+   };
+
+  if (loading) {
+    return <div style={{ padding: 32, textAlign: 'center' }}><Loader size="md" content="Loading security settings..." /></div>;
+  }
+  if (error) {
+    return <div style={{ padding: 32 }}><Message type="error">{error}</Message></div>;
+  }
+
+  // Get current sessionId from localStorage
+  const currentSessionId = window.localStorage.getItem('sessionId');
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -75,6 +75,7 @@ const SecuritySettings = () => {
         </div>
 
         <div style={{ padding: '0 16px 16px' }}>
+          {passwordResetSuccess && <Message type="success" style={{ marginBottom: 16 }}>Password reset email sent!</Message>}
           {/* Password */}
           <div style={{ marginBottom: 24 }}>
             <Stack justifyContent="space-between" alignItems="center" style={{
@@ -97,10 +98,10 @@ const SecuritySettings = () => {
                   color: cardText,
                   opacity: 0.7
                 }}>
-                  Last changed 3 months ago
+                  Last changed: Not available
                 </div>
               </div>
-              <Button appearance="ghost" size="sm">
+              <Button appearance="ghost" size="sm" onClick={handlePasswordReset}>
                 Change Password
               </Button>
             </Stack>
@@ -136,16 +137,16 @@ const SecuritySettings = () => {
                   opacity: 0.7,
                   marginTop: 4
                 }}>
-                  Status: Disabled
+                  Status: {twoFAEnabled ? "Enabled" : "Disabled"}
                 </div>
               </div>
-              <Button appearance="primary" size="sm">
-                Enable 2FA
+              <Button appearance={twoFAEnabled ? "ghost" : "primary"} size="sm" onClick={onEnable2FA} disabled={twoFAEnabled}>
+                {twoFAEnabled ? "2FA Enabled" : "Enable 2FA"}
               </Button>
             </Stack>
           </div>
 
-          {/* Active Sessions */}
+          {/* Active Session */}
           <div>
             <div style={{
               fontSize: 16,
@@ -153,18 +154,18 @@ const SecuritySettings = () => {
               color: cardText,
               marginBottom: 16
             }}>
-              Active Sessions
+              Active Session
             </div>
             <Stack direction="column" justifyContent='space-between' spacing={12} alignItems='stretch'>
-              {activeSessions.map((session, index) => (
-                <Stack key={index} justifyContent="space-between" style={{
+              {user && (
+                <Stack justifyContent="space-between" style={{
                   padding: '16px',
                   border: `1px solid ${borderColor}`,
                   borderRadius: 6,
                   background: 'transparent'
                 }}>
                   <Stack alignItems="center" spacing={12}>
-                    {session.icon}
+                    <FaDesktop style={{ fontSize: 16, color: '#666' }} />
                     <div>
                       <div style={{
                         fontSize: 14,
@@ -172,28 +173,62 @@ const SecuritySettings = () => {
                         color: cardText,
                         marginBottom: 2
                       }}>
-                        {session.device}
+                        {user.displayName || user.email}
                       </div>
                       <div style={{
                         fontSize: 12,
                         color: cardText,
                         opacity: 0.7
                       }}>
-                        {session.location} • {session.time}
+                        {user.email} • Current session
                       </div>
                     </div>
                   </Stack>
-                  {session.status === 'active' ? (
+                  <Tag color="green" style={{ backgroundColor: '#e6f4ea', color: '#1e7e34' }}>
+                    Active
+                  </Tag>
+                </Stack>
+              )}
+            </Stack>
+          </div>
+
+          {/* All Sessions */}
+          <div style={{ marginTop: 32 }}>
+            <div style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: cardText,
+              marginBottom: 16
+            }}>
+              All Sessions
+            </div>
+            <Stack direction="column" spacing={12}>
+              {sessions.length > 0 ? (<>
+              {
+                sessions.map(session => (
+                <Stack key={session.sessionId} justifyContent="space-between" style={{
+                  padding: '16px',
+                  border: `1px solid ${borderColor}`,
+                  borderRadius: 6,
+                  background: 'transparent'
+                }}>
+                  <div>
+                    {session.device} - {session.location} - {session.time}
+                  </div>
+                  {session.sessionId === currentSessionId ? (
                     <Tag color="green" style={{ backgroundColor: '#e6f4ea', color: '#1e7e34' }}>
-                      Active
+                      Current
                     </Tag>
                   ) : (
-                    <Button appearance="ghost" size="sm" color="red">
+                    <Button appearance="ghost" size="sm" color="red" onClick={() => handleRevoke(session.sessionId)}>
                       Revoke
                     </Button>
                   )}
                 </Stack>
-              ))}
+              )
+              )} </> ) : (
+                <div>No sessions found</div>
+              )}
             </Stack>
           </div>
         </div>

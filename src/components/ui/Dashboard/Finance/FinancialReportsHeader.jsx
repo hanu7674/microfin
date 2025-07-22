@@ -21,7 +21,7 @@ const FinancialReportsHeader = ({
     { label: 'Last 90 days', value: 'Last 90 days' },
     { label: 'Last 6 months', value: 'Last 6 months' },
     { label: 'Last 1 year', value: 'Last 1 year' },
-    { label: 'Custom range', value: 'Custom range' }
+    { label: 'All time', value: 'All time' }
   ];
 
   return (
@@ -52,6 +52,7 @@ const FinancialReportsHeader = ({
           style={{ width: 150 }}
           appearance="default"
           placeholder="Select date range"
+          defaultValue='Last 30 days'
         />
         <Button 
           appearance="primary" 

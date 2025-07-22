@@ -2,9 +2,36 @@ import React from 'react';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
-const CustomerAcquisition = () => {
+// Accepts a 'data' prop: array of { date, customers }
+const CustomerAcquisition = ({ data = [] }) => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
+
+  // Placeholder for chart rendering
+  const renderChart = () => {
+    if (!Array.isArray(data) || data.length === 0) {
+      return <div style={{ textAlign: 'center', color: '#666', fontSize: 16 }}>No customer acquisition data available.</div>;
+    }
+    // If you have a chart library, render a chart here. For now, show a simple table as a placeholder.
+    return (
+      <table style={{ width: '100%', color: cardText, fontSize: 14 }}>
+        <thead>
+          <tr>
+            <th style={{ textAlign: 'left', padding: 4 }}>Date</th>
+            <th style={{ textAlign: 'right', padding: 4 }}>New Customers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((d, i) => (
+            <tr key={i}>
+              <td style={{ padding: 4 }}>{new Date(d.date).toLocaleDateString()}</td>
+              <td style={{ padding: 4, textAlign: 'right' }}>{d.customers}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -34,17 +61,8 @@ const CustomerAcquisition = () => {
           }}>
             Customer Acquisition
           </h3>
-          <a href="#" style={{
-            fontSize: 14,
-            color: cardText,
-            textDecoration: 'none',
-            fontWeight: 500,
-            opacity: 0.8
-          }}>
-            View Details
-          </a>
+          
         </div>
-        
         <div style={{
           height: '300px',
           backgroundColor: '#f5f5f5',
@@ -52,15 +70,10 @@ const CustomerAcquisition = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: '2px dashed #ddd'
+          border: '2px dashed #ddd',
+          overflow: 'auto'
         }}>
-          <div style={{
-            textAlign: 'center',
-            color: '#666',
-            fontSize: 16
-          }}>
-            Customer Growth Chart
-          </div>
+          {renderChart()}
         </div>
       </div>
     </div>

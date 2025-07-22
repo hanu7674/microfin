@@ -19,8 +19,21 @@ const ClientSearchFilter = ({ searchValue, onSearchChange, statusFilter, onStatu
     { label: 'All Types', value: '' },
     { label: 'Individual', value: 'individual' },
     { label: 'Business', value: 'business' },
-    { label: 'Corporate', value: 'corporate' }
-  ];
+    { label: 'Corporate', value: 'corporate' },
+    { label: 'Government', value: 'government' },
+    { label: 'Non-Profit', value: 'non-profit' },
+    { label: 'Educational', value: 'educational' },
+    { label: 'Research', value: 'research' },
+    { label: 'Healthcare', value: 'healthcare' },
+    { label: 'Financial', value: 'financial' },
+    { label: 'Technology', value: 'technology' },
+    {label: 'Small Business', value: 'small_business' },
+    {label: 'Medium Business', value: 'medium_business' },
+    {label: 'Large Business', value: 'large_business' },
+    {label: 'Startup', value: 'startup' },
+    {label: 'Enterprise', value: 'enterprise' },
+    {label: 'Other', value: 'other' },
+    ];
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -65,22 +78,7 @@ const ClientSearchFilter = ({ searchValue, onSearchChange, statusFilter, onStatu
             style={{ width: '150px' }}
           />
           
-          <Button
-            appearance="ghost"
-            size="md"
-            style={{
-              border: `1px solid ${borderColor}`,
-              borderRadius: 6,
-              padding: '8px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6
-            }}
-            onClick={onMoreFilters}
-          >
-            <FaFilter />
-            More Filters
-          </Button>
+          
         </div>
       </div>
     </div>
