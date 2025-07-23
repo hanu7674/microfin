@@ -1,31 +1,76 @@
-import React from 'react';
-import { Stack, Panel, Button, Table, Tag, Avatar } from 'rsuite';
+import React, { useEffect, useState } from 'react';
+import { Stack, Panel, Button, Table, Tag, Avatar, Modal, Form, Schema, SelectPicker } from 'rsuite';
 import { FaUser, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { useSelector, useDispatch } from 'react-redux';
+import { addBusinessUser, editBusinessUser, fetchBusinessUsers, removeBusinessUser } from '../../../../redux/businessProfile';
+import { auth } from '../../../../Firebase/firebase';
+
+const { StringType } = Schema.Types;
+
+const userModel = Schema.Model({
+  name: StringType().isRequired('Name is required'),
+  email: StringType().isEmail('Please enter a valid email').isRequired('Email is required'),
+  role: StringType().isRequired('Role is required'),
+  permissions: StringType().isRequired('Permissions are required'),
+  status: StringType().isRequired('Status is required'),
+});
+
+const defaultUser = {
+  name: '',
+  email: '',
+  role: 'Viewer',
+  permissions: 'Read Only',
+  status: 'Active',
+};
 
 const UserPermissions = () => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
+  const dispatch = useDispatch();
+  const users = useSelector(state => state.businessProfile.users);
+  const userId = auth.currentUser?.uid;
 
-  const users = [
-    {
-      id: 1,
-      name: 'Rajesh Kumar',
-      email: 'rajesh@business.com',
-      role: 'Admin',
-      permissions: 'Full Access',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      name: 'Priya Sharma',
-      email: 'priya@business.com',
-      role: 'Viewer',
-      permissions: 'Read Only',
-      status: 'Inactive'
+  const [showModal, setShowModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [formValue, setFormValue] = useState(defaultUser);
+  const [formError, setFormError] = useState({});
+
+
+  useEffect(() => {
+    dispatch(fetchBusinessUsers());
+  }, []);
+
+  const openAddModal = () => {
+    setEditingUser(null);
+    setFormValue(defaultUser);
+    setShowModal(true);
+  };
+
+  const openEditModal = (user) => {
+    setEditingUser(user);
+    setFormValue(user);
+    setShowModal(true);
+  };
+
+  const handleRemove = (user) => {
+    dispatch(removeBusinessUser(user.id));
+  };
+
+  const handleSubmit = () => {
+    if (!userId) return;
+    if (!userModel.check(formValue)) {
+      setFormError(userModel.check(formValue));
+      return;
     }
-  ];
+    if (editingUser) {
+      dispatch(editBusinessUser(formValue));
+    } else {
+      dispatch(addBusinessUser(formValue));
+    }
+    setShowModal(false);
+  };
 
   const renderUser = (user) => (
     <Stack alignItems="center" spacing={12}>
@@ -71,11 +116,11 @@ const UserPermissions = () => {
 
   const renderActions = (user) => (
     <Stack spacing={8}>
-      <Button appearance="ghost" size="xs">
+      <Button appearance="ghost" size="xs" onClick={() => openEditModal(user)}>
         <FaEdit style={{ marginRight: 4 }} />
         Edit
       </Button>
-      <Button appearance="ghost" size="xs" color="red">
+      <Button appearance="ghost" size="xs" color="red" onClick={() => handleRemove(user)}>
         <FaTrash style={{ marginRight: 4 }} />
         Remove
       </Button>
@@ -105,7 +150,7 @@ const UserPermissions = () => {
           }}>
             User Permissions
           </div>
-          <Button appearance="primary" size="sm">
+          <Button appearance="primary" size="sm" onClick={openAddModal}>
             <FaPlus style={{ marginRight: 8 }} />
             Add User
           </Button>
@@ -157,6 +202,48 @@ const UserPermissions = () => {
           </Table>
         </div>
       </Panel>
+
+      <Modal open={showModal} onClose={() => setShowModal(false)} size="xs">
+        <Modal.Header>
+          <Modal.Title>{editingUser ? 'Edit User' : 'Add User'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form
+            fluid
+            model={userModel}
+            formValue={formValue}
+            onChange={setFormValue}
+            onCheck={setFormError}
+            checkTrigger="change"
+            error={formError}
+          >
+            <Form.Group controlId="name">
+              <Form.ControlLabel>Name</Form.ControlLabel>
+              <Form.Control name="name" />
+            </Form.Group>
+            <Form.Group controlId="email">
+              <Form.ControlLabel>Email</Form.ControlLabel>
+              <Form.Control name="email" />
+            </Form.Group>
+            <Form.Group controlId="role">
+              <Form.ControlLabel>Role</Form.ControlLabel>
+              <Form.Control name="role" accepter={SelectPicker} block data={[{label:'Admin', value:'Admin'},{label:'Viewer', value:'Viewer'}]} />
+            </Form.Group>
+            <Form.Group controlId="permissions">
+              <Form.ControlLabel>Permissions</Form.ControlLabel>
+              <Form.Control name="permissions" accepter={SelectPicker} block data={[{label:'Full Access', value:'Full Access'},{label:'Read Only', value:'Read Only'}]} />
+            </Form.Group>
+            <Form.Group controlId="status">
+              <Form.ControlLabel>Status</Form.ControlLabel>
+              <Form.Control name="status" accepter={SelectPicker} block data={[{label:'Active', value:'Active'},{label:'Inactive', value:'Inactive'}]} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleSubmit} appearance="primary">{editingUser ? 'Save' : 'Add'}</Button>
+          <Button onClick={() => setShowModal(false)} appearance="subtle">Cancel</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

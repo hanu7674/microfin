@@ -52,55 +52,6 @@ const routesWithSidebar = ['/dashboard'];
 // Check if the current route is one of the routes with a sidebar
 const hasSidebar = routesWithSidebar.some(route => path.startsWith(route));
 
-// Global ResizeObserver error handler
-useEffect(() => {
-  // Suppress ResizeObserver errors globally
-  const originalError = console.error;
-  const originalWarn = console.warn;
-  
-  console.error = (...args) => {
-    const message = args[0];
-    if (typeof message === 'string' && 
-        (message.includes('ResizeObserver') || 
-         message.includes('ResizeObserver loop') ||
-         message.includes('ResizeObserver loop completed') ||
-         message.includes('ResizeObserver loop limit exceeded'))) {
-      return; // Suppress ResizeObserver errors
-    }
-    originalError.apply(console, args);
-  };
-
-  console.warn = (...args) => {
-    const message = args[0];
-    if (typeof message === 'string' && 
-        (message.includes('ResizeObserver') || 
-         message.includes('ResizeObserver loop') ||
-         message.includes('ResizeObserver loop completed') ||
-         message.includes('ResizeObserver loop limit exceeded'))) {
-      return; // Suppress ResizeObserver warnings
-    }
-    originalWarn.apply(console, args);
-  };
-
-  // Handle unhandled promise rejections that might be related to ResizeObserver
-  const handleUnhandledRejection = (event) => {
-    const message = event.reason?.message || event.reason || '';
-    if (typeof message === 'string' && message.includes('ResizeObserver')) {
-      event.preventDefault();
-      return;
-    }
-  };
-
-  window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
-  // Cleanup function
-  return () => {
-    console.error = originalError;
-    console.warn = originalWarn;
-    window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-  };
-}, []);
-
   return (
     <Container style={{ background: bgMain, color: textMain }}>
       <Header >

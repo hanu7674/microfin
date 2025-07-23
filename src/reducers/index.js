@@ -9,7 +9,8 @@ import clientsReducer from '../redux/clients';
 import businessProfileReducer from '../redux/businessProfile';
 import paymentsReducer from '../redux/payments';
 import securityReducer from './security';
-
+import generalSettingsReducer from '../redux/generalSettings';
+import supportReducer from '../redux/support';
 const rootReducer = combineReducers({
   notifications: notificationsReducer(),
   auth: authReducer,
@@ -20,7 +21,9 @@ const rootReducer = combineReducers({
   clients: clientsReducer,
   businessProfile: businessProfileReducer,
   payments: paymentsReducer,
-  security: securityReducer
+  security: securityReducer,
+  generalSettings: generalSettingsReducer,
+  support: supportReducer
 });
 
 export default rootReducer;

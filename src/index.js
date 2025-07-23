@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import { NotificationsProvider } from 'reapop';
 import configureStore from './redux/configureStore';
 import { BrowserRouter as Router } from 'react-router-dom';
+import WithLocaleProvider from './components/Theme/withLocaleProvider';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const store = configureStore();
 root.render(
@@ -15,9 +17,11 @@ root.render(
     <ThemeProvider>
       <Provider store={store}>
         <NotificationsProvider>
-          <Router>
-          <App />
-          </Router>
+          <WithLocaleProvider>
+            <Router>
+              <App />
+            </Router>
+          </WithLocaleProvider>
         </NotificationsProvider>
       </Provider>
     </ThemeProvider>

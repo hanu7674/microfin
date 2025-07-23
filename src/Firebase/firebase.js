@@ -281,3 +281,14 @@ export const paymentLinkById = (id) => doc(firestoreDb, `payment_links/${id}`);
 // export const subscriptionsRef = (userId) => doc(firestoreDb, `users/${userId}/subscriptions`);
 export const subscriptionById = (userId, id) => doc(firestoreDb, `users/${userId}/subscriptions/${id}`);
 export const currentSubscriptionRef = (userId) => doc(firestoreDb, `users/${userId}/subscriptions/current`);
+
+export const businessUsersCollection = (userId) => collection(firestoreDb, `users/${userId}/users/`);
+export const businessUserById = (userId, id) => doc(firestoreDb, `users/${userId}/users/${id}`);
+
+// Support
+export const supportTicketsCollection = (userId) => collection(firestoreDb, `users/${userId}/support_tickets`);
+export const supportTicketById = (userId, id) => doc(firestoreDb, `users/${userId}/support_tickets/${id}`);
+export const callbackRequestsCollection = (userId) => collection(firestoreDb, `users/${userId}/callback_requests`);
+export const callbackRequestById = (userId, id) => doc(firestoreDb, `users/${userId}/callback_requests/${id}`);
+export const knowledgeBaseCollection = (userId) => collection(firestoreDb, `users/${userId}/knowledge_base`);
+export const knowledgeBaseById = (userId, id) => doc(firestoreDb, `users/${userId}/knowledge_base/${id}`);

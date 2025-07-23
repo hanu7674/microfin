@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Stack, Grid, Row, Col, Panel, Button, Toggle } from 'rsuite';
-import { FaGoogle, FaEnvelope, FaMobile, FaCog } from 'react-icons/fa';
+import { Stack, Panel, Button, Toggle } from 'rsuite';
+import { FaGoogle, FaEnvelope, FaMobile, FaCheck } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { useDispatch } from 'react-redux';
+import { dismissNotification, notify } from 'reapop';
 
 const Integrations = () => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
-
+  const dispatch = useDispatch();
   const [integrations, setIntegrations] = useState({
     googleSheets: true,
     emailNotifications: false,
@@ -19,6 +21,45 @@ const Integrations = () => {
       ...prev,
       [integration]: !prev[integration]
     }));
+    if(integration === 'googleSheets') {
+      dispatch(notify({
+        title: 'Google Sheets integration',
+        message: 'The Google Sheets integration has been updated successfully',
+        status: 'success',
+        dismissible: true,
+        dismissAfter: 3000,
+        position: 'top-right',
+        id: integration,
+        icon: <FaCheck />,
+        action: { label: 'Dismiss', onClick: () => dispatch(dismissNotification(integration)) }
+      }));
+    }
+    else if(integration === 'emailNotifications') {
+    dispatch(notify({
+      title: 'Email Notifications',
+      message: 'The email notifications have been updated successfully',
+      status: 'success',
+      dismissible: true,
+      dismissAfter: 3000,
+      position: 'top-right',
+      id: integration,
+      icon: <FaCheck />,
+      action: { label: 'Dismiss', onClick: () => dispatch(dismissNotification(integration)) }
+    }));
+  }
+  else if(integration === 'smsGateway') {
+    dispatch(notify({
+      title: 'SMS Gateway',
+      message: 'The SMS gateway has been updated successfully',
+      status: 'success',
+      dismissible: true,
+      dismissAfter: 3000,
+      position: 'top-right',
+      id: integration,
+      icon: <FaCheck />,
+      action: { label: 'Dismiss', onClick: () => dispatch(dismissNotification(integration)) }
+    }));
+  }
   };
 
   const integrationCards = [
@@ -83,12 +124,15 @@ const Integrations = () => {
                   padding: '20px',
                   border: `1px solid ${borderColor}`,
                   borderRadius: 8,
-                  background: 'transparent',
+                  background: integration.enabled ? 'rgba(66,133,244,0.04)' : 'transparent',
+                  minWidth: 320,
+                  maxWidth: 480,
+                  margin: '0 auto',
                   transition: 'all 0.2s ease'
                 }}
               >
-                <Stack justifyContent="space-between" >
-                  <Stack alignItems="space-between" spacing={16}>
+                <Stack justifyContent="space-between" alignItems="center">
+                  <Stack alignItems="center" spacing={16}>
                     <div style={{
                       width: 48,
                       height: 48,
@@ -124,6 +168,7 @@ const Integrations = () => {
                     <Button 
                       appearance="ghost" 
                       size="sm"
+                      aria-label={`Configure ${integration.title}`}
                       style={{
                         padding: '6px 12px',
                         fontSize: 12,
@@ -136,6 +181,7 @@ const Integrations = () => {
                       checked={integration.enabled}
                       onChange={() => handleToggle(integration.key)}
                       size="sm"
+                      aria-label={`Toggle ${integration.title}`}
                     />
                   </Stack>
                 </Stack>

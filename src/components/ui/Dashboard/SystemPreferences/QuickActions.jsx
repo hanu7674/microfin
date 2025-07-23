@@ -1,36 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Stack, Panel, Button } from 'rsuite';
 import { FaDownload, FaUpload, FaTrash, FaChevronRight } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-
+import { notify } from 'reapop';
+import { useDispatch } from 'react-redux';
 const QuickActions = () => {
   const { theme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
-
-  const quickActions = [
+   const dispatch = useDispatch();
+   const quickActions = [
     {
       title: 'Export Data',
       description: 'Download all your data',
       icon: <FaDownload style={{ fontSize: 16, color: '#666' }} />,
-      action: () => console.log('Export data')
+      disabled: false
     },
     {
       title: 'Import Data',
       description: 'Upload data from file',
       icon: <FaUpload style={{ fontSize: 16, color: '#666' }} />,
-      action: () => console.log('Import data')
+      disabled: false
     },
     {
       title: 'Clear Cache',
       description: 'Remove temporary files',
       icon: <FaTrash style={{ fontSize: 16, color: '#666' }} />,
-      action: () => console.log('Clear cache')
+      disabled: false
     }
   ];
+  const handleAction = (action) => {
+    dispatch(notify({
+      title: action.title,
+      message: `${action.description} \n will be implemented in the future`,
+      status: 'success',
+      position: 'top-right',
+      dismissible: true,
+      dismissAfter: 3000,
+      action: [
+        {
+          label: 'Undo',
+          onClick: () => console.log('Undo')
+        }
+      ]
+    }))
+  }
 
   return (
     <div style={{ marginBottom: 32 }}>
+        
       <Panel
         style={{
           background: cardBg,
@@ -66,7 +84,8 @@ const QuickActions = () => {
                   borderRadius: 6,
                   background: 'transparent'
                 }}
-                onClick={action.action}
+                onClick={() => handleAction(action)}
+                disabled={action.disabled}
               >
                 <Stack alignItems="center" spacing={12}>
                   {action.icon}

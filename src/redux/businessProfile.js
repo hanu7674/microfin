@@ -33,6 +33,22 @@ export const fetchSubscriptionRequest = () => ({ type: 'FETCH_SUBSCRIPTION_REQUE
 export const fetchSubscriptionSuccess = (data) => ({ type: 'FETCH_SUBSCRIPTION_SUCCESS', payload: data });
 export const fetchSubscriptionFailure = (error) => ({ type: 'FETCH_SUBSCRIPTION_FAILURE', payload: error });
 
+export const addBusinessUserRequest = () => ({ type: 'ADD_BUSINESS_USER_REQUEST' });
+export const addBusinessUserSuccess = (data) => ({ type: 'ADD_BUSINESS_USER_SUCCESS', payload: data });
+export const addBusinessUserFailure = (error) => ({ type: 'ADD_BUSINESS_USER_FAILURE', payload: error });
+
+export const editBusinessUserRequest = () => ({ type: 'EDIT_BUSINESS_USER_REQUEST' });
+export const editBusinessUserSuccess = (data) => ({ type: 'EDIT_BUSINESS_USER_SUCCESS', payload: data });
+export const editBusinessUserFailure = (error) => ({ type: 'EDIT_BUSINESS_USER_FAILURE', payload: error });
+
+export const removeBusinessUserRequest = () => ({ type: 'REMOVE_BUSINESS_USER_REQUEST' });
+export const removeBusinessUserSuccess = (data) => ({ type: 'REMOVE_BUSINESS_USER_SUCCESS', payload: data });
+export const removeBusinessUserFailure = (error) => ({ type: 'REMOVE_BUSINESS_USER_FAILURE', payload: error });
+
+export const fetchBusinessUsersRequest = () => ({ type: 'FETCH_BUSINESS_USERS_REQUEST' });
+export const fetchBusinessUsersSuccess = (data) => ({ type: 'FETCH_BUSINESS_USERS_SUCCESS', payload: data });
+export const fetchBusinessUsersFailure = (error) => ({ type: 'FETCH_BUSINESS_USERS_FAILURE', payload: error });
+
 export const subscribeToPlan = (plan) => async (dispatch) => {
   dispatch({ type: SUBSCRIBE_PLAN_REQUEST });
   try {
@@ -141,6 +157,51 @@ export const fetchSubscriptionDetails = () => async (dispatch) => {
   }
 };
 
+export const fetchBusinessUsers = () => async (dispatch) => {
+
+  try {
+    dispatch(fetchBusinessUsersRequest());
+    const data = await dataService.businessProfileService.fetchBusinessUsers();
+    dispatch(fetchBusinessUsersSuccess(data));
+  } catch (error) {
+    dispatch(fetchBusinessUsersFailure(error.message));
+  }
+};
+
+export const addBusinessUser = (newUser) => async (dispatch) => {
+  try {
+    dispatch(addBusinessUserRequest());
+    const data = await dataService.businessProfileService.addBusinessUser(newUser);
+    dispatch(addBusinessUserSuccess(data));
+    dispatch(fetchBusinessUsers());
+  } catch (error) {
+    dispatch(addBusinessUserFailure(error.message));
+  }
+};
+
+// Edit user in business profile
+export const editBusinessUser = (updatedUser) => async (dispatch) => {
+  try {
+    dispatch(editBusinessUserRequest());
+    const data = await dataService.businessProfileService.updateBusinessUser(updatedUser);
+    dispatch(editBusinessUserSuccess(data));
+  } catch (error) {
+    dispatch(editBusinessUserFailure(error.message));
+  }
+};
+
+// Remove user from business profile
+export const removeBusinessUser = (userIdToRemove) => async (dispatch) => {
+  try {
+    dispatch(removeBusinessUserRequest());
+    const data = await dataService.businessProfileService.deleteBusinessUser(userIdToRemove);
+    dispatch(removeBusinessUserSuccess(data));
+    dispatch(fetchBusinessUsers());
+  } catch (error) {
+    dispatch(removeBusinessUserFailure(error.message));
+  }
+};
+
 // Reducer
 const initialState = {
   profile: null,
@@ -195,6 +256,30 @@ export default function businessProfileReducer(state = initialState, action) {
       return { ...state, subscriptionLoading: false, subscription: action.payload, subscriptionError: null };
     case SUBSCRIBE_PLAN_FAILURE:
       return { ...state, subscriptionLoading: false, subscriptionError: action.payload };
+    case 'ADD_BUSINESS_USER_REQUEST':
+      return { ...state, loading: true, error: null };
+    case 'ADD_BUSINESS_USER_SUCCESS':
+      return { ...state, loading: false, users: [...state.users, action.payload], error: null };
+    case 'ADD_BUSINESS_USER_FAILURE':
+      return { ...state, loading: false, error: action.payload };
+    case 'EDIT_BUSINESS_USER_REQUEST': 
+      return { ...state, loading: true, error: null };
+    case 'EDIT_BUSINESS_USER_SUCCESS':
+      return { ...state, loading: false, users: state.users.map(user => user.id === action.payload.id ? action.payload : user), error: null };
+    case 'EDIT_BUSINESS_USER_FAILURE':
+      return { ...state, loading: false, error: action.payload };
+    case 'REMOVE_BUSINESS_USER_REQUEST':
+      return { ...state, loading: true, error: null };
+    case 'REMOVE_BUSINESS_USER_SUCCESS':
+      return { ...state, loading: false, users: state.users.filter(user => user.id !== action.payload), error: null };
+    case 'REMOVE_BUSINESS_USER_FAILURE':
+      return { ...state, loading: false, error: action.payload };
+    case 'FETCH_BUSINESS_USERS_REQUEST':
+      return { ...state, usersLoading: true, usersError: null };
+    case 'FETCH_BUSINESS_USERS_SUCCESS':
+      return { ...state, usersLoading: false, users: action.payload, usersError: null };
+    case 'FETCH_BUSINESS_USERS_FAILURE':
+      return { ...state, usersLoading: false, usersError: action.payload };
     default:
       return state;
   }

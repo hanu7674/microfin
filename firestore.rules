@@ -113,11 +113,35 @@ service cloud.firestore {
         allow delete: if isOwner(userId);
       }
       match /business_documents/{docId} {
-    allow read, write: if isOwner(userId);
-  }
-   match /business_subscription/{docId} {
+    		allow read, write: if isOwner(userId);
+  		}
+      match /business_subscription/{docId} {
     		allow read, write: if isOwner(userId);
       }
+      match /sessions/{docId} {
+    		allow read, write: if isOwner(userId);
+      }
+      match /subscriptions/current {
+      allow read, write: if isOwner(userId);
+    }
+       match /subscriptions/{subId} {
+      allow read, write: if isOwner(userId);
+    }
+    match /generalSettings/settings {
+    allow read, write: if isOwner(userId);
+    }
+    match /users/{userID} {
+    allow read, write: if isOwner(userId);
+    }
+    match /support_tickets/{ticketId} {
+    allow read, write: if isOwner(userId);
+    }
+    match /callback_requests/{callbackRequestId} {
+    allow read, write: if isOwner(userId);
+    }
+    match /knowledge_base/{knowledgeBaseId} {
+    allow read, write: if isOwner(userId);
+    }
       match /business_profile/data {
         allow read, write: if isOwner(userId);
         allow create: if isOwner(userId);
@@ -295,6 +319,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
+    match /payment_links/{payment_id}{ 
+    	allow read, write: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
     // Deny all other access
     match /{document=**} {
       allow read, write: if false;

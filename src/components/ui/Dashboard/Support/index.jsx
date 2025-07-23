@@ -8,21 +8,24 @@ import KnowledgeBase from './KnowledgeBase';
 import ContactSupport from './ContactSupport';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { useSupport } from '../../../../hooks/useDataService';
+import { useDispatch } from 'react-redux';
+import { listenToSupportTickets, listenToCallbackRequests, listenToKnowledgeBase } from '../../../../redux/support';
 
 const Support = () => {
   const { theme } = useTheme();
   const { pageBg } = getThemeVars(theme);
-
-  const { 
-    loading, 
-    error, 
-    fetchSupportTickets 
-  } = useSupport();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchSupportTickets();
-  }, [fetchSupportTickets]);
+    const unsubTickets = dispatch(listenToSupportTickets());
+    const unsubCallbacks = dispatch(listenToCallbackRequests());
+    const unsubKB = dispatch(listenToKnowledgeBase());
+    return () => {
+      if (typeof unsubTickets === 'function') unsubTickets();
+      if (typeof unsubCallbacks === 'function') unsubCallbacks();
+      if (typeof unsubKB === 'function') unsubKB();
+    };
+  }, []);
 
   return (
     <div style={{ 
@@ -33,7 +36,6 @@ const Support = () => {
     }}>
       <>
         <SupportHeader />
-        
         <Grid fluid>
           {/* Support Overview */}
           <Row>
@@ -41,17 +43,15 @@ const Support = () => {
               <SupportOverview />
             </Col>
           </Row>
-          
           {/* Support Tickets and Callback Requests */}
           <Row gutter={24}>
-            <Col xs={24} lg={12}>
+            <Col xs={24} lg={24}>
               <SupportTickets />
             </Col>
-            <Col xs={24} lg={12}>
+            <Col xs={24} lg={24}>
               <CallbackRequests />
             </Col>
           </Row>
-          
           {/* Knowledge Base and Contact Support */}
           <Row gutter={24}>
             <Col xs={24} lg={12}>

@@ -59,7 +59,12 @@ import {
   paymentLinksCollection,
   paymentLinkById,
   currentSubscriptionRef,
-  auth
+  auth,
+  businessUsersCollection,
+  businessUserById,
+  supportTicketsCollection,
+  supportTicketById,
+  callbackRequestsCollection
 } from '../Firebase/firebase';
 
 // Dashboard Data Service
@@ -550,41 +555,20 @@ export const clientsService = {
 // Support Service
 export const supportService = {
   // Fetch support tickets
-  async fetchSupportTickets(userId, filters = {}) {
+  async fetchSupportTickets(userId) {
     try {
-      let ticketsQuery = query(
-        ticketsCollection(),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
-      );
-      
-      // Apply filters
-      if (filters.status) {
-        ticketsQuery = query(ticketsQuery, where('status', '==', filters.status));
-      }
-      
-      if (filters.priority) {
-        ticketsQuery = query(ticketsQuery, where('priority', '==', filters.priority));
-      }
-      
-      if (filters.limit) {
-        ticketsQuery = query(ticketsQuery, limit(filters.limit));
-      }
-      
-      const ticketsSnapshot = await getDocs(ticketsQuery);
-      return ticketsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const ticketRef = supportTicketsCollection(userId);
+      const ticketsSnapshot = await getDocs(ticketRef);
+      return ticketsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       throw new Error(`Failed to fetch support tickets: ${error.message}`);
     }
   },
 
   // Create support ticket
-  async createSupportTicket(ticketData) {
+  async createSupportTicket(userId, ticketData) {
     try {
-      const ticketRef = ticketsCollection();
+      const ticketRef = supportTicketsCollection(userId);
       const newTicket = {
         ...ticketData,
         status: 'open',
@@ -603,9 +587,9 @@ export const supportService = {
   },
 
   // Update support ticket
-  async updateSupportTicket(ticketId, updateData) {
+  async updateSupportTicket(userId, ticketId, updateData) {
     try {
-      const ticketRef = ticketById(ticketId);
+      const ticketRef = supportTicketById(userId, ticketId);
       const updatedData = {
         ...updateData,
         updatedAt: serverTimestamp()
@@ -618,6 +602,18 @@ export const supportService = {
       };
     } catch (error) {
       throw new Error(`Failed to update support ticket: ${error.message}`);
+    }
+  },
+
+  // Create callback request
+  async createCallbackRequest(userId, requestData) {
+    try {
+      const ref = callbackRequestsCollection(userId);
+      const newRequest = { ...requestData, createdAt: serverTimestamp() };
+      const docRef = await addDoc(ref, newRequest);
+      return { id: docRef.id, ...newRequest };
+    } catch (error) {
+      throw new Error(`Failed to create callback request: ${error.message}`);
     }
   }
 };
@@ -651,6 +647,36 @@ export const businessProfileService = {
     const snap = await getDoc(ref);
     if(snap.exists()) return snap.data();
     return null;
+  },
+  async fetchBusinessUsers() {
+    const userId = auth.currentUser.uid;
+    const ref = businessUsersCollection(userId);
+    const snap = await getDocs(ref);
+    if(snap.empty) return [];
+    return snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+  },
+  async addBusinessUser(userData) {
+    const userId = auth.currentUser.uid;
+    const ref = businessUsersCollection(userId);
+    const newUser = {
+      ...userData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    const docRef = await addDoc(ref, newUser);
+    return { id: docRef.id, ...newUser };
+  },
+  async updateBusinessUser( userData) {
+    const userId = auth.currentUser.uid;
+    const ref = businessUserById(userId, userData.id);
+    await updateDoc(ref, { ...userData, updatedAt: serverTimestamp() });
+    return true;
+  },
+  async deleteBusinessUser(userIdToRemove) {
+    const userId = auth.currentUser.uid;
+    const ref = businessUserById(userId, userIdToRemove);
+    await deleteDoc(ref);
+    return true;
   }
 };
 

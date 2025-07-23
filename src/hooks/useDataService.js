@@ -436,10 +436,7 @@ export const useSupport = () => {
     if (!user) return;
 
     try {
-      const ticket = await dataService.supportService.createSupportTicket({
-        ...ticketData,
-        userId: user.uid
-      });
+      const ticket = await dataService.supportService.createSupportTicket(user.uid, ticketData);
       return ticket;
     } catch (error) {
       console.error('Failed to create support ticket:', error);
@@ -457,12 +454,24 @@ export const useSupport = () => {
     }
   }, []);
 
+  const createCallbackRequest = useCallback(async (requestData) => {
+    if (!user) return;
+    try {
+      const request = await dataService.supportService.createCallbackRequest(user.uid, requestData);
+      return request;
+    } catch (error) {
+      console.error('Failed to create callback request:', error);
+      throw error;
+    }
+  }, [user]);
+
   return {
     loading,
     error,
     fetchSupportTickets,
     createSupportTicket,
-    updateSupportTicket
+    updateSupportTicket,
+    createCallbackRequest
   };
 };
 

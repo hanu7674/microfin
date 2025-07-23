@@ -4,11 +4,10 @@ import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
 const DisplayPreferences = () => {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
 
   const [preferences, setPreferences] = useState({
-    darkMode: false,
     compactView: true
   });
 
@@ -17,6 +16,10 @@ const DisplayPreferences = () => {
       ...prev,
       [preference]: !prev[preference]
     }));
+  };
+
+  const handleThemeToggle = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -68,8 +71,8 @@ const DisplayPreferences = () => {
                 </div>
               </div>
               <Toggle
-                checked={preferences.darkMode}
-                onChange={() => handleToggle('darkMode')}
+                checked={theme === 'dark'}
+                onChange={handleThemeToggle}
                 size="md"
               />
             </Stack>

@@ -1,59 +1,58 @@
 import React, { useState } from 'react';
-import { Stack, Panel, Button, Table, Tag, Avatar, Whisper, Tooltip , IconButton} from 'rsuite';
-import { FaPhone, FaUser, FaClock, FaCheckCircle, FaTimes, FaEye, FaPhoneAlt } from 'react-icons/fa';
+import { Stack, Panel, Button, Table, Tag, Avatar, Whisper, Tooltip, IconButton, Loader, Message, Modal, Form, Schema, toaster, Notification, SelectPicker } from 'rsuite';
+import { FaPhone, FaUser, FaEye, FaPhoneAlt, FaCheckCircle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { useSelector } from 'react-redux';
+import { useSupport } from '../../../../hooks/useDataService';
+
+const { StringType } = Schema.Types;
+const callbackModel = Schema.Model({
+  customer: StringType().isRequired('Customer name is required'),
+  phone: StringType().isRequired('Phone is required'),
+  email: StringType().isEmail('Enter a valid email').isRequired('Email is required'),
+  reason: StringType().isRequired('Reason is required'),
+  preferredTime: StringType().isRequired('Preferred time is required'),
+  priority: StringType().isRequired('Priority is required'),
+});
 
 const CallbackRequests = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor, success, warning, danger, info } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
+  const callbackRequests = useSelector(state => state.support.callbackRequests);
+  const loading = useSelector(state => state.support.callbackLoading);
+  const error = useSelector(state => state.support.callbackError);
+  const { createCallbackRequest } = useSupport();
 
-  const [callbackRequests, setCallbackRequests] = useState([
-    {
-      id: 'CB-001',
-      customer: 'Rajesh Kumar',
-      phone: '+91 98765 43210',
-      email: 'rajesh@business.com',
-      reason: 'Payment Gateway Issue',
-      preferredTime: '10:00 AM - 12:00 PM',
-      status: 'Pending',
-      requestTime: '2 hours ago',
-      priority: 'High'
-    },
-    {
-      id: 'CB-002',
-      customer: 'Priya Sharma',
-      phone: '+91 87654 32109',
-      email: 'priya@business.com',
-      reason: 'Invoice Generation Help',
-      preferredTime: '2:00 PM - 4:00 PM',
-      status: 'Scheduled',
-      requestTime: '1 day ago',
-      priority: 'Medium'
-    },
-    {
-      id: 'CB-003',
-      customer: 'Amit Patel',
-      phone: '+91 76543 21098',
-      email: 'amit@business.com',
-      reason: 'Account Setup Assistance',
-      preferredTime: '11:00 AM - 1:00 PM',
-      status: 'Completed',
-      requestTime: '3 days ago',
-      priority: 'Low'
-    },
-    {
-      id: 'CB-004',
-      customer: 'Neha Singh',
-      phone: '+91 65432 10987',
-      email: 'neha@business.com',
-      reason: 'Report Configuration',
-      preferredTime: '3:00 PM - 5:00 PM',
-      status: 'Pending',
-      requestTime: '4 hours ago',
-      priority: 'High'
+  const [showModal, setShowModal] = useState(false);
+  const [formValue, setFormValue] = useState({
+    customer: '',
+    phone: '',
+    email: '',
+    reason: '',
+    preferredTime: '',
+    priority: '',
+  });
+  const [formError, setFormError] = useState({});
+
+  const handleAddRequest = () => {
+    if (!callbackModel.check(formValue)) {
+      setFormError(callbackModel.check(formValue));
+      return;
     }
-  ]);
+    createCallbackRequest(formValue);
+    setShowModal(false);
+    setFormValue({
+      customer: '',
+      phone: '',
+      email: '',
+      reason: '',
+      preferredTime: '',
+      priority: '',
+    });
+    setFormError({});
+    toaster.push(<Notification type="success" header="Success">Callback request created!</Notification>, { placement: 'topEnd' });
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -80,20 +79,8 @@ const CallbackRequests = () => {
         <FaUser style={{ color: '#666' }} />
       </Avatar>
       <div>
-        <div style={{
-          fontSize: 14,
-          fontWeight: 500,
-          color: cardText
-        }}>
-          {request.customer}
-        </div>
-        <div style={{
-          fontSize: 12,
-          color: cardText,
-          opacity: 0.7
-        }}>
-          {request.phone}
-        </div>
+        <div style={{ fontSize: 14, fontWeight: 500, color: cardText }}>{request.customer}</div>
+        <div style={{ fontSize: 12, color: cardText, opacity: 0.7 }}>{request.phone}</div>
       </div>
     </Stack>
   );
@@ -106,9 +93,7 @@ const CallbackRequests = () => {
       color: getStatusColor(status) === 'green' ? '#1e7e34' : 
              getStatusColor(status) === 'blue' ? '#1976d2' : 
              getStatusColor(status) === 'orange' ? '#f57c00' : '#d32f2f'
-    }}>
-      {status}
-    </Tag>
+    }}>{status}</Tag>
   );
 
   const renderPriority = (priority) => (
@@ -117,32 +102,18 @@ const CallbackRequests = () => {
                      getPriorityColor(priority) === 'orange' ? '#fff3e0' : '#e6f4ea',
       color: getPriorityColor(priority) === 'red' ? '#d32f2f' : 
              getPriorityColor(priority) === 'orange' ? '#f57c00' : '#1e7e34'
-    }}>
-      {priority}
-    </Tag>
+    }}>{priority}</Tag>
   );
 
   const renderActions = (request) => (
     <Stack spacing={8}>
-      <Whisper
-        placement="top"
-        trigger="hover"
-        speaker={<Tooltip>View Details</Tooltip>}
-      >
+      <Whisper placement="top" trigger="hover" speaker={<Tooltip>View Details</Tooltip>}>
         <IconButton icon={<FaEye />} appearance="subtle" circle />
       </Whisper>
-      <Whisper
-        placement="top"
-        trigger="hover"
-        speaker={<Tooltip>Call Customer</Tooltip>}
-      >
+      <Whisper placement="top" trigger="hover" speaker={<Tooltip>Call Customer</Tooltip>}>
         <IconButton icon={<FaPhoneAlt />} appearance="subtle" circle color="green" />
       </Whisper>
-      <Whisper
-        placement="top"
-        trigger="hover"
-        speaker={<Tooltip>Mark Complete</Tooltip>}
-      >
+      <Whisper placement="top" trigger="hover" speaker={<Tooltip>Mark Complete</Tooltip>}>
         <IconButton icon={<FaCheckCircle />} appearance="subtle" circle color="green" />
       </Whisper>
     </Stack>
@@ -150,85 +121,94 @@ const CallbackRequests = () => {
 
   return (
     <div style={{ marginBottom: 32 }}>
-      <Panel
-        style={{
-          background: cardBg,
-          border: `1px solid ${borderColor}`,
-          borderRadius: 8,
-          boxShadow: shadow
-        }}
-      >
-        <Stack justifyContent="space-between" alignItems="center" style={{
-          marginBottom: 24,
-          padding: '10px 16px',
-          borderBottom: `3px solid ${cardBorderBottomColor}`,
-          borderBottomWidth: 1
-        }}>
-          <div style={{
-            fontSize: 18,
-            fontWeight: 600,
-            color: cardText
-          }}>
-            Callback Requests
-          </div>
-          <Button appearance="primary" size="sm">
+      <Panel style={{ background: cardBg, border: `1px solid ${borderColor}`, borderRadius: 8, boxShadow: shadow }}>
+        <Stack justifyContent="space-between" alignItems="center" style={{ marginBottom: 24, padding: '10px 16px', borderBottom: `3px solid ${cardBorderBottomColor}`, borderBottomWidth: 1 }}>
+          <div style={{ fontSize: 18, fontWeight: 600, color: cardText }}>Callback Requests</div>
+          <Button appearance="primary" size="sm" onClick={() => setShowModal(true)}>
             <FaPhone style={{ marginRight: 8 }} />
             New Request
           </Button>
         </Stack>
-
         <div style={{ padding: '0 16px 16px' }}>
-          <Table
-            data={callbackRequests}
-            autoHeight
-            style={{ background: 'transparent' }}
-            rowHeight={60}
-          >
+          {loading && <Loader center content="Loading requests..." />}
+          {error && <Message type="error" description={error} />}
+          <Table data={callbackRequests} autoHeight style={{ background: 'transparent' }} rowHeight={60}>
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Customer</Table.HeaderCell>
-              <Table.Cell>
-                {(rowData) => renderCustomer(rowData)}
-              </Table.Cell>
+              <Table.Cell>{(rowData) => renderCustomer(rowData)}</Table.Cell>
             </Table.Column>
-
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Reason</Table.HeaderCell>
               <Table.Cell dataKey="reason" />
             </Table.Column>
-
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Preferred Time</Table.HeaderCell>
               <Table.Cell dataKey="preferredTime" />
             </Table.Column>
-
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.Cell>
-                {(rowData) => renderStatus(rowData.status)}
-              </Table.Cell>
+              <Table.Cell>{(rowData) => renderStatus(rowData.status)}</Table.Cell>
             </Table.Column>
-
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Priority</Table.HeaderCell>
-              <Table.Cell>
-                {(rowData) => renderPriority(rowData.priority)}
-              </Table.Cell>
+              <Table.Cell>{(rowData) => renderPriority(rowData.priority)}</Table.Cell>
             </Table.Column>
-
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Requested</Table.HeaderCell>
               <Table.Cell dataKey="requestTime" />
             </Table.Column>
-
             <Table.Column flexGrow={1}>
               <Table.HeaderCell>Actions</Table.HeaderCell>
-              <Table.Cell>
-                {(rowData) => renderActions(rowData)}
-              </Table.Cell>
+              <Table.Cell>{(rowData) => renderActions(rowData)}</Table.Cell>
             </Table.Column>
           </Table>
         </div>
       </Panel>
+      <Modal open={showModal} onClose={() => setShowModal(false)} size="xs">
+        <Modal.Header>
+          <Modal.Title>New Callback Request</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form
+            fluid
+            model={callbackModel}
+            formValue={formValue}
+            onChange={setFormValue}
+            onCheck={setFormError}
+            checkTrigger="change"
+            error={formError}
+          >
+            <Form.Group controlId="customer">
+              <Form.ControlLabel>Customer Name</Form.ControlLabel>
+              <Form.Control name="customer" />
+            </Form.Group>
+            <Form.Group controlId="phone">
+              <Form.ControlLabel>Phone</Form.ControlLabel>
+              <Form.Control name="phone" />
+            </Form.Group>
+            <Form.Group controlId="email">
+              <Form.ControlLabel>Email</Form.ControlLabel>
+              <Form.Control name="email" />
+            </Form.Group>
+            <Form.Group controlId="reason">
+              <Form.ControlLabel>Reason</Form.ControlLabel>
+              <Form.Control name="reason" />
+            </Form.Group>
+            <Form.Group controlId="preferredTime">
+              <Form.ControlLabel>Preferred Time</Form.ControlLabel>
+              <Form.Control name="preferredTime" />
+            </Form.Group>
+            <Form.Group controlId="priority">
+              <Form.ControlLabel>Priority</Form.ControlLabel>
+              <Form.Control name="priority" block accepter={SelectPicker} data={[{label: 'High', value: 'High'}, {label: 'Medium', value: 'Medium'}, {label: 'Low', value: 'Low'}]} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleAddRequest} appearance="primary">Add Request</Button>
+          <Button onClick={() => setShowModal(false)} appearance="subtle">Cancel</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
