@@ -6,7 +6,7 @@ import { Grid, Row, Col, Panel, Stack, IconButton } from 'rsuite';
 
 const ClientSummaryCards = ({ data = {} }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, muted, success, info, warning, danger } = getThemeVars(theme);
+  const { cardBg, cardText, muted, success, info, warning, danger } = getThemeVars(theme);
 
   const cards = [
     {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stack, Grid, Row, Col, Panel } from 'rsuite';
-import { FaTicketAlt, FaQuestionCircle, FaPhone, FaCheckCircle, FaClock, FaExclamationTriangle } from 'react-icons/fa';
+import { FaTicketAlt, FaQuestionCircle, FaPhone, FaCheckCircle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useSelector } from 'react-redux';

@@ -28,21 +28,11 @@ import {
   deleteClient as deleteClientAction
 } from '../redux/clients';
 import {
-  FETCH_BUSINESS_PROFILE_REQUEST,
-  FETCH_BUSINESS_PROFILE_SUCCESS,
-  FETCH_BUSINESS_PROFILE_FAILURE,
-  UPDATE_BUSINESS_PROFILE_REQUEST,
-  UPDATE_BUSINESS_PROFILE_SUCCESS,
-  UPDATE_BUSINESS_PROFILE_FAILURE
-} from '../reducers/types';
-import {
   fetchBusinessDocuments,
   fetchBusinessProfile as fetchBusinessProfileAction,
   fetchSubscriptionDetails,
   updateBusinessProfile as updateBusinessProfileAction,
-  uploadBusinessDocuments
 } from '../redux/businessProfile';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { clearPaymentLinkStatusAction, expireOldPaymentLinksAction, fetchPayments as fetchPaymentsAction, generatePaymentLinkAction, listenToPaymentLinkAction } from '../redux/payments';
 import {
   fetchDashboardData,

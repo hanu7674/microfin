@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack, Grid, Row, Col, Panel } from 'rsuite';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { FaDollarSign, FaUsers, FaChartLine, FaQuestionCircle, FaRupeeSign } from 'react-icons/fa';
+import { FaUsers, FaChartLine, FaQuestionCircle, FaRupeeSign } from 'react-icons/fa';
 
 const KPICards = ({ data = null }) => {
   const { theme } = useTheme();

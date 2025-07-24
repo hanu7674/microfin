@@ -5,7 +5,7 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const ClosedLoans = ({ data = null }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
 
   // Use processed loan data
   const loansData = data && data.length > 0 ? data : [];

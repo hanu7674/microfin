@@ -5,7 +5,7 @@ import { getThemeVars } from '../../../../Theme/themeVars';
 
 const InvoiceSummary = ({ items, taxRate, discount, onTaxChange, onDiscountChange }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, muted, cardBorderBottomColor } = getThemeVars(theme);
 
   // Calculate subtotal from items
   const subtotal = items.reduce((sum, item) => {
@@ -34,11 +34,6 @@ const InvoiceSummary = ({ items, taxRate, discount, onTaxChange, onDiscountChang
         }}
       >
         <h3 style={{
-          fontSize: 18,
-          fontWeight: 600,
-          margin: 0,
-          marginBottom: 20,
-          color: cardText,
           fontSize: 18, 
         fontWeight: 600, 
         margin: 0, 

@@ -8,7 +8,7 @@ const { Column, HeaderCell, Cell } = Table;
 
 const InvoiceItems = ({ items, onAddItem, onRemoveItem, onUpdateItem }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, ctaBg, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, cardBorderBottomColor } = getThemeVars(theme);
 
   const calculateAmount = (qty, rate) => {
     return (qty || 0) * (rate || 0);

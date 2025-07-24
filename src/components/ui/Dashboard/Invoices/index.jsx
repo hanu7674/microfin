@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Row, Col, Button, Input, InputGroup, SelectPicker, DatePicker, Checkbox, Message } from 'rsuite';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
@@ -9,7 +8,6 @@ import InvoiceFilter from './InvoiceSearchFilter';
 import InvoiceTable from './InvoiceTable';
 import InvoicePagination from './InvoicePagination';
 import { useInvoices } from '../../../../hooks/useDataService';
-import AddSampleDataButton from './AddSampleDataButton';
 
 const InvoiceDashboardPage = () => {
   const { theme } = useTheme();
@@ -28,9 +26,7 @@ const InvoiceDashboardPage = () => {
     loading, 
     error, 
     fetchInvoices,
-    createInvoice,
     updateInvoice,
-    deleteInvoice
   } = useInvoices();
 
   // Fetch invoices on component mount
@@ -138,8 +134,8 @@ const InvoiceDashboardPage = () => {
     navigate('/dashboard/invoices/new');
   };
 
-  // Calculate invoice summary data
-  const invoiceSummaryData = {
+  // Calculate invoice summary data (memoized)
+  const invoiceSummaryData = useMemo(() => ({
     totalInvoices: invoices?.length || 0,
     paidInvoices: invoices?.filter(invoice => invoice.status === 'Paid').length || 0,
     pendingInvoices: invoices?.filter(invoice => invoice.status === 'Pending').length || 0,
@@ -147,7 +143,7 @@ const InvoiceDashboardPage = () => {
     totalAmount: invoices?.reduce((sum, invoice) => sum + (invoice.total || 0), 0) || 0,
     paidAmount: invoices?.filter(invoice => invoice.status === 'Paid').reduce((sum, invoice) => sum + (invoice.total || 0), 0) || 0,
     pendingAmount: invoices?.filter(invoice => invoice.status === 'Pending').reduce((sum, invoice) => sum + (invoice.total || 0), 0) || 0
-  };
+  }), [invoices]);
 
   // Filter invoices based on search and filters
   const filteredInvoices = (invoices || []).filter(invoice => {

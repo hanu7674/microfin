@@ -1,5 +1,5 @@
 import React from 'react';
-import { Panel, Container, Content, FlexboxGrid } from 'rsuite';
+import { Panel } from 'rsuite';
 
 const TermsOfService = () => (
   <>

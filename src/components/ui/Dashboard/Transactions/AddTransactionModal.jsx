@@ -10,14 +10,14 @@ import {
   Stack,
   Message
 } from 'rsuite';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useTransactions } from '../../../../hooks/useDataService';
 
 const AddTransactionModal = ({ show, onClose, onSuccess }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted } = getThemeVars(theme);
+  const { cardText } = getThemeVars(theme);
   const { createTransaction } = useTransactions();
 
   // Handle ResizeObserver errors

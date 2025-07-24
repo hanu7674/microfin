@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Table, Tag, Button, Tooltip, Whisper, IconButton, Loader, Stack } from 'rsuite';
+import React from 'react';
+import { Table, Tag, Tooltip, Whisper, IconButton, Loader, Stack } from 'rsuite';
 import { 
   FaEye, 
   FaEdit, 
@@ -27,7 +27,7 @@ const InvoiceTable = ({
   onRemind 
 }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
 
   const getStatusColor = (status) => {
     switch (status) {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input, SelectPicker, Button } from 'rsuite';
-import { FaSearch, FaFilter } from 'react-icons/fa';
+import { Input, SelectPicker } from 'rsuite';
+import { FaSearch } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 

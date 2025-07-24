@@ -3,8 +3,6 @@ import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { FaCheckCircle, FaClock } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { updateBusinessProfile } from '../../../../redux/businessProfile';
-import { Button } from 'rsuite';
 import { notify } from 'reapop';
 const VerificationStatus = ({ emailVerified, phoneVerified, documentVerification, userId }) => {
   const { theme } = useTheme();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Nav, Sidenav } from 'rsuite';
+import { Nav, Sidenav } from 'rsuite';
 import { 
   FaChartLine, 
   FaExchangeAlt, 

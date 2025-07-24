@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Stack, Panel, Button, Table, Tag, Avatar, Whisper, Tooltip, IconButton, Loader, Message, Modal, Form, Schema, toaster, Notification, SelectPicker } from 'rsuite';
+import { Stack, Panel, Button, Table, Tag, Avatar, Whisper, Tooltip, IconButton, Loader, Message, Modal, Form, Schema, SelectPicker } from 'rsuite';
 import { FaTicketAlt, FaUser, FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useSupport } from '../../../../hooks/useDataService';
 
 const { StringType } = Schema.Types;

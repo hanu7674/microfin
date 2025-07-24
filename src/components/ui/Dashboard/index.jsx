@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Content, Sidebar, Panel, FlexboxGrid, Stack, Grid, Col, Loader } from 'rsuite';
+import { Grid, Col, Loader } from 'rsuite';
 import { useTheme } from '../../Theme/theme';
 import { getThemeVars } from '../../Theme/themeVars';
-import DashboardSidebar from './DashboardSidebar';
 import DashboardHeader from './DashboardHeader';
 import FinancialOverview from './FinancialOverview';
 import ChartsSection from './ChartsSection';
@@ -16,12 +15,7 @@ const Dashboard = () => {
   const {
     bgMain,
     textMain,
-    bgSection,
-    cardBg,
-    cardText,
-    borderColor,
-    shadow,
-    muted
+   
   } = getThemeVars(theme);
 
   const { 

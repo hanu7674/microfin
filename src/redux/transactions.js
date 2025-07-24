@@ -1,6 +1,4 @@
 import { 
-  collection, 
-  doc, 
   getDocs, 
   getDoc, 
   addDoc, 
@@ -13,11 +11,10 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { 
-  transactionsCollection, 
   transactionById, 
   userTransactionsRef
 } from '../Firebase/firebase';
-import { dismissNotification, notify } from 'reapop';
+import { notify } from 'reapop';
 
 // Fetch Transactions Actions
 export const fetchTransactionsRequest = () => ({
@@ -96,8 +93,7 @@ export const createTransaction = (userId, transactionData) => async (dispatch) =
     if (processedTransactionData.date) {
       // Convert to Firestore timestamp if it's a Date object
       if (processedTransactionData.date instanceof Date) {
-        processedTransactionData.date = processedTransactionData.date;
-      } else if (typeof processedTransactionData.date === 'string') {
+       } else if (typeof processedTransactionData.date === 'string') {
         processedTransactionData.date = new Date(processedTransactionData.date);
       }
     }

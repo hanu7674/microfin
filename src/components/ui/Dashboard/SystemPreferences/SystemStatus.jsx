@@ -5,7 +5,7 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const SystemStatus = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor, success, warning } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
 
   const systemStatus = [
     {

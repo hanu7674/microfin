@@ -1,7 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Login from '../components/ui/Auth/Signup/Signup';
-import { LoginComponent } from '../components/ui/Auth/Login';
+ import { LoginComponent } from '../components/ui/Auth/Login';
 import TermsOfService from '../components/ui/Auth/Terms/TermsOfService';
 import PrivacyPolicy from '../components/ui/Auth/Privacy/PrivacyPolicy';
 import Dashboard from '../components/ui/Dashboard';

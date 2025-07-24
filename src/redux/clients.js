@@ -1,18 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { 
-  FETCH_CLIENTS_REQUEST, 
-  FETCH_CLIENTS_SUCCESS, 
-  FETCH_CLIENTS_FAILURE,
-  CREATE_CLIENT_REQUEST,
-  CREATE_CLIENT_SUCCESS,
-  CREATE_CLIENT_FAILURE,
-  UPDATE_CLIENT_REQUEST,
-  UPDATE_CLIENT_SUCCESS,
-  UPDATE_CLIENT_FAILURE,
-  DELETE_CLIENT_REQUEST,
-  DELETE_CLIENT_SUCCESS,
-  DELETE_CLIENT_FAILURE
-} from './types';
+
 import dataService from '../services/dataService';
 
 // Async thunks

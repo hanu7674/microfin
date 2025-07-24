@@ -8,7 +8,7 @@ import {
 } from '../reducers/types';
 import dataService from '../services/dataService';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage, firestoreDb, auth, currentSubscriptionRef } from '../Firebase/firebase';
+import { storage, firestoreDb, auth } from '../Firebase/firebase';
 import { collection, addDoc, serverTimestamp , doc, setDoc, onSnapshot} from 'firebase/firestore';
 import { SUBSCRIBE_PLAN_REQUEST, SUBSCRIBE_PLAN_SUCCESS, SUBSCRIBE_PLAN_FAILURE } from '../reducers/types';
 // Actions

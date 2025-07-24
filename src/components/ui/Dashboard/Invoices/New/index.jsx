@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Message, Loader, Button, Modal } from 'rsuite';
+import { Container, Message, Loader,  Modal } from 'rsuite';
 import { useNavigate } from 'react-router-dom';
 import CreateInvoiceHeader from './CreateInvoiceHeader';
 import SenderRecipientDetails from './SenderRecipientDetails';
@@ -12,7 +12,6 @@ import { useTheme } from '../../../../Theme/theme';
 import { getThemeVars } from '../../../../Theme/themeVars';
 import { useInvoices } from '../../../../../hooks/useDataService';
 import jsPDF from 'jspdf';
-import { FaEye } from 'react-icons/fa';
 
 const CreateInvoice = () => {
   const { theme } = useTheme();

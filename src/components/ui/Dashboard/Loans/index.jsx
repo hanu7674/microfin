@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { Grid, Row, Col, Button, Loader, Message } from 'rsuite';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
@@ -19,7 +19,7 @@ const LoanDashboardPage = () => {
   const { bgMain, cardBg, borderColor, shadow } = getThemeVars(theme);
   
   // Get loan data from Redux
-  const { loans, loading, error, fetchLoans, createLoan } = useLoans();
+  const { loans, loading, error, fetchLoans } = useLoans();
 
   const navigate = useNavigate();
 

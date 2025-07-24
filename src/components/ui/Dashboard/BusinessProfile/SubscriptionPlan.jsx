@@ -8,7 +8,7 @@ import { Loader } from 'rsuite';
 
 const SubscriptionPlan = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, success, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
   const [showModal, setShowModal] = useState(false);
   const [actionMessage, setActionMessage] = useState(null);
   const { subscription, subscriptionLoading, subscriptionError, fetchSubscription } = useBusinessProfile();

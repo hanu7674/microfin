@@ -1,10 +1,9 @@
 import React from 'react';
-import { Panel, Stack, Grid, Col, Row, IconButton } from 'rsuite';
+import { Panel, Grid, Col, Row } from 'rsuite';
 import { FaDollarSign, FaFileAlt, FaChartLine, FaMoneyBillWave, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { IconBase } from 'react-icons';
-
+ 
 const FinancialOverviewCards = ({ data = null }) => {
   const { theme } = useTheme();
   const { cardBg, borderColor, shadow, muted, textMain } = getThemeVars(theme);

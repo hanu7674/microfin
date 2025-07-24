@@ -1,7 +1,6 @@
 import React from 'react';
 import { Panel, FlexboxGrid } from 'rsuite';
 import Signup from './Signup';
-import SocialLogins from './SocialLogins';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useSelector } from 'react-redux';
@@ -9,8 +8,6 @@ import { Navigate } from 'react-router-dom';
  const SignupPage = () => {
   const {theme } = useTheme();
   const themeVars = getThemeVars(theme);
-  const handleGoogle = () => alert('Google sign up (demo)');
-  const handleMicrosoft = () => alert('Microsoft sign up (demo)');
   const handleSignInLink = () => alert('Go to sign in (demo)');
   const { user } = useSelector(state => state.auth);
   if (user?.id) {

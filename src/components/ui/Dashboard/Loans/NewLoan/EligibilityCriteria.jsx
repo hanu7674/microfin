@@ -5,7 +5,7 @@ import { getThemeVars } from '../../../../Theme/themeVars';
 
 const EligibilityCriteria = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
 
   const criteria = [
     'Minimum 6 months business operation',

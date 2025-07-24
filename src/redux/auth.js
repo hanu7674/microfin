@@ -1,12 +1,10 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, reauthenticateWithCredential, EmailAuthProvider, updatePassword, deleteUser, linkWithCredential, GoogleAuthProvider, linkWithPopup, updateProfile, signInWithPopup } from "firebase/auth";
-import { auth, usersRef, userRef, usermetadata, usernameRef, batch, imageUploadPath, usermetadataRef, ipDataRef, reviewCollection, testimonialCollection, reviewById, testimonialById, userSignupLogsById, firestoreDb, securityQuestionsRef, userLogCollectionRef, userLogRef, contactUsCollection, profileFilesUploadPath, fileRef, educationCollection, educationById, projectsCollection, projectsById, experienceById, experienceCollection, certificationsCollection, certificationsById, appStatusDocRef, emailDocRef, emailCollection, emailCollectionRef, tokensRef, userBusinessProfileRef } from "../Firebase/firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, updateProfile, signInWithPopup } from "firebase/auth";
+import { auth,  userRef, usermetadata, usernameRef, batch,   userLogRef, userBusinessProfileRef } from "../Firebase/firebase";
 import * as authActionTypes from '../reducers/types';
 import { dismissNotification, notify } from "reapop";
-import { addDoc, arrayRemove, arrayUnion, deleteDoc, FieldValue, getDoc, getDocs, onSnapshot, orderBy, query, runTransaction, serverTimestamp, setDoc, Transaction, updateDoc, where } from "firebase/firestore";
-import { deleteObject, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { onDisconnect, onValue, set } from "firebase/database";
+import { getDoc, runTransaction, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { fetchBusinessProfile } from "./businessProfile";
-
+  
 
 
 export const loginRequest = () => ({

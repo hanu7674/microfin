@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LoanApplicationPage = () => {
   const { theme } = useTheme();
-  const { bgMain, cardBg, borderColor, shadow } = getThemeVars(theme);
+  const { bgMain } = getThemeVars(theme);
   const { createLoan } = useLoans();
   const navigate = useNavigate();
 

@@ -1,4 +1,3 @@
-// src/utils/formatCurrency.js
 export function formatCurrency(amount, currency = 'INR', locale = 'en-IN') {
   if (typeof amount !== 'number') return amount;
   try {

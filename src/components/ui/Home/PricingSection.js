@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'rsuite';
 import { useSelector } from 'react-redux';
-import { convertAndFormatCurrency, formatCurrency } from '../../Theme/formatCurrency';
+import { convertAndFormatCurrency } from '../../Theme/formatCurrency';
 
 function PricingCard({ title, price, features, highlight, buttonText, onClick, sublabel, cardBg, cardText, borderColor, shadow }) {
   return (

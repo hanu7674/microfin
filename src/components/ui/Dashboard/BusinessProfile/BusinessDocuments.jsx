@@ -168,7 +168,7 @@ const BusinessDocuments = () => {
     if (!uploading && uploadProgress === 100 && !uploadError) {
       setShowModal(false);
     }
-  }, [uploading, documents]);
+  }, [uploading, documents, uploadProgress, uploadError]);
 
   return (
     <div style={{ marginBottom: 32 }}>

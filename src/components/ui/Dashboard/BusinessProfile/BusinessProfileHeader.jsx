@@ -5,7 +5,7 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const BusinessProfileHeader = ({ activeTab, onTabChange }) => {
   const { theme } = useTheme();
-  const { cardText, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardText } = getThemeVars(theme);
 
   return (
     <div style={{ marginBottom: 32 }}>

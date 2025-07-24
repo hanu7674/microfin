@@ -7,7 +7,6 @@ import {
   Stack, 
   Message,
   Divider,
-  IconButton,
   Schema,
   Grid,
   Col,
@@ -17,12 +16,12 @@ import {
   // Breadcrumb
 } from 'rsuite';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaArrowLeft, FaSave, FaTimes, FaUser, FaBuilding, FaEnvelope, FaPhone, FaHome, FaHandHoldingUsd } from 'react-icons/fa';
+import {   FaSave, FaTimes, FaUser, FaBuilding, FaEnvelope, FaPhone} from 'react-icons/fa';
 import { useTheme } from '../../../../Theme/theme';
 import { getThemeVars } from '../../../../Theme/themeVars';
 import { useClients } from '../../../../../hooks/useDataService';
 
-const { StringType, NumberType } = Schema.Types;
+const { StringType } = Schema.Types;
 
 // Define the form schema
 const model = Schema.Model({

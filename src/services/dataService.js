@@ -1,6 +1,4 @@
 import { 
-  collection, 
-  doc, 
   getDocs, 
   getDoc, 
   addDoc, 
@@ -11,52 +9,25 @@ import {
   orderBy, 
   limit,
   serverTimestamp,
-  runTransaction,
-  writeBatch,
   setDoc,
   onSnapshot
 } from 'firebase/firestore';
 import { 
-  transactionsCollection, 
   transactionById, 
   userTransactionsRef,
-  loansCollection,
   loanById,
   userLoansRef,
-  invoicesCollection,
   invoiceById,
   userInvoicesRef,
-  clientsCollection,
   clientById,
   userClientsRef,
-  businessProfilesCollection,
-  businessProfileById,
   userBusinessProfileRef,
-  analyticsCollection,
-  userAnalyticsRef,
-  financialReportsCollection,
-  userFinancialReportsRef,
-  paymentsCollection,
-  paymentById,
   userPaymentsRef,
-  accountSettingsCollection,
-  accountSettingsById,
-  userAccountSettingsRef,
-  systemPreferencesCollection,
-  systemPreferencesById,
-  userSystemPreferencesRef,
-  dashboardDataCollection,
-  dashboardDataById,
-  userDashboardDataRef,
-  kpiDataCollection,
+   userDashboardDataRef,
   userKpiDataRef,
-  chartsDataCollection,
   userChartsDataRef,
-  ticketsCollection,
-  ticketById,
   userBusinessDocumentsRef,
-  userBusinessSubscriptionRef,
-  paymentLinksCollection,
+   paymentLinksCollection,
   paymentLinkById,
   currentSubscriptionRef,
   auth,
@@ -743,8 +714,7 @@ export const paymentsService = {
   }
 };
   
-
-export default {
+const services = {
   dashboardService,
   transactionsService,
   loansService,
@@ -753,4 +723,6 @@ export default {
   supportService,
   businessProfileService,
   paymentsService
-}; 
+};
+
+export default services;

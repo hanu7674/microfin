@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, Button } from 'rsuite';
+import { Button } from 'rsuite';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
@@ -12,7 +12,7 @@ const InvoicePagination = ({
   onPageChange 
 }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, ctaBg } = getThemeVars(theme);
+  const { cardText, borderColor, muted, ctaBg } = getThemeVars(theme);
 
   const startResult = (currentPage - 1) * pageSize + 1;
   const endResult = Math.min(currentPage * pageSize, totalResults);

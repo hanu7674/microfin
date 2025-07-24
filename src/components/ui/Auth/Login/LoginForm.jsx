@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Form, Button, Checkbox, Row, Col, Stack, Schema, Message, InputGroup } from 'rsuite';
+import { Form, Button, Checkbox, Stack, Schema, Message, InputGroup } from 'rsuite';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
-import { useTheme } from '../../../Theme/theme';
-import { getThemeVars } from '../../../Theme/themeVars';
+ 
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../../../redux/auth';
@@ -14,9 +13,7 @@ const model = Schema.Model({
 });
 
 const LoginForm = () => {
-  const {theme } = useTheme();
-  const themeVars = getThemeVars(theme);
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
   const navigate = useNavigate();
   const auth = useSelector(state => state.auth);
   const [formValue, setFormValue] = useState({

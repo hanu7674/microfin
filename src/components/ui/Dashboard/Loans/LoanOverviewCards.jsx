@@ -1,12 +1,12 @@
 import React from 'react';
-import { Grid, Col, Row, Stack, Panel, IconButton } from 'rsuite';
-import { FaRupeeSign, FaBalanceScale, FaCalendar, FaClock, FaDollarSign } from 'react-icons/fa';
+import { Grid, Col, Row, Stack, Panel } from 'rsuite';
+import { FaBalanceScale, FaCalendar, FaClock, FaDollarSign } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
 const LoanOverviewCards = ({ data = null }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
 
   // Use backend data or fallback to default data
   const overviewData = data ? [

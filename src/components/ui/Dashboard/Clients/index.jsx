@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Loader, Message } from 'rsuite';
+import React, { useState, useEffect } from 'react';
+import { Loader, Message } from 'rsuite';
 import { useSelector } from 'react-redux';
 import ClientDashboardHeader from './ClientDashboardHeader';
 import ClientSummaryCards from './ClientSummaryCards';
 import ClientSearchFilter from './ClientSearchFilter';
 import ClientTable from './ClientTable';
 import ClientPagination from './ClientPagination';
-import AddSampleDataButton from './AddSampleDataButton';
-import ClientDebug from './ClientDebug';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useClients } from '../../../../hooks/useDataService';
@@ -30,8 +28,6 @@ const ClientManagement = () => {
     loading, 
     error, 
     fetchClients,
-    createClient,
-    updateClient,
     deleteClient
   } = useClients();
 

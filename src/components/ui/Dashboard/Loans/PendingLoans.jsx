@@ -1,11 +1,11 @@
 import React from 'react';
-import { Tag, Progress } from 'rsuite';
+import { Tag } from 'rsuite';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
 const PendingLoans = ({ data = null }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
 
   // Use processed loan data
   const loansData = data && data.length > 0 ? data : [];

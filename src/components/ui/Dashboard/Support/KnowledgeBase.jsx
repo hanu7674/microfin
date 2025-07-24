@@ -1,50 +1,10 @@
 import React, { useState } from 'react';
-import { Stack, Panel, Input, Grid, Row, Col, Loader, Message, Button, toaster, Notification } from 'rsuite';
-import { FaSearch, FaBook, FaShieldAlt, FaCreditCard, FaTools, FaLightbulb, FaQuestionCircle } from 'react-icons/fa';
+import { Stack, Panel, Input, Grid, Row, Col, Loader, Message } from 'rsuite';
+import { FaSearch } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useSelector } from 'react-redux';
-import { auth, firestoreDb, knowledgeBaseCollection } from '../../../../Firebase/firebase';
-import { collection, addDoc } from 'firebase/firestore';
 
-const sampleCategories = [
-  {
-    title: 'Getting Started',
-    description: 'Learn the basics of using our platform',
-    category: 'Getting Started',
-    color: '#4285F4'
-  },
-  {
-    title: 'Account Management',
-    description: 'Manage your account settings and preferences',
-    category: 'Account Management',
-    color: '#34A853'
-  },
-  {
-    title: 'Billing & Payments',
-    description: 'Understand billing cycles and payment methods',
-    category: 'Billing & Payments',
-    color: '#EA4335'
-  },
-  {
-    title: 'Technical Support',
-    description: 'Troubleshoot technical issues and errors',
-    category: 'Technical Support',
-    color: '#FF9800'
-  },
-  {
-    title: 'Best Practices',
-    description: 'Tips and tricks for optimal usage',
-    category: 'Best Practices',
-    color: '#9C27B0'
-  },
-  {
-    title: 'FAQ',
-    description: 'Frequently asked questions and answers',
-    category: 'FAQ',
-    color: '#607D8B'
-  }
-];
 
 const KnowledgeBase = () => {
   const { theme } = useTheme();
@@ -53,7 +13,7 @@ const KnowledgeBase = () => {
   const knowledgeBase = useSelector(state => state.support.knowledgeBase);
   const loading = useSelector(state => state.support.kbLoading);
   const error = useSelector(state => state.support.kbError);
-  const [inserting, setInserting] = useState(false);
+ 
 
   
 

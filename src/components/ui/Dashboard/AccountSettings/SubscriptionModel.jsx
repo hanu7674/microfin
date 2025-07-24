@@ -2,8 +2,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Stack, Message, CardGroup, Card, Loader } from 'rsuite';
-import PricingSection from '../../Home/PricingSection';
+import { Modal, Button, Stack, CardGroup, Card, Loader } from 'rsuite';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
@@ -47,7 +46,7 @@ const SubscribeModal = ({ open, onClose, onSubscribe }) => {
       setLoading(false);
     }, 2000);
   }, []);
-  const { selectedPlanTheme, selectedPlanText, selectedPlanBg, selectedPlanBorder, cardBg, cardText, selectedPlanBgHover, borderColor, shadow } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
   return (
     <Modal open={open} onClose={onClose} size="sm">
       <Modal.Header>

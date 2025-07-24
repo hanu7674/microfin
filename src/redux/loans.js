@@ -1,18 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { 
-  FETCH_LOANS_REQUEST, 
-  FETCH_LOANS_SUCCESS, 
-  FETCH_LOANS_FAILURE,
-  CREATE_LOAN_REQUEST,
-  CREATE_LOAN_SUCCESS,
-  CREATE_LOAN_FAILURE,
-  UPDATE_LOAN_REQUEST,
-  UPDATE_LOAN_SUCCESS,
-  UPDATE_LOAN_FAILURE,
-  DELETE_LOAN_REQUEST,
-  DELETE_LOAN_SUCCESS,
-  DELETE_LOAN_FAILURE
-} from './types';
 import dataService from '../services/dataService';
 
 // Async thunks

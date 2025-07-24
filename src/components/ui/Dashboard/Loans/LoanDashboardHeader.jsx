@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, Stack } from 'rsuite';
+import { Button } from 'rsuite';
 import { FaPlus } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
 const LoanDashboardHeader = ({ onApplyLoan }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, ctaBg } = getThemeVars(theme);
+  const { cardText, ctaBg } = getThemeVars(theme);
 
   return (
     <div style={{ marginBottom: 24 }}>

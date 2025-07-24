@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Panel, Stack, Table, Tag } from 'rsuite';
+import { Panel, Table, Tag } from 'rsuite';
 import { useTheme } from '../../Theme/theme';
 import { getThemeVars } from '../../Theme/themeVars';
 import { useTransactions } from '../../../hooks/useDataService';

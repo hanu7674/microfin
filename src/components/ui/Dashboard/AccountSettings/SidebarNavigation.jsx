@@ -1,4 +1,4 @@
-import React from 'react';
+  import React from 'react';
 import { Button, Stack } from 'rsuite';
 import { FaUser, FaShieldAlt, FaBell, FaCreditCard, FaLink } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
@@ -6,7 +6,7 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const SidebarNavigation = ({ activeTab, onTabChange }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
+  const { cardBg,   borderColor, shadow } = getThemeVars(theme);
 
   const navigationItems = [
     { key: 'profile', label: 'Profile', icon: <FaUser /> },

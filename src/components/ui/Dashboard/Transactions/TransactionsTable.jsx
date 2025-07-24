@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Tag, Button, Tooltip, Whisper, IconButton, Loader, Stack } from 'rsuite';
+import React, { useState } from 'react';
+import { Table, Tag, Tooltip, Whisper, IconButton, Loader, Stack } from 'rsuite';
 import { 
   FaEye, 
   FaEdit, 
   FaTrash, 
-  FaDownload,
   FaArrowUp,
   FaArrowDown
 } from 'react-icons/fa';
@@ -27,7 +26,7 @@ const TransactionsTable = ({
   onDelete 
 }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow,  cardBorderBottomColor } = getThemeVars(theme);
 
   // Modal states
   const [viewModal, setViewModal] = useState({ show: false, transaction: null });

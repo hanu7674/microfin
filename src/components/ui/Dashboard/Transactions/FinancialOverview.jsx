@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Panel, Stack, FlexboxGrid, Button } from 'rsuite';
-import { FaArrowUp, FaArrowDown, FaBalanceScale, FaPlus } from 'react-icons/fa';
+import React from 'react';
+import { Panel, Stack, FlexboxGrid } from 'rsuite';
+import { FaArrowUp, FaArrowDown, FaBalanceScale } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 const FinancialOverview = ({ data = null }) => {

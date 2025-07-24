@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Stack, Panel, Button } from 'rsuite';
 import { FaDownload, FaUpload, FaTrash, FaChevronRight } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';

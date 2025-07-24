@@ -6,7 +6,7 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const ClientDashboardHeader = ({ onExport, onAddClient }) => {
   const { theme } = useTheme();
-  const { cardText, borderColor, ctaBg, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardText, borderColor, ctaBg } = getThemeVars(theme);
 
   return (
     <div style={{ marginBottom: 32 }}>

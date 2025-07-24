@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Input, Button, Form, Schema, Message, Stack } from 'rsuite';
+import { Button, Form, Schema, Message, Stack } from 'rsuite';
 import { FaLink } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars'; 
 import { usePayments } from '../../../../hooks/useDataService';
 import dataService from '../../../../services/dataService';
 import { useDispatch } from 'react-redux';
-import { updatePaymentLinkStatus, setPaymentLinkError, clearPaymentLinkStatus } from '../../../../redux/payments';
+import { updatePaymentLinkStatus, setPaymentLinkError } from '../../../../redux/payments';
 
-const { StringType, NumberType } = Schema.Types;
+const { StringType } = Schema.Types;
 
 const model = Schema.Model({
   amount: StringType().isRequired('Amount is required').pattern(/^\d+(\.\d{1,2})?$/, 'Enter a valid amount'),
@@ -19,8 +19,8 @@ const model = Schema.Model({
 
 const QuickPaymentLink = () => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, ctaBg, cardBorderBottomColor } = getThemeVars(theme);
-  const { generatedLink, linkLoading, linkError, generatePaymentLink, expireOldPaymentLinks, listenToPaymentLink, clearPaymentLinkStatus } = usePayments();
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
+  const { generatedLink, linkLoading, linkError, generatePaymentLink, expireOldPaymentLinks,  clearPaymentLinkStatus } = usePayments();
   const dispatch = useDispatch();
 
   const [formValue, setFormValue] = useState({

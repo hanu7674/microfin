@@ -10,14 +10,14 @@ import {
   Stack,
   Message
 } from 'rsuite';
-import { FaEdit, FaTimes } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useTransactions } from '../../../../hooks/useDataService';
 
 const EditTransactionModal = ({ show, onClose, transaction, onSuccess }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted } = getThemeVars(theme);
+  const { cardText } = getThemeVars(theme);
   const { updateTransaction } = useTransactions();
 
    

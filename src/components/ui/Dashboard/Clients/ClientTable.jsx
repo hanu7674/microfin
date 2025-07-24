@@ -9,7 +9,7 @@ const { Column, HeaderCell, Cell } = Table;
 
 const ClientTable = ({ data, selectedClients, onSelectClient, onSelectAll, onView, onEdit, onEmail }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, success, danger, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Sample client data

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Loader, Message, Stack, Grid, Row, Col } from 'rsuite';
+import { Loader, Message, Grid, Row, Col } from 'rsuite';
 import PaymentDashboardHeader from './PaymentDashboardHeader';
 import PaymentSummaryCards from './PaymentSummaryCards';
 import PaymentMethods from './PaymentMethods';

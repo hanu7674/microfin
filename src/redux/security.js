@@ -5,7 +5,7 @@ import {
   FETCH_2FA_STATUS_REQUEST, FETCH_2FA_STATUS_SUCCESS, FETCH_2FA_STATUS_FAILURE
 } from '../reducers/types';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
-import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { firestoreDb } from '../Firebase/firebase';
 
 export const fetchSessions = (userId) => async (dispatch) => {

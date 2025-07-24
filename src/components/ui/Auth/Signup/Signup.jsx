@@ -182,9 +182,9 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
       </Form.Group>
            <Checkbox name="agree" checked={formValue.agree} onChange={(v, checked) => setFormValue({ ...formValue, agree: checked })} errorMessage={formError.agree}>
           I agree to the &nbsp;
-            <a style={{ color: themeVars.textLink, cursor: 'pointer' }} onClick={() => setShowTerms(true)}>Terms of Service</a>
+            <a href='#' style={{ color: themeVars.textLink, cursor: 'pointer' }} onClick={() => setShowTerms(true)}>Terms of Service</a>
           &nbsp;and &nbsp;  
-            <a style={{ color: themeVars.textLink, cursor: 'pointer' }} onClick={() => setShowPrivacy(true)}>Privacy Policy</a>
+            <a href='#' style={{ color: themeVars.textLink, cursor: 'pointer' }} onClick={() => setShowPrivacy(true)}>Privacy Policy</a>
         </Checkbox>
             
              <Checkbox name="marketing" checked={formValue.marketing} onChange={(v, checked) => setFormValue({ ...formValue, marketing: checked })} errorMessage={formError.marketing}>

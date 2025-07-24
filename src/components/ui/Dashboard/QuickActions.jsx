@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Panel, Button, Stack, Loader } from 'rsuite';
+import {  Button,   Loader } from 'rsuite';
 import { useNavigate } from 'react-router-dom';
 import { 
   FaUserPlus, 
@@ -14,7 +14,7 @@ import { getThemeVars } from '../../Theme/themeVars';
 
 const QuickActions = ({ dashboardData = null }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, ctaBg, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow,  muted, cardBorderBottomColor } = getThemeVars(theme);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 

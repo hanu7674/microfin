@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Modal, 
   Stack, 
@@ -6,14 +6,14 @@ import {
   Message,
   Panel
 } from 'rsuite';
-import { FaTrash, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
+import { FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useTransactions } from '../../../../hooks/useDataService';
 
 const DeleteTransactionModal = ({ show, onClose, transaction, onSuccess }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, muted } = getThemeVars(theme);
   const { deleteTransaction } = useTransactions();
 
   const [loading, setLoading] = useState(false);

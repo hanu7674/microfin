@@ -1,28 +1,19 @@
 import { 
-  collection, 
-  doc, 
   getDocs, 
   getDoc, 
-  addDoc, 
   updateDoc, 
-  deleteDoc, 
   query, 
-  where, 
   orderBy, 
   limit,
   serverTimestamp, 
   setDoc
 } from 'firebase/firestore';
 import { 
-  dashboardDataCollection, 
-  dashboardDataById, 
   userDashboardDataRef,
-  kpiDataCollection,
   userKpiDataRef,
-  chartsDataCollection,
   userChartsDataRef
 } from '../Firebase/firebase';
-import { dismissNotification, notify } from 'reapop';
+import { notify } from 'reapop';
 
 // Dashboard Data Actions
 export const fetchDashboardDataRequest = () => ({

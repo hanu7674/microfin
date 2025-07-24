@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { FaTrendingUp, FaClock, FaCheckCircle } from 'react-icons/fa';
+import { FaClock, FaCheckCircle } from 'react-icons/fa';
 import { IoTrendingUpOutline } from 'react-icons/io5';
 
 const PaymentSummaryCards = ({ payments = [] }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, success, warning, info } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, success, warning } = getThemeVars(theme);
 
   // Calculate today's payments
   const today = new Date();

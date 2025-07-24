@@ -5,7 +5,7 @@ import FinancialReportsHeader from './FinancialReportsHeader';
 import FinancialOverviewCards from './FinancialOverviewCards';
 import ChartSection from './ChartSection';
 import BusinessTrends from './BusinessTrends';
-import { Grid, Row, Col, Loader, Message } from 'rsuite';
+import { Grid,Row, Col, Loader, Message } from 'rsuite';
 import RevenueBreakdown from './RevenueBreakdown';
 import { useTransactions } from '../../../../hooks/useDataService';
 import { FaDollarSign, FaFileAlt, FaChartLine, FaMoneyBillWave } from 'react-icons/fa';
@@ -13,7 +13,7 @@ import jsPDF from 'jspdf';
 
 const FinancialReportsPage = () => {
   const { theme } = useTheme();
-  const { bgMain, cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
+  const { bgMain, cardBg, borderColor, shadow } = getThemeVars(theme);
   
   // Get transaction data from Redux
   const { transactions, loading, error, fetchTransactions } = useTransactions();
@@ -417,12 +417,16 @@ const FinancialReportsPage = () => {
       <div style={{height: '10px'}}></div>
       
       <Grid fluid>
+        <Row>
+
+        
         <Col md={16} sm={16}>
           <RevenueBreakdown data={financialMetrics.revenueBreakdown} />
         </Col>
         <Col md={8} sm={8}>
           <BusinessTrends data={financialMetrics.businessTrends} />
         </Col>
+        </Row>
       </Grid>
     </div>
   );

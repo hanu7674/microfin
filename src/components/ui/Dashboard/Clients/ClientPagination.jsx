@@ -5,7 +5,7 @@ import { getThemeVars } from '../../../Theme/themeVars';
 
 const ClientPagination = ({ currentPage, totalPages, totalResults, pageSize, onPageChange }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow } = getThemeVars(theme);
+  const { cardText } = getThemeVars(theme);
 
   const startResult = (currentPage - 1) * pageSize + 1;
   const endResult = Math.min(currentPage * pageSize, totalResults);

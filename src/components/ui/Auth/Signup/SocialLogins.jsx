@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Col, FlexboxGrid } from 'rsuite';
+import { Button, FlexboxGrid } from 'rsuite';
 import { FaGoogle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';

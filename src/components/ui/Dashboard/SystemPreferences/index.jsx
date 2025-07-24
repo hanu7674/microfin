@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid, Row, Col } from 'rsuite';
+import { Grid, Row, Col } from 'rsuite';
 import SystemPreferencesHeader from './SystemPreferencesHeader';
 import GeneralSettings from './GeneralSettings';
 import DisplayPreferences from './DisplayPreferences';

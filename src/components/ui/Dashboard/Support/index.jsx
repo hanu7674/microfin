@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Container, Grid, Row, Col } from 'rsuite';
+import { Grid, Row, Col } from 'rsuite';
 import SupportHeader from './SupportHeader';
 import SupportOverview from './SupportOverview';
 import SupportTickets from './SupportTickets';

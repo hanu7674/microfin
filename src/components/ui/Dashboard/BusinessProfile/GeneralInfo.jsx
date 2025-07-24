@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { updateBusinessProfile } from '../../../../redux/businessProfile';
 const GeneralInfo = ({ profile }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({

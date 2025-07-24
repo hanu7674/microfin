@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Loader, Button } from 'rsuite';
+import { Container, Loader } from 'rsuite';
 import AnalyticsHeader from './AnalyticsHeader';
 import KPICards from './KPICards';
 import RevenueTrend from './RevenueTrend';
@@ -43,16 +43,6 @@ const fakeCustomerAcquisitionWeek = last7Days.map((date) => ({
   customers: 30 + Math.floor(Math.random() * 70)
 }));
 
-// Generate fake data for the last 30 days (month)
-const last30Days = getLastNDates(30);
-const fakeRevenueTrendMonth = last30Days.map((date, i) => ({
-  date: date.toISOString().split('T')[0],
-  revenue: 10000 + i * 500 + Math.floor(Math.random() * 1000)
-}));
-const fakeCustomerAcquisitionMonth = last30Days.map((date) => ({
-  date: date.toISOString().split('T')[0],
-  customers: 20 + Math.floor(Math.random() * 80)
-}));
 
 const fakeKpiData = {
   totalRevenue: { value: 123456, change: 15, trend: 'positive' },

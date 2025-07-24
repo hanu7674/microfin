@@ -4,7 +4,7 @@ import { Stack, Panel, Button, Tag, Loader, Message } from 'rsuite';
 import { FaDesktop } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
-import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { fetchSessions, revokeSession, sendPasswordReset, fetch2FAStatus } from '../../../../redux/security';
 
 const SecuritySettings = () => {
@@ -14,13 +14,6 @@ const SecuritySettings = () => {
   const dispatch = useDispatch();
   const { sessions, loading, error, twoFAEnabled, passwordResetSuccess } = useSelector(state => state.security);
   const user = getAuth().currentUser;
-
-  // Helper to get device info
-  const getDeviceInfo = () => {
-    return window.navigator.userAgent;
-  };
-
-  // Register current session in Firestore if not already present
    
   useEffect(() => {
     if (user) {

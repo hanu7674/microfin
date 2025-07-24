@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Input, Button, Tag } from 'rsuite';
-import { FaEdit, FaCheckCircle, FaClock, FaUniversity } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useDispatch } from 'react-redux';
 import { updateBusinessProfile } from '../../../../redux/businessProfile';
 const BankDetails = ({ profile }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, success, warning, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, cardBorderBottomColor } = getThemeVars(theme);
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({...profile});

@@ -24,11 +24,7 @@ const InvoiceNotes = ({ formData, onFormChange }) => {
           }}
         >
           <h3 style={{
-            fontSize: 18,
-            fontWeight: 600,
-            margin: 0,
-            marginBottom: 16,
-            color: cardText,
+             
             fontSize: 18, 
         fontWeight: 600, 
         margin: 0, 

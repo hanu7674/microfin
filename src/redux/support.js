@@ -1,5 +1,5 @@
-import { collection, onSnapshot, addDoc } from 'firebase/firestore';
-import { auth, firestoreDb, supportTicketsCollection, callbackRequestsCollection, knowledgeBaseCollection } from '../Firebase/firebase';
+import { onSnapshot } from 'firebase/firestore';
+import { auth, supportTicketsCollection, callbackRequestsCollection, knowledgeBaseCollection } from '../Firebase/firebase';
 import * as types from './types';
 import dataService from '../services/dataService';
 

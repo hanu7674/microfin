@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Stack } from 'rsuite';
-import { FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaGoogle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { FaMicrosoft } from 'react-icons/fa6';

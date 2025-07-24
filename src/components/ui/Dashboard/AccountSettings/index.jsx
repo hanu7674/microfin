@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Col, Container, Grid, Row, Stack } from 'rsuite';
+import { Col, Grid, Row } from 'rsuite';
 import AccountSettingsHeader from './AccountSettingsHeader';
 import SidebarNavigation from './SidebarNavigation';
 import ProfileInformation from './ProfileInformation';

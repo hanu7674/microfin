@@ -1,5 +1,4 @@
 import React from 'react';
-import { Panel, Stack } from 'rsuite';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 

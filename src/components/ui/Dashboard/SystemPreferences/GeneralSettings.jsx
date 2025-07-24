@@ -4,7 +4,7 @@ import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGeneralSettings, updateGeneralSettings } from '../../../../redux/generalSettings';
-import { formatCurrency } from '../../../Theme/formatCurrency';
+ 
 
 const GeneralSettings = () => {
   const { theme } = useTheme();

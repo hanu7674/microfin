@@ -23,9 +23,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 const LoanApplicationForm = ({ onSaveDraft, onPrevious, onSubmit }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor, ctaBg } = getThemeVars(theme);
-  const fileInputRef = useRef(null);
-
+  const { cardBg, cardText, borderColor, shadow, ctaBg, muted } = getThemeVars(theme);
+ 
   // Current step state
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
@@ -180,13 +179,6 @@ const LoanApplicationForm = ({ onSaveDraft, onPrevious, onSubmit }) => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  // Handle file upload
-  const handleFileUpload = (documentType) => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
   };
 
   // Handle file selection

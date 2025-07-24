@@ -1,12 +1,12 @@
 import React from 'react';
-import { Grid, Col, Row, Panel, Stack, IconButton } from 'rsuite';
-import { FaFileAlt, FaCheckCircle, FaClock, FaExclamationTriangle, FaRupeeSign, FaMoneyBillWave } from 'react-icons/fa';
+import { Grid, Col, Row, Panel, Stack } from 'rsuite';
+import { FaFileAlt, FaCheckCircle, FaClock, FaExclamationTriangle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 
 const InvoiceSummaryCards = ({ data = null }) => {
   const { theme } = useTheme();
-  const { cardBg, cardText, borderColor, shadow, muted, cardBorderBottomColor } = getThemeVars(theme);
+  const { cardBg, cardText, borderColor, shadow, muted } = getThemeVars(theme);
 
   // Use backend data or fallback to default data
   const summaryData = data ? [

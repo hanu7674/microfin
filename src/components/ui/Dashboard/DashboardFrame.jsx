@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Sidebar, Sidenav, Content, Nav,Navbar, DOMHelper } from 'rsuite';
-import { Outlet , NavLinkProps, NavLink as BaseNavLink } from 'react-router-dom';
+import { Outlet ,  NavLink as BaseNavLink } from 'react-router-dom';
 import ArrowLeftLineIcon from '@rsuite/icons/ArrowLeftLine';
 import ArrowRightLineIcon from '@rsuite/icons/ArrowRightLine';
 import { withAuthentication } from '../../../Session';

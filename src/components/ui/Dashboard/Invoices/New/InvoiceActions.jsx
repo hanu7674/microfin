@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button } from 'rsuite';
-import { FaLock, FaDownload, FaPaperPlane } from 'react-icons/fa';
+import { FaDownload, FaPaperPlane } from 'react-icons/fa';
 import { useTheme } from '../../../../Theme/theme';
 import { getThemeVars } from '../../../../Theme/themeVars';
 
 const InvoiceActions = ({ onSaveDraft, onDownloadPDF, onCancel, onSendInvoice }) => {
   const { theme } = useTheme();
-  const { cardText, borderColor, ctaBg } = getThemeVars(theme);
+  const { borderColor, ctaBg } = getThemeVars(theme);
 
   return (
     <div style={{ 

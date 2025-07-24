@@ -1,6 +1,5 @@
 import React from 'react';
-  import { FaHome, FaHandHoldingUsd } from 'react-icons/fa';
-import { useTheme } from '../../../../Theme/theme';
+ import { useTheme } from '../../../../Theme/theme';
 import { getThemeVars } from '../../../../Theme/themeVars';
 import { Link } from 'react-router-dom';
 const LoanApplicationHeader = () => {

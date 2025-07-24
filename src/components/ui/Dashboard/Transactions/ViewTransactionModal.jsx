@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
   Modal, 
   Stack, 
   Panel,
   Tag,
-  Divider,
   Button
 } from 'rsuite';
-import { FaEye, FaArrowUp, FaArrowDown, FaCalendar, FaFileAlt, FaUser, FaTag } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaCalendar } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 

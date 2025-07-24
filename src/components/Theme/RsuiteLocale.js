@@ -11,8 +11,6 @@ import zhTW from 'rsuite/locales/zh_TW';
 import jaJP from 'rsuite/locales/ja_JP';
 import koKR from 'rsuite/locales/ko_KR';
 
-// ...other imports
-
 const localeMap = {
 
   'en-US': enUS,

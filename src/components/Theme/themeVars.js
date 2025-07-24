@@ -1,12 +1,10 @@
-// Theme variables for light and dark mode
-
+ 
 export function getThemeVars(theme) {
   const isDark = theme === 'dark';
   return {
     isDark,
     bgMain: isDark ? '#18191A' : '#fff',
-    bgSection: isDark ? '#23272F' : '#F7F8FA',
-    textMain: isDark ? '#fff' : '#18191A',
+     textMain: isDark ? '#fff' : '#18191A',
     textSecondary: isDark ? '#bbb' : '#666',
     textLink: isDark ? '#007bff' : '#007bff',
     textLinkHover: isDark ? '#0056b3' : '#0056b3',
