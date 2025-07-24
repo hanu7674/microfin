@@ -1,18 +1,18 @@
 import React from 'react';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
+import { Button, Stack } from 'rsuite';
 
-const AnalyticsHeader = () => {
+const AnalyticsHeader = ({ showFakeData, setShowFakeData }) => {
   const { theme } = useTheme();
   const { cardText, cardBorderBottomColor } = getThemeVars(theme);
 
   return (
     <div style={{ marginBottom: 32 }}>
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        marginBottom: 16
-      }}>
+      <Stack justifyContent='space-between'>
+        <Stack.Item>
+
+        
         <h1 style={{ 
           fontSize: 28, 
           fontWeight: 700, 
@@ -32,8 +32,16 @@ const AnalyticsHeader = () => {
           padding: '0 16px'
         }}>
           Monitor your business performance and key insights
-        </p>
-      </div>
+        </p></Stack.Item>
+        <Stack.Item>
+
+       
+        <div style={{ marginBottom: 24 }}>
+          <Button appearance={showFakeData ? 'primary' : 'ghost'} onClick={() => setShowFakeData(v => !v)}>
+            {showFakeData ? 'Hide Fake Data' : 'Show Fake Data'}
+          </Button>
+        </div> </Stack.Item>
+      </Stack>
     </div>
   );
 };

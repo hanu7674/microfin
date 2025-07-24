@@ -609,7 +609,7 @@ export const supportService = {
   async createCallbackRequest(userId, requestData) {
     try {
       const ref = callbackRequestsCollection(userId);
-      const newRequest = { ...requestData, createdAt: serverTimestamp() };
+      const newRequest = { ...requestData, createdAt: serverTimestamp(), status: 'Pending' };
       const docRef = await addDoc(ref, newRequest);
       return { id: docRef.id, ...newRequest };
     } catch (error) {

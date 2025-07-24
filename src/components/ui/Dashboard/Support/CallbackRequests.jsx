@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { Stack, Panel, Button, Table, Tag, Avatar, Whisper, Tooltip, IconButton, Loader, Message, Modal, Form, Schema, toaster, Notification, SelectPicker } from 'rsuite';
-import { FaPhone, FaUser, FaEye, FaPhoneAlt, FaCheckCircle } from 'react-icons/fa';
+import { Stack, Panel, Button, Table, Tag, Avatar, Whisper, Tooltip, IconButton, Loader, Message, Modal, Form, Schema, toaster, Notification, SelectPicker, TimePicker } from 'rsuite';
+import { FaPhone, FaUser, FaEye, FaPhoneAlt, FaCheckCircle, FaTrash } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { useSelector } from 'react-redux';
 import { useSupport } from '../../../../hooks/useDataService';
 
-const { StringType } = Schema.Types;
+const { StringType, DateType } = Schema.Types;
 const callbackModel = Schema.Model({
   customer: StringType().isRequired('Customer name is required'),
   phone: StringType().isRequired('Phone is required'),
   email: StringType().isEmail('Enter a valid email').isRequired('Email is required'),
   reason: StringType().isRequired('Reason is required'),
-  preferredTime: StringType().isRequired('Preferred time is required'),
+  preferredTime: DateType().isRequired('Preferred time is required'),
   priority: StringType().isRequired('Priority is required'),
 });
 
@@ -22,9 +22,11 @@ const CallbackRequests = () => {
   const callbackRequests = useSelector(state => state.support.callbackRequests);
   const loading = useSelector(state => state.support.callbackLoading);
   const error = useSelector(state => state.support.callbackError);
-  const { createCallbackRequest } = useSupport();
+  const { createCallbackRequest, updateCallbackRequest, deleteCallbackRequest } = useSupport();
 
+   
   const [showModal, setShowModal] = useState(false);
+  const [viewMode, setViewMode] = useState(false);
   const [formValue, setFormValue] = useState({
     customer: '',
     phone: '',
@@ -52,6 +54,40 @@ const CallbackRequests = () => {
     });
     setFormError({});
     toaster.push(<Notification type="success" header="Success">Callback request created!</Notification>, { placement: 'topEnd' });
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setViewMode(false);
+    setFormValue({
+      customer: '',
+      phone: '',
+      email: '',
+      reason: '',
+      preferredTime: '',
+      priority: '',
+    });
+    setFormError({});
+  };
+
+  const handleViewDetails = (request) => {
+    setFormValue(request);
+    setViewMode(true);
+    setShowModal(true);
+  };
+
+  const handleMarkComplete = (request) => {
+    updateCallbackRequest(request.id, { ...request, status: 'Completed' });
+    toaster.push(<Notification type="success" header="Success">Marked as completed</Notification>, { placement: 'topEnd' });
+  };
+
+  const handleDelete = (request) => {
+    deleteCallbackRequest(request.id);
+    toaster.push(<Notification type="success" header="Success">Request deleted</Notification>, { placement: 'topEnd' });
+  };
+
+  const handleCall = (request) => {
+    window.open(`tel:${request.phone}`);
   };
 
   const getStatusColor = (status) => {
@@ -86,6 +122,10 @@ const CallbackRequests = () => {
   );
 
   const renderStatus = (status) => (
+    <div>
+      {status ? (
+        
+     
     <Tag color={getStatusColor(status)} style={{ 
       backgroundColor: getStatusColor(status) === 'green' ? '#e6f4ea' : 
                      getStatusColor(status) === 'blue' ? '#e3f2fd' : 
@@ -93,7 +133,11 @@ const CallbackRequests = () => {
       color: getStatusColor(status) === 'green' ? '#1e7e34' : 
              getStatusColor(status) === 'blue' ? '#1976d2' : 
              getStatusColor(status) === 'orange' ? '#f57c00' : '#d32f2f'
-    }}>{status}</Tag>
+    }}>{status}</Tag>): <>
+    <Tag color="red" style={{ backgroundColor: '#ffebee', color: '#d32f2f' }}>N/A</Tag>
+    </>
+  }
+  </div>
   );
 
   const renderPriority = (priority) => (
@@ -108,16 +152,21 @@ const CallbackRequests = () => {
   const renderActions = (request) => (
     <Stack spacing={8}>
       <Whisper placement="top" trigger="hover" speaker={<Tooltip>View Details</Tooltip>}>
-        <IconButton icon={<FaEye />} appearance="subtle" circle />
+        <IconButton icon={<FaEye />} appearance="subtle" circle onClick={() => handleViewDetails(request)} />
       </Whisper>
       <Whisper placement="top" trigger="hover" speaker={<Tooltip>Call Customer</Tooltip>}>
-        <IconButton icon={<FaPhoneAlt />} appearance="subtle" circle color="green" />
+        <IconButton icon={<FaPhoneAlt />} appearance="subtle" circle color="green" onClick={() => handleCall(request)} />
       </Whisper>
       <Whisper placement="top" trigger="hover" speaker={<Tooltip>Mark Complete</Tooltip>}>
-        <IconButton icon={<FaCheckCircle />} appearance="subtle" circle color="green" />
+        <IconButton icon={<FaCheckCircle />} appearance="subtle" circle color="green" onClick={() => handleMarkComplete(request)} />
+      </Whisper>
+      <Whisper placement="top" trigger="hover" speaker={<Tooltip>Delete Request</Tooltip>}>
+        <IconButton icon={<FaTrash />} appearance="subtle" circle color="red" onClick={() => handleDelete(request)} />
       </Whisper>
     </Stack>
   );
+
+  
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -132,8 +181,8 @@ const CallbackRequests = () => {
         <div style={{ padding: '0 16px 16px' }}>
           {loading && <Loader center content="Loading requests..." />}
           {error && <Message type="error" description={error} />}
-          <Table data={callbackRequests} autoHeight style={{ background: 'transparent' }} rowHeight={60}>
-            <Table.Column flexGrow={1}>
+          <Table data={callbackRequests} autoHeight  rowHeight={60}>
+            <Table.Column flexGrow={2}>
               <Table.HeaderCell>Customer</Table.HeaderCell>
               <Table.Cell>{(rowData) => renderCustomer(rowData)}</Table.Cell>
             </Table.Column>
@@ -153,20 +202,17 @@ const CallbackRequests = () => {
               <Table.HeaderCell>Priority</Table.HeaderCell>
               <Table.Cell>{(rowData) => renderPriority(rowData.priority)}</Table.Cell>
             </Table.Column>
-            <Table.Column flexGrow={1}>
-              <Table.HeaderCell>Requested</Table.HeaderCell>
-              <Table.Cell dataKey="requestTime" />
-            </Table.Column>
-            <Table.Column flexGrow={1}>
+             
+            <Table.Column flexGrow={2}>
               <Table.HeaderCell>Actions</Table.HeaderCell>
               <Table.Cell>{(rowData) => renderActions(rowData)}</Table.Cell>
             </Table.Column>
           </Table>
         </div>
       </Panel>
-      <Modal open={showModal} onClose={() => setShowModal(false)} size="xs">
+      <Modal open={showModal} onClose={() => handleCloseModal()} size="xs">
         <Modal.Header>
-          <Modal.Title>New Callback Request</Modal.Title>
+          <Modal.Title>{viewMode ? 'Callback Request Details' : 'New Callback Request'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form
@@ -177,6 +223,7 @@ const CallbackRequests = () => {
             onCheck={setFormError}
             checkTrigger="change"
             error={formError}
+            readOnly={viewMode}
           >
             <Form.Group controlId="customer">
               <Form.ControlLabel>Customer Name</Form.ControlLabel>
@@ -196,7 +243,7 @@ const CallbackRequests = () => {
             </Form.Group>
             <Form.Group controlId="preferredTime">
               <Form.ControlLabel>Preferred Time</Form.ControlLabel>
-              <Form.Control name="preferredTime" />
+              <Form.Control block accepter={TimePicker}  hideMinutes={minute => minute % 15 !== 0} hideHours={ hour => hour < 9 || hour > 17 } placement='auto' name="preferredTime" />
             </Form.Group>
             <Form.Group controlId="priority">
               <Form.ControlLabel>Priority</Form.ControlLabel>
@@ -205,8 +252,19 @@ const CallbackRequests = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleAddRequest} appearance="primary">Add Request</Button>
-          <Button onClick={() => setShowModal(false)} appearance="subtle">Cancel</Button>
+          {viewMode && (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Button onClick={() => handleCloseModal()} appearance="subtle">Close</Button>
+              <Button appearance="primary" onClick={() => setViewMode(false)}>Edit Request</Button>
+            </div>
+          )}
+          {!viewMode && (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Button onClick={() => setShowModal(false)} appearance="subtle">Cancel</Button>
+              <Button onClick={handleAddRequest} appearance="primary">Add a new Request</Button>
+            </div>
+          )}
+          
         </Modal.Footer>
       </Modal>
     </div>
