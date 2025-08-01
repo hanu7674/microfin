@@ -11,6 +11,8 @@ import paymentsReducer from '../redux/payments';
 import securityReducer from './security';
 import generalSettingsReducer from '../redux/generalSettings';
 import supportReducer from '../redux/support';
+import teamReducer from '../redux/team';
+
 const rootReducer = combineReducers({
   notifications: notificationsReducer(),
   auth: authReducer,
@@ -23,7 +25,8 @@ const rootReducer = combineReducers({
   payments: paymentsReducer,
   security: securityReducer,
   generalSettings: generalSettingsReducer,
-  support: supportReducer
+  support: supportReducer,
+  team: teamReducer
 });
 
 export default rootReducer;

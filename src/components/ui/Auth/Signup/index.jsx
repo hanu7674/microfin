@@ -14,6 +14,8 @@ import { Navigate } from 'react-router-dom';
     return <Navigate to="/dashboard" />;
   }
   return (
+    <div style={{marginTop: '3%', backgroundColor: themeVars.bgMain, }}>
+
     <FlexboxGrid justify="center" align="middle" style={{  background: themeVars.bgSection }}>
       <FlexboxGrid.Item colspan={24} style={{ maxWidth: 560, width: '100%' }}>
         <Panel  style={{ padding: 32, margin: '40px 0', background: themeVars.cardBg }}>
@@ -26,6 +28,7 @@ import { Navigate } from 'react-router-dom';
                   </Panel>
       </FlexboxGrid.Item>
     </FlexboxGrid>
+    </div>
   );
 }
 

@@ -1,5 +1,5 @@
-import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
  import { LoginComponent } from '../components/ui/Auth/Login';
 import TermsOfService from '../components/ui/Auth/Terms/TermsOfService';
 import PrivacyPolicy from '../components/ui/Auth/Privacy/PrivacyPolicy';
@@ -20,7 +20,7 @@ import Analytics from '../components/ui/Dashboard/Analytics';
 import AccountSettings from '../components/ui/Dashboard/AccountSettings';
 import SystemPreferences from '../components/ui/Dashboard/SystemPreferences';
 import Support from '../components/ui/Dashboard/Support';
- 
+import Teams from '../components/ui/Home/Teams';
 const Home = lazy(() => import('../components/ui/Home'));
 const Signup = lazy(() => import('../components/ui/Auth/Signup'));
 
@@ -36,11 +36,30 @@ function Error500() {
   return <div style={{ textAlign: 'center', marginTop: 80, fontSize: 24, color: '#c00' }}>500 - Server Error<br />Something went wrong. Please try again later.</div>;
 }
 
+function ScrollToHash() {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      const el = document.getElementById(hash.replace('#', ''));
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [hash]);
+
+  return null;
+}
 export default function AppRoutes() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
+      <ScrollToHash />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/team" element={<Teams />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<LoginComponent />} />
         <Route path='/terms-of-service' element={<TermsOfService />} />

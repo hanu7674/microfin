@@ -72,6 +72,17 @@ const paymentsSlice = createSlice({
     clearPaymentLinkStatus: (state) => {
       state.paymentLinkStatus = null;
       state.linkError = null;
+    },
+    clearPayments: (state) => {
+      state.payments = [];
+      state.paymentMethods = [];
+      state.loading = false;
+      state.error = null;
+      state.generatedLink = null;
+      state.expiredLinks = [];
+      state.linkLoading = false;
+      state.linkError = null;
+      state.paymentLinkStatus = null;
     }
   },
   extraReducers: (builder) => {
@@ -116,5 +127,5 @@ const paymentsSlice = createSlice({
   }
 });
 
-export const { updatePaymentLinkStatus, setPaymentLinkError, clearPaymentLinkStatus } = paymentsSlice.actions;
+export const { updatePaymentLinkStatus, setPaymentLinkError, clearPaymentLinkStatus, clearPayments } = paymentsSlice.actions;
 export default paymentsSlice.reducer;

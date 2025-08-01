@@ -50,6 +50,9 @@ export const dashboardReducer = (state = initialState, action) => {
         error: action.payload
       };
 
+    case 'CLEAR_DASHBOARD':
+      return initialState;
+
     default:
       return state;
   }

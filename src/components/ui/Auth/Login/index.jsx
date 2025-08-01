@@ -23,6 +23,7 @@ export const LoginComponent = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
   return (  
+    <div style={{marginTop: '3%', backgroundColor: themeVars.bgMain, }}>
   <Container style={{ background: themeVars.bgSection }}>
     <Content>
       <FlexboxGrid justify="center" align="middle" style={{ minHeight: '90vh' }}>
@@ -68,6 +69,7 @@ export const LoginComponent = () => {
         </Modal.Body>
       </Modal>
   </Container>
+  </div>
 );
 }
   

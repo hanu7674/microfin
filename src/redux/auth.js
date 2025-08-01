@@ -1,10 +1,19 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, updateProfile, signInWithPopup } from "firebase/auth";
-import { auth,  userRef, usermetadata, usernameRef, batch,   userLogRef, userBusinessProfileRef } from "../Firebase/firebase";
+import { auth,  userRef, usermetadata, usernameRef, batch,   userLogRef, userBusinessProfileRef, userDashboardDataRef, userKpiDataRef, userAccountSettingsRef, userSystemPreferencesRef, currentSubscriptionRef } from "../Firebase/firebase";
 import * as authActionTypes from '../reducers/types';
 import { dismissNotification, notify } from "reapop";
 import { getDoc, runTransaction, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { fetchBusinessProfile } from "./businessProfile";
-  
+import { clearClients } from './clients';
+import { clearInvoices } from './invoices';
+import { clearLoans } from './loans';
+import { clearDashboard } from './dashboard';
+import { clearBusinessProfile } from './businessProfile';
+import { clearPayments } from './payments';
+import { clearGeneralSettings } from './generalSettings';
+import { clearSupport } from './support';
+import { clearTeam } from './team';
+   
 
 
 export const loginRequest = () => ({
@@ -334,7 +343,7 @@ export const createUserDataonSignup = (data, form) => {
     dispatch(
       notify({
         id: "loading",
-        message: "logging in...",
+        message: "Creating account and setting up your workspace...",
         status: "loading",
         dismissAfter: 100000,
       })
@@ -350,10 +359,8 @@ export const createUserDataonSignup = (data, form) => {
         );
       } else {
         batch.set(userRef(userId), userData);
-        updateProfile(auth.currentUser, {
-          displayName: formInfo.firstName + ' ' + formInfo.lastName
-        })
-        setDoc(userBusinessProfileRef(userId), {
+        // 1. Create business profile
+        batch.set(userBusinessProfileRef(userId), {
           ...formInfo,
           email: user.email,
           id: user.uid,
@@ -364,9 +371,74 @@ export const createUserDataonSignup = (data, form) => {
           accessToken: user.accessToken,
           creationTime: new Date(),
           lastSignInTime: user.metadata.lastSignInTime,
-          businessType: formInfo.businessType,
-          businessName: formInfo.businessName,
-        })
+          businessType: formInfo.businessType || 'Individual',
+          businessName: formInfo.businessName || formInfo.firstName + ' ' + formInfo.lastName,
+          status: 'pending',
+          verificationStatus: 'unverified'
+        });
+        // 3. Create dashboard data
+        batch.set(userDashboardDataRef(userId), {
+          totalRevenue: 0,
+          totalExpenses: 0,
+          netProfit: 0,
+          activeLoans: 0,
+          totalClients: 0,
+          pendingInvoices: 0,
+          overduePayments: 0,
+          monthlyGrowth: 0,
+          lastUpdated: serverTimestamp()
+        });
+        // 4. Create KPI data
+        batch.set(userKpiDataRef(userId), {
+          totalRevenue: { value: 0, change: 0, trend: 'positive' },
+          activeCustomers: { value: 0, change: 0, trend: 'positive' },
+          avgTransaction: { value: 0, change: 0, trend: 'positive' },
+          growthRate: { value: 0, change: 0, trend: 'positive' },
+          lastUpdated: serverTimestamp()
+        });
+        // 5. Create account settings
+        batch.set(userAccountSettingsRef(userId), {
+          notifications: {
+            email: true,
+            push: true,
+            sms: false
+          },
+          privacy: {
+            profileVisibility: 'private',
+            dataSharing: false
+          },
+          security: {
+            twoFactorAuth: false,
+            loginAlerts: true
+          },
+          lastUpdated: serverTimestamp()
+        });
+        // 6. Create system preferences
+        batch.set(userSystemPreferencesRef(userId), {
+          theme: 'light',
+          language: 'en',
+          timezone: 'UTC',
+          currency: 'USD',
+          dateFormat: 'MM/DD/YYYY',
+          lastUpdated: serverTimestamp()
+        });
+        // 7. Create current subscription (free tier)
+        batch.set(currentSubscriptionRef(userId), {
+          plan: 'free',
+          status: 'active',
+          startDate: serverTimestamp(),
+          endDate: null,
+          features: ['basic_loans', 'basic_invoices', 'basic_reports'],
+          limits: {
+            loans: 5,
+            invoices: 10,
+            clients: 10
+          }
+        });
+        // 8.Update user profile
+        updateProfile(auth.currentUser, {
+          displayName: formInfo.firstName + ' ' + formInfo.lastName
+        });
         batch
           .commit()
           .then(() => {
@@ -374,7 +446,7 @@ export const createUserDataonSignup = (data, form) => {
             dispatch(getCurrentUserDataSuccess(userData));
             dispatch(
               notify({
-                message: "Account created successfully!.",
+                message: "Account created successfully! Your workspace is ready.",
                 status: "success",
               })
             );
@@ -498,78 +570,19 @@ export const updateUserDetailsFailure = (error) => ({
 export const signupUser = (form) => async (dispatch, getState) => {
   try {
     dispatch(createNewUserRequest());
-  
-     const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+    const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
     const user = userCredential.user;
-    let userId = user.uid;
-    const { password, confirmPassword, ...formInfo } = form;
-    const userData = {
-      ...formInfo,
-      email: user.email,
-      id: user.uid,
-       photoURL: user.photoURL,
-      providerData: user.providerData,
-      emailVerified: user.emailVerified,
-      phoneNumber: user.phoneNumber,
-      accessToken: user.accessToken,
-      creationTime: new Date(),
-      lastSignInTime: user.metadata.lastSignInTime,
-        }
-          dispatch(
-            notify({
-        id: "loading",
-        message: "logging in...",
-        status: "loading",
-        dismissAfter: 100000,
-      })
-    );
-    getDoc(userRef(userId)).then((info) => {
-      if (info.exists()) {
-          dispatch(
-            notify({
-            message: "User already exists!.",
-            status: "success",
-            dismissAfter: 5000,
-          })
-        );
-        } else {
-        batch.set(userRef(userId), userData);
-        updateProfile(auth.currentUser, {
-          displayName: formInfo.firstName + ' ' + formInfo.lastName
-        })
-        batch
-          .commit()
-          .then(() => {
-            dispatch(createNewUserSuccess(userData));
-    dispatch(
-      notify({
-                message: "Account created successfully!.",
-                status: "success",
-      })
-      );
-      dispatch(dismissNotification("loading"));
-            dispatch(getCurrentUserData(user.uid));
-        })
-        .catch((error) => {
-            dispatch(createNewUserFailure(error));
-            dispatch(
-              notify({ id: "error", message: error.message, status: "error" })
-            );
-          });
-      }
-    }).catch((error) => {
-      dispatch(loginFailure(error));
-    dispatch(
-        notify({ id: "error", message: error.message, status: "error" })
-      );
-        dispatch(dismissNotification("loading"));
-    })
+     dispatch(createUserDataonSignup(user, form));
   } catch (error) {
     dispatch(createNewUserFailure(error.message));
+    dispatch(
+      notify({ id: "error", message: error.message, status: "error" })
+    );
+    dispatch(dismissNotification("loading"));
     throw error;
   }
 };
-export const logoutUser = () => {
+export const logoutUser = (navigate) => {
   return (dispatch, getState) => {
     dispatch({ type: 'LOGOUT_REQUEST' });
     const userId = auth.currentUser.uid;
@@ -589,7 +602,18 @@ export const logoutUser = () => {
           auth.signOut()
             .then(() => {
               dispatch({ type: 'LOGOUT_SUCCESS' });
-              window.location.reload();
+              // Clear entire Redux store
+              dispatch({ type: 'CLEAR_TRANSACTIONS' });
+              dispatch(clearClients());
+              dispatch(clearInvoices());
+              dispatch(clearLoans());
+              dispatch(clearDashboard());
+              dispatch(clearBusinessProfile());
+              dispatch(clearPayments());
+              dispatch(clearGeneralSettings());
+              dispatch(clearSupport());
+              dispatch(clearTeam());
+              navigate('/');
             })
             .catch((error) => {
               dispatch({ type: 'LOGOUT_FAILURE', payload: error.message });
@@ -605,8 +629,18 @@ export const logoutUser = () => {
       auth.signOut()
         .then(() => {
           dispatch({ type: 'LOGOUT_SUCCESS' });
-          window.location.reload();
-
+          // Clear entire Redux store
+          dispatch({ type: 'CLEAR_TRANSACTIONS' });
+          dispatch(clearClients());
+          dispatch(clearInvoices());
+          dispatch(clearLoans());
+          dispatch(clearDashboard());
+          dispatch(clearBusinessProfile());
+          dispatch(clearPayments());
+          dispatch(clearGeneralSettings());
+          dispatch(clearSupport());
+          dispatch(clearTeam());
+          navigate('/');
         })
         .catch((error) => {
           dispatch({ type: 'LOGOUT_FAILURE', payload: error.message });

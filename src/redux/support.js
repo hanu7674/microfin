@@ -61,6 +61,10 @@ export const addSupportTicket = (userId, ticket) => async (dispatch) => {
 }
 
     
+export const clearSupport = () => ({
+  type: 'CLEAR_SUPPORT'
+});
+
 export default function supportReducer(state = initialState, action) {
   switch (action.type) {
     case types.FETCH_SUPPORT_TICKETS_REQUEST:
@@ -81,6 +85,8 @@ export default function supportReducer(state = initialState, action) {
       return { ...state, kbLoading: false, knowledgeBase: action.payload, kbError: null };
     case types.FETCH_KNOWLEDGE_BASE_FAILURE:
       return { ...state, kbLoading: false, kbError: action.payload };
+    case 'CLEAR_SUPPORT':
+      return initialState;
     default:
       return state;
   }

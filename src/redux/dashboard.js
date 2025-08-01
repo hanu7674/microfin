@@ -158,3 +158,8 @@ export const updateDashboardData = (userId, data) => async (dispatch) => {
     dispatch(notify({ message: error.message, status: 'error' }));
   }
 }; 
+
+// Clear Dashboard Data
+export const clearDashboard = () => ({
+  type: 'CLEAR_DASHBOARD'
+}); 

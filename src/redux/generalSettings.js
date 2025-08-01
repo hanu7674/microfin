@@ -34,7 +34,13 @@ const initialState = {
 const generalSettingsSlice = createSlice({
   name: 'generalSettings',
   initialState,
-  reducers: {},
+  reducers: {
+    clearGeneralSettings: (state) => {
+      state.settings = null;
+      state.loading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchGeneralSettings.pending, (state) => { state.loading = true; state.error = null; })
@@ -44,4 +50,5 @@ const generalSettingsSlice = createSlice({
   }
 });
 
+export const { clearGeneralSettings } = generalSettingsSlice.actions;
 export default generalSettingsSlice.reducer;

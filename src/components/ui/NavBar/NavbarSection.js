@@ -4,26 +4,25 @@ import { FaBell, FaChartLine } from 'react-icons/fa';
 import MenuIcon from '@rsuite/icons/Menu';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../../../redux/auth';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const NavbarSection = ({ textMain, borderColor, bgMain, isDark, ThemeToggle, muted }) => {
   const [open, setOpen] = useState(false);
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
   const handleLogout = () => {
-    dispatch(logoutUser());
+    dispatch(logoutUser(navigate));
   };
   const userDisplay = auth.user?.displayName || auth.user?.email || 'User';
   
-  // Debug: Log user data to console
-  console.log('Auth state:', auth);
-  console.log('User data:', auth.user);
   return (
     <Container>
       <Header>
         <Navbar appearance="subtle" style={{ position:"fixed", top: 0, left: 0, right: 0, zIndex: 1000, borderBottom: `1px solid ${borderColor}`, background: bgMain, color: textMain, padding: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-             <Navbar.Brand style={{ fontWeight: 700, fontSize: 22, display: 'flex', alignItems: 'center', gap: 8, color: textMain }}>
+             <Navbar.Brand as={NavLink} to="/" style={{ fontWeight: 700, fontSize: 22, display: 'flex', alignItems: 'center', gap: 8, color: textMain }}>
               <FaChartLine style={{ color: 'var(--color-primary)' }} /> MicroFin
             </Navbar.Brand>
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
@@ -35,10 +34,10 @@ const NavbarSection = ({ textMain, borderColor, bgMain, isDark, ThemeToggle, mut
               !auth.isAuthenticated && (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
               <Nav className="desktop-nav" style={{ display: 'flex', gap: 24 }}>
-                <Nav.Item as={NavLink} to="#features" style={{ color: textMain, background: bgMain }}>Features</Nav.Item>
-                <Nav.Item as={NavLink} to="#pricing" style={{ color: textMain, background: bgMain }}>Pricing</Nav.Item>
-                <Nav.Item as={NavLink} to="#about" style={{ color: textMain, background: bgMain }}>About</Nav.Item>
-                <Nav.Item as={NavLink} to="#contact" style={{ color: textMain, background: bgMain }}>Contact</Nav.Item>
+                <Nav.Item as={NavLink} to="/#features" style={{ color: textMain, background: bgMain }}>Features</Nav.Item>
+                <Nav.Item as={NavLink} to="/#pricing" style={{ color: textMain, background: bgMain }}>Pricing</Nav.Item>
+                <Nav.Item as={NavLink} to="/#about" style={{ color: textMain, background: bgMain }}>About</Nav.Item>
+                <Nav.Item as={NavLink} to="/#contact" style={{ color: textMain, background: bgMain }}>Contact</Nav.Item>
               </Nav>
             </div>
               )

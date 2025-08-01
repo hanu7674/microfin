@@ -1,9 +1,16 @@
 import React from 'react';
 import { Button, Header } from 'rsuite';
 import { FaStar, FaUsers } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import image from './image.png'
+function HeroSection({ bgMain, textMain, subText, isDark, muted, id }) {
+  const navigate = useNavigate(); 
 
-function HeroSection({ bgMain, textMain, subText, isDark, borderColor, muted }) {
+  const handleAction = () => {
+    navigate('/signup');
+  }
   return (
+    <section id={id}>
     <Header>
     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', margin: '0 auto', padding: '5%', background: bgMain, color: textMain }}>
       <div style={{ flex: '1 1 400px', minWidth: 320, maxWidth: 540 }}>
@@ -12,8 +19,8 @@ function HeroSection({ bgMain, textMain, subText, isDark, borderColor, muted }) 
           Streamline your microfinance operations with our comprehensive platform. Manage loans, track payments, and grow your business efficiently.
         </p>
         <div style={{ display: 'flex', gap: 16, marginBottom: 28 }}>
-          <Button style={{ background: isDark ? '#fff' : '#000', color: isDark ? '#000' : '#fff', borderRadius: 6, fontWeight: 600, fontSize: 18, padding: '12px 28px' }}>Start Free Trial</Button>
-          <Button variant="outline" style={{
+          <Button onClick={handleAction} style={{ background: isDark ? '#fff' : '#000', color: isDark ? '#000' : '#fff', borderRadius: 6, fontWeight: 600, fontSize: 18, padding: '12px 28px' }}>Start Free Trial</Button>
+          <Button variant="outline" onClick={handleAction} style={{
             fontWeight: 600,
             fontSize: 18,
             padding: '12px 28px',
@@ -28,13 +35,12 @@ function HeroSection({ bgMain, textMain, subText, isDark, borderColor, muted }) 
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><FaUsers /> 10,000+ Users</span>
         </div>
       </div>
-      <div style={{ flex: '1 1 400px', minWidth: 320, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 32 }}>
-        <div style={{ width: 420, height: 240, background: isDark ? '#333' : '#bbb', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 22, fontWeight: 500 }}>
-          Dashboard Preview
-        </div>
+      <div style={{ flex: '1 1 400px', padding: '2%', minWidth: 320,  borderRadius: 12, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 32 }}>
+         <img src={image} alt="Dashboard Preview" style={{ width: '100%', height: '100%', objectFit: 'cover',  borderRadius: 12, }} />
       </div>
     </div>
     </Header>
+    </section>
   );
 }
 

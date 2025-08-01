@@ -1,23 +1,37 @@
 import React from 'react';
-import { Button, Stack } from 'rsuite';
+import { Button, FlexboxGrid } from 'rsuite';
 import { FaGoogle } from 'react-icons/fa';
 import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import { FaMicrosoft } from 'react-icons/fa6';
 
-const SocialLogins = () => {
-    const theme = useTheme();
-    const themeVars = getThemeVars(theme);
+const SocialLogins = ({ onGoogle, onMicrosoft }) => {
+  const theme = useTheme();
+  const themeVars = getThemeVars(theme);
 
-  return  (
-  <Stack spacing={12} direction="horizontal" justifyContent="center" wrap>
-    <Button block appearance={themeVars.buttonAppearance} style={{ border: `1px solid ${themeVars.border}`, flex: 1, color: themeVars.textMain }}>
-      <FaGoogle />
-    </Button>
-    <Button block appearance={themeVars.buttonAppearance} style={{ border: `1px solid ${themeVars.border} `, flex: 1, color: themeVars.textMain }}>
-      <FaMicrosoft/>
-    </Button>
-  </Stack>
-)
-}
-export default SocialLogins; 
+  return (
+    <FlexboxGrid justify="space-between">
+      <FlexboxGrid.Item colspan={11}>
+
+      <Button
+        block
+        appearance={themeVars.buttonAppearance}
+        onClick={onGoogle}
+      >
+        <FaGoogle  />
+      </Button>
+      </FlexboxGrid.Item>
+      <FlexboxGrid.Item colspan={11}>
+
+      <Button
+        block
+        appearance={themeVars.buttonAppearance}
+        onClick={onMicrosoft}
+      >
+        <FaMicrosoft /> 
+      </Button>
+      </FlexboxGrid.Item>
+    </FlexboxGrid>
+  );
+};
+export default SocialLogins;

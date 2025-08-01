@@ -25,14 +25,14 @@ function FeatureCard({ icon, title, desc, cardBg, cardText, borderColor, shadow,
   );
 }
 
-function FeaturesSection({ bgSection, textMain, muted, borderColor, cardBg, cardText, shadow }) {
+function FeaturesSection({ bgSection, textMain, muted, borderColor, cardBg, cardText, shadow, id }) {
   // Theme-based icon backgrounds and colors
   const isDark = cardText === '#fff';
   const iconBg = isDark ? '#222' : '#f0f0f0';
   const iconColor = isDark ? '#fff' : '#222';
 
   return (
-    <div id="features" style={{ background: bgSection, padding: '80px 0 32px 0', }}>
+    <section id={id} style={{ background: bgSection, padding: '80px 0 32px 0', }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
         <h2 style={{ fontSize: 36, fontWeight: 700, textAlign: 'center', marginBottom: 12, color: textMain }}>Everything You Need to Manage Microfinance</h2>
         <p style={{ textAlign: 'center', color: muted, fontSize: 18, marginBottom: 36 }}>Our platform provides all the tools you need to run a successful microfinance operation</p>
@@ -45,7 +45,7 @@ function FeaturesSection({ bgSection, textMain, muted, borderColor, cardBg, card
           <FeatureCard icon={<RiSettings3Fill />} title="Automation" desc="Automate routine tasks like payment processing and notification sending." cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} iconBg={iconBg} iconColor={iconColor} />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

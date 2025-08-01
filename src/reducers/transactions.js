@@ -94,6 +94,9 @@ export const transactionsReducer = (state = initialState, action) => {
         filters: initialState.filters
       };
 
+    case 'CLEAR_TRANSACTIONS':
+      return initialState;
+
     default:
       return state;
   }

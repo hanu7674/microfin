@@ -202,6 +202,11 @@ export const removeBusinessUser = (userIdToRemove) => async (dispatch) => {
   }
 };
 
+// Clear Business Profile
+export const clearBusinessProfile = () => ({
+  type: 'CLEAR_BUSINESS_PROFILE'
+});
+
 // Reducer
 const initialState = {
   profile: null,
@@ -280,6 +285,8 @@ export default function businessProfileReducer(state = initialState, action) {
       return { ...state, usersLoading: false, users: action.payload, usersError: null };
     case 'FETCH_BUSINESS_USERS_FAILURE':
       return { ...state, usersLoading: false, usersError: action.payload };
+    case 'CLEAR_BUSINESS_PROFILE':
+      return initialState;
     default:
       return state;
   }

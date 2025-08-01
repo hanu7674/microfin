@@ -35,6 +35,31 @@ service cloud.firestore {
       return request.resource.data.keys().hasAll(['name', 'email', 'phone', 'userId']);
     }
     
+    function isValidTeamMember() {
+      return request.resource.data.keys().hasAll(['name', 'role', 'github']) &&
+             request.resource.data.name is string &&
+             request.resource.data.role is string &&
+             request.resource.data.github is string &&
+             request.resource.data.name.size() > 0 &&
+             request.resource.data.role.size() > 0 &&
+             request.resource.data.github.size() > 0;
+    }
+    
+    // Team collection (public read, authenticated write)
+    match /team/{memberId} {
+      // Allow public read access for team display
+      allow read: if true;
+      
+      // Allow authenticated users to create team members
+      allow create: if isAuthenticated() && isValidTeamMember();
+      
+      // Allow authenticated users to update team members
+      allow update: if isAuthenticated() && isValidTeamMember();
+      
+      // Allow authenticated users to delete team members
+      allow delete: if isAuthenticated();
+    }
+    
     // Users collection
     match /users/{userId} {
       allow read, write: if isOwner(userId);
@@ -122,26 +147,23 @@ service cloud.firestore {
     		allow read, write: if isOwner(userId);
       }
       match /subscriptions/current {
+        allow read, write: if isOwner(userId);
+      }
+      match /generalSettings/settings {
       allow read, write: if isOwner(userId);
-    }
-       match /subscriptions/{subId} {
+      }
+      match /users/{userID} {
       allow read, write: if isOwner(userId);
-    }
-    match /generalSettings/settings {
-    allow read, write: if isOwner(userId);
-    }
-    match /users/{userID} {
-    allow read, write: if isOwner(userId);
-    }
-    match /support_tickets/{ticketId} {
-    allow read, write: if isOwner(userId);
-    }
-    match /callback_requests/{callbackRequestId} {
-    allow read, write: if isOwner(userId);
-    }
-    match /knowledge_base/{knowledgeBaseId} {
-    allow read, write: if isOwner(userId);
-    }
+      }
+      match /support_tickets/{ticketId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /callback_requests/{callbackRequestId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /knowledge_base/{knowledgeBaseId} {
+        allow read, write: if isOwner(userId);
+      }
       match /business_profile/data {
         allow read, write: if isOwner(userId);
         allow create: if isOwner(userId);
@@ -169,155 +191,15 @@ service cloud.firestore {
         allow update: if isOwner(userId);
         allow delete: if isOwner(userId);
       }
+      match /userSignupLogs/{logId} {
+        allow read, write: if isAdmin();
+      }
     }
     
-    // Global collections (admin access)
-    match /transactions/{transactionId} {
-      allow read, write: if isAdmin();
-    }
     
-    match /loans/{loanId} {
-      allow read, write: if isAdmin();
-    }
     
-    match /invoices/{invoiceId} {
-      allow read, write: if isAdmin();
-    }
     
-    match /clients/{clientId} {
-      allow read, write: if isAdmin();
-    }
     
-    match /business_profiles/{profileId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /analytics/{analyticsId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /financial_reports/{reportId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /payments/{paymentId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /dashboard_data/{dataId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /kpi_data/{kpiId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /charts_data/{chartId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /account_settings/{settingsId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /system_preferences/{prefId} {
-      allow read, write: if isAdmin();
-    }
-    
-    // Support tickets
-    match /tickets/{ticketId} {
-      allow read, write: if isAuthenticated() && (
-        request.auth.uid == resource.data.userId || 
-        request.auth.uid == resource.data.assignedTo ||
-        isAdmin()
-      );
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && (
-        request.auth.uid == resource.data.userId || 
-        request.auth.uid == resource.data.assignedTo ||
-        isAdmin()
-      );
-      allow delete: if isAdmin();
-    }
-    
-    // Public collections (read-only for authenticated users)
-    match /blogs/{blogId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    match /reviews/{reviewId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
-    }
-    
-    match /testimonials/{testimonialId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    match /events/{eventId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    match /notifications/{notificationId} {
-      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
-      allow write: if isAdmin();
-    }
-    
-    // Configuration and settings (admin only)
-    match /config/{configId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    match /settings/{settingId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
-    
-    // Contact and support
-    match /contactUS/{contactId} {
-      allow read: if isAdmin();
-      allow create: if isAuthenticated();
-    }
-    
-    // Security and authentication
-    match /securityQuestions/{questionId} {
-      allow read, write: if isOwner(questionId);
-    }
-    
-    match /userSignupLogs/{logId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /tokens/{tokenId} {
-      allow read, write: if isOwner(tokenId);
-    }
-    
-    // Traffic and analytics (admin only)
-    match /traffic/{trafficId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /pageViews/{viewId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /webapp/{webappId} {
-      allow read, write: if isAdmin();
-    }
-    
-    // Email and templates
-    match /mail/{mailId} {
-      allow read, write: if isAdmin();
-    }
-    
-    match /templates/{templateId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
-    }
     
     match /payment_links/{payment_id}{ 
     	allow read, write: if isAuthenticated();

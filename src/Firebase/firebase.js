@@ -124,3 +124,8 @@ export const callbackRequestsCollection = (userId) => collection(firestoreDb, `u
 export const callbackRequestById = (userId, id) => doc(firestoreDb, `users/${userId}/callback_requests/${id}`);
 export const knowledgeBaseCollection = (userId) => collection(firestoreDb, `users/${userId}/knowledge_base`);
 export const knowledgeBaseById = (userId, id) => doc(firestoreDb, `users/${userId}/knowledge_base/${id}`);
+
+// Team Management
+export const teamCollection = () => collection(firestoreDb, 'team');
+export const teamMemberById = (id) => doc(firestoreDb, `team/${id}`);
+export const userTeamRef = (userId) => collection(firestoreDb, `users/${userId}/team`);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'rsuite';
 import { useSelector } from 'react-redux';
 import { convertAndFormatCurrency } from '../../Theme/formatCurrency';
+import { useNavigate } from 'react-router-dom';
 
 function PricingCard({ title, price, features, highlight, buttonText, onClick, sublabel, cardBg, cardText, borderColor, shadow }) {
   return (
@@ -19,15 +20,26 @@ function PricingCard({ title, price, features, highlight, buttonText, onClick, s
   );
 }
 
-function PricingSection({ bgMain, textMain, muted, borderColor, cardBg, cardText, shadow }) {
+function PricingSection({ bgMain, textMain, muted, borderColor, cardBg, cardText, shadow, id }) {
   const settings = useSelector(state => state.generalSettings?.settings);
   const currency = settings?.currency || 'INR';
   const locale = settings?.language || 'en-IN';
 
   // State for converted prices
   const [starterPrice, setStarterPrice] = useState('');
-  // Add more states for other plans if needed
+  const [professionalPrice, setProfessionalPrice] = useState('');
+  const [enterprisePrice, setEnterprisePrice] = useState('');
 
+  const user = useSelector(state => state.auth?.user);
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/signup');
+    }
+  }
   useEffect(() => {
     let isMounted = true;
     // Try to get from localStorage first
@@ -46,18 +58,55 @@ function PricingSection({ bgMain, textMain, muted, borderColor, cardBg, cardText
     return () => { isMounted = false; };
   }, [currency, locale]);
 
-  return (
+  useEffect(() => {
+
+    let isMounted = true;
+    const cacheKey = `professionalPrice_${currency}_${locale}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      setProfessionalPrice(cached);
+    } else {
+      convertAndFormatCurrency(999, 'INR', currency, locale).then(res => {
+        if (isMounted) {
+          setProfessionalPrice(res);
+          localStorage.setItem(cacheKey, res);
+        }
+      });
+    }
+    return () => { isMounted = false; };
+  }, [currency, locale]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const cacheKey = `enterprisePrice_${currency}_${locale}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      setEnterprisePrice(cached);
+    } else {
+      convertAndFormatCurrency(9999, 'INR', currency, locale).then(res => {
+        if (isMounted) {
+          setEnterprisePrice(res);
+          localStorage.setItem(cacheKey, res);
+        }
+      });
+    }
+    return () => { isMounted = false; };
+  }, [currency, locale]); 
+
+    return (
+      <section id={id}>
     <div style={{ background: bgMain, padding: '56px 0 32px 0' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
         <h2 style={{ fontSize: 32, fontWeight: 700, textAlign: 'center', marginBottom: 12, color: textMain }}>Simple, Transparent Pricing</h2>
         <p style={{ textAlign: 'center', color: muted, fontSize: 18, marginBottom: 36 }}>Choose the plan that fits your microfinance institution's needs</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <PricingCard title="Starter" price={starterPrice || '...'} features={["Up to 100 clients", "Basic reporting", "Email support"]} buttonText="Get Started" cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} />
-          {/* <PricingCard title="Professional" price={convertAndFormatCurrency(999, 'INR', currency, locale)} features={["Up to 1,000 clients", "Advanced analytics", "Priority support", "Mobile app access"]} buttonText="Get Started" highlight cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} /> */}
-          {/* <PricingCard title="Enterprise" price={convertAndFormatCurrency(9999, 'INR', currency, locale)} features={["Unlimited clients", "Custom integrations", "Dedicated support", "White-label options"]} buttonText="Contact Sales" cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} /> */}
+          <PricingCard onClick={handleGetStarted} title="Starter" price={starterPrice || '...'} features={["Up to 100 clients", "Basic reporting", "Email support"]} buttonText="Get Started" cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} />
+          <PricingCard onClick={handleGetStarted} title="Professional" price={professionalPrice || '...'} features={["Up to 1,000 clients", "Advanced analytics", "Priority support", "Mobile app access"]} buttonText="Get Started" highlight cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} />
+          <PricingCard onClick={handleGetStarted} title="Enterprise" price={enterprisePrice || '...'} features={["Unlimited clients", "Custom integrations", "Dedicated support", "White-label options"]} buttonText="Contact Sales" cardBg={cardBg} cardText={cardText} borderColor={borderColor} shadow={shadow} />
         </div>
       </div>
     </div>
+    </section>
   );
 }
 
