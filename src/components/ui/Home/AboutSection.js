@@ -27,20 +27,56 @@ function AboutSection({ id }) {
     dispatch(fetchTeamMembers());
   }, [dispatch]);
 
-  // Fetch GitHub stats for team members
+  // Fetch GitHub stats for team members with better error handling
   useEffect(() => {
     teamMembers.forEach(member => {
-      fetch(`https://api.github.com/users/${member.github}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.message && data.message.includes('API rate limit exceeded')) {
-            setStats(prev => ({ ...prev, [member.github]: { error: 'Rate limit exceeded' } }));
-          } else {
-            setStats(prev => ({ ...prev, [member.github]: data }));
+      // Skip if we already have data for this user
+      if (stats[member.github] && !stats[member.github].error) {
+        return;
+      }
+
+      fetch(`https://api.github.com/users/${member.github}`, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'MicroFin-App'
+        }
+      })
+        .then(res => {
+          if (!res.ok) {
+            if (res.status === 403) {
+              throw new Error('Rate limit exceeded');
+            } else if (res.status === 404) {
+              throw new Error('User not found');
+            } else {
+              throw new Error(`GitHub API error: ${res.status}`);
+            }
           }
+          return res.json();
+        })
+        .then(data => {
+          setStats(prev => ({ 
+            ...prev, 
+            [member.github]: {
+              avatar_url: data.avatar_url,
+              followers: data.followers || 0,
+              public_repos: data.public_repos || 0,
+              location: data.location || 'N/A',
+              error: null
+            }
+          }));
         })
         .catch(error => {
-          setStats(prev => ({ ...prev, [member.github]: { error: 'Failed to fetch' } }));
+          console.warn(`Failed to fetch GitHub data for ${member.github}:`, error.message);
+          setStats(prev => ({ 
+            ...prev, 
+            [member.github]: { 
+              error: error.message,
+              avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4',
+              followers: 0,
+              public_repos: 0,
+              location: 'N/A'
+            } 
+          }));
         });
     });
   }, [teamMembers]);
@@ -173,15 +209,42 @@ function AboutSection({ id }) {
                   flexDirection: 'column', 
                   alignItems: 'center'
                 }}>
-                  <img src={stat?.avatar_url || 'https://avatars.githubusercontent.com/u/1?v=4'} alt={member.name} style={{ width: 80, height: 80, borderRadius: '50%', marginBottom: 16, objectFit: 'cover', border: `2px solid ${borderColor}` }} />
-                  <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 4, color: cardText, textAlign: 'center' }}>{member.name}</div>
-                  <div style={{ color: muted, fontSize: 15, marginBottom: 12 }}>{member.role}</div>
-                  <a href={`https://github.com/${member.github}`} target="_blank" rel="noopener noreferrer" style={{ color: '#0366d6', fontWeight: 500, marginBottom: 12 }}>@{member.github}</a>
+                  <img 
+                    src={stat?.avatar_url || 'https://avatars.githubusercontent.com/u/1?v=4'} 
+                    alt={member.name} 
+                    style={{ 
+                      width: 80, 
+                      height: 80, 
+                      borderRadius: '50%', 
+                      marginBottom: 16, 
+                      objectFit: 'cover', 
+                      border: `2px solid ${borderColor}` 
+                    }} 
+                  />
+                  <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 4, color: cardText, textAlign: 'center' }}>
+                    {member.name}
+                  </div>
+                  <div style={{ color: muted, fontSize: 15, marginBottom: 12 }}>
+                    {member.role}
+                  </div>
+                  <a 
+                    href={`https://github.com/${member.github}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{ color: '#0366d6', fontWeight: 500, marginBottom: 12 }}
+                  >
+                    @{member.github}
+                  </a>
                   {stat ? (
                     <div style={{ fontSize: 15, color: cardText, textAlign: 'center' }}>
                       <div>Followers: <b>{stat.followers}</b></div>
                       <div>Public Repos: <b>{stat.public_repos}</b></div>
-                      <div>Location: {stat.location || 'N/A'}</div>
+                      <div>Location: {stat.location}</div>
+                      {stat.error && (
+                        <div style={{ fontSize: 12, color: muted, marginTop: 4 }}>
+                          (GitHub data unavailable)
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div style={{ color: borderColor, fontSize: 14 }}>Loading...</div>
