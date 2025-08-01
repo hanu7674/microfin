@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Header, Navbar, Nav, Button, Drawer, IconButton, Avatar, Badge } from 'rsuite';
-import { FaBell, FaChartLine } from 'react-icons/fa';
+import { Container, Header, Navbar, Nav, Button, Drawer, IconButton, Avatar, Badge, Whisper, Popover, List, Stack, Divider } from 'rsuite';
+import { FaBell, FaChartLine, FaCheckCircle, FaExclamationTriangle, FaInfoCircle, FaTimes } from 'react-icons/fa';
 import MenuIcon from '@rsuite/icons/Menu';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../../../redux/auth';
@@ -15,7 +15,117 @@ const NavbarSection = ({ textMain, borderColor, bgMain, isDark, ThemeToggle, mut
   const handleLogout = () => {
     dispatch(logoutUser(navigate));
   };
+  
   const userDisplay = auth.user?.displayName || auth.user?.email || 'User';
+
+  // Sample notifications data
+  const notifications = [
+    {
+      id: 1,
+      type: 'success',
+      title: 'Payment Received',
+      message: 'Payment of $1,250 has been received from Client A',
+      time: '2 minutes ago',
+      icon: <FaCheckCircle style={{ color: '#00c851' }} />
+    },
+    {
+      id: 2,
+      type: 'warning',
+      title: 'Invoice Overdue',
+      message: 'Invoice #INV-2024-001 is overdue by 5 days',
+      time: '1 hour ago',
+      icon: <FaExclamationTriangle style={{ color: '#ffbb33' }} />
+    },
+    {
+      id: 3,
+      type: 'info',
+      title: 'New Client Added',
+      message: 'Client B has been added to your client list',
+      time: '3 hours ago',
+      icon: <FaInfoCircle style={{ color: '#33b5e5' }} />
+    },
+    {
+      id: 4,
+      type: 'success',
+      title: 'Loan Approved',
+      message: 'Your loan application has been approved',
+      time: '1 day ago',
+      icon: <FaCheckCircle style={{ color: '#00c851' }} />
+    },
+    {
+      id: 5,
+      type: 'warning',
+      title: 'System Maintenance',
+      message: 'Scheduled maintenance in 2 hours',
+      time: '2 days ago',
+      icon: <FaExclamationTriangle style={{ color: '#ffbb33' }} />
+    }
+  ];
+
+  const NotificationsPopover = React.forwardRef((props, ref) => (
+    
+    <Popover
+       ref={ref}
+       title={
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          padding: '8px 0'
+        }}>
+          <span style={{ fontWeight: 600, fontSize: 16 }}>Notifications</span>
+                  </div>
+      }
+      style={{ width: 350, maxHeight: 400, overflow: 'hidden' }}
+      {...props}
+    >
+      <div style={{ maxHeight: 300, overflowY: 'scroll' }}>
+        {notifications.length > 0 ? (
+          <List hover>
+            {notifications.map((notification, index) => (
+              <div key={notification.id}>
+                <List.Item
+                  style={{
+                    padding: '12px 16px',
+                    borderBottom: index < notifications.length - 1 ? `1px solid ${borderColor}` : 'none',
+                    cursor: 'pointer',
+                   }}
+                  
+                >
+                  <Stack spacing={12} alignItems="flex-start">
+                    <Stack.Item>
+                      {notification.icon}
+                    </Stack.Item>
+                    <Stack.Item style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>
+                        {notification.title}
+                      </div>
+                      <div style={{ fontSize: 12, color: muted, lineHeight: 1.4 }}>
+                        {notification.message}
+                      </div>
+                      <div style={{ fontSize: 11, color: muted, marginTop: 4 }}>
+                        {notification.time}
+                      </div>
+                    </Stack.Item>
+                  </Stack>
+                </List.Item>
+              </div>
+            ))}
+          </List>
+        ) : (
+          <div style={{ 
+            padding: '32px 16px', 
+            textAlign: 'center', 
+            color: muted,
+            fontSize: 14
+          }}>
+            No notifications
+          </div>
+        )}
+      </div>
+      
+    </Popover>
+  ));
   
   return (
     <Container>
@@ -47,12 +157,19 @@ const NavbarSection = ({ textMain, borderColor, bgMain, isDark, ThemeToggle, mut
               {auth.isAuthenticated ? (
                 <>
                   <Nav.Item style={{ color: textMain, background: bgMain, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    
-                    <Badge content="9" >
-                    <FaBell color={isDark ? '#aaa' : '#666'}   size={24} />
-                    </Badge>
+                    <Whisper
+                      trigger="click"
+                      placement="bottomEnd"
+                      speaker={<NotificationsPopover />}
+                    >
+                      <Badge content={notifications.length} style={{ cursor: 'pointer' }}>
+                        <FaBell 
+                          size={24} 
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </Badge>
+                    </Whisper>
                   </Nav.Item>
-
 
                   <Nav.Item style={{ color: textMain, background: bgMain, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <Avatar circle src={auth?.user?.photoURL} style={{ marginRight: 8 }} /> 

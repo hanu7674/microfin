@@ -16,12 +16,34 @@ import { useTheme } from '../../../Theme/theme';
 import { getThemeVars } from '../../../Theme/themeVars';
 import TermsOfService from '../Terms/TermsOfService';
 import PrivacyPolicy from '../Privacy/PrivacyPolicy';
+import { loginWithGoogle, loginWithMicrosoft } from '../../../../redux/auth';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { notify } from 'reapop';
+
 
 export const LoginComponent = () => {
   const {theme } = useTheme();
   const themeVars = getThemeVars(theme);
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleGoogleLogin = () => {
+    dispatch(loginWithGoogle('/dashboard', navigate));
+  };
+
+  const handleMicrosoftLogin = () => {
+    dispatch(
+      notify({
+        id: "microsoft-unavailable",
+        message: "Microsoft authentication is not available at the moment. Please use email signup or Google authentication.",
+        status: "warning",
+        dismissible: true,
+        dismissAfter: 5000
+      })
+    );
+  };
   return (  
     <div style={{marginTop: '3%', backgroundColor: themeVars.bgMain, }}>
   <Container style={{ background: themeVars.bgSection }}>
@@ -38,7 +60,7 @@ export const LoginComponent = () => {
             </div>
             <LoginForm />
             <Divider>Or continue with</Divider>
-            <SocialLogins />
+            <SocialLogins onGoogle={handleGoogleLogin} onMicrosoft={handleMicrosoftLogin} />
             
             <div style={{ fontSize: 12, color: '#888', textAlign: 'center', marginTop: 18 }}>
               By signing in, you agree to our &nbsp;

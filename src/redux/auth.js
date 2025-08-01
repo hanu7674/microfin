@@ -243,7 +243,9 @@ export const loginWithGoogle = (path, navigate) => {
       const googleAuthProvider = new GoogleAuthProvider();
       signInWithPopup(auth, googleAuthProvider)
     .then((userCredential) => {      
-      
+      dispatch(loginSuccess(userCredential.user, path));
+      dispatch(dismissNotification("loading"));
+      navigate(path);
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -571,8 +573,7 @@ export const signupUser = (form) => async (dispatch, getState) => {
   try {
     dispatch(createNewUserRequest());
     const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-    const user = userCredential.user;
-     dispatch(createUserDataonSignup(user, form));
+     dispatch(createUserDataonSignup(userCredential, form));
   } catch (error) {
     dispatch(createNewUserFailure(error.message));
     dispatch(
@@ -693,4 +694,90 @@ export const uploadUserDataToBusinessProfile = () => async (dispatch) => {
   } catch (error) {
     dispatch(notify({ message: error.message, status: "error" }));
   }
+};
+
+export const signupWithGoogle = (navigate) => {
+  return async (dispatch) => {
+    try {
+      dispatch(loginRequest());
+      dispatch(
+        notify({ id: "loading", message: "Signing up with Google...", status: "loading" })
+      );
+      
+      const googleAuthProvider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, googleAuthProvider);
+      const user = userCredential.user;
+      
+      // Check if this is a new user
+      const isNewUser = userCredential._tokenResponse?.isNewUser;
+      
+      if (isNewUser) {
+        // Create user data for new Google signup
+        const userData = {
+          firstName: user.displayName?.split(' ')[0] || '',
+          lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+          email: user.email,
+          id: user.uid,
+          photoURL: user.photoURL,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          businessName: '',
+          businessType: '',
+          phone: '',
+          marketing: false,
+          emailVerified: user.emailVerified,
+          provider: 'google'
+        };
+        
+        // Create user data in Firestore
+        await createUserDataonSignup({ user }, userData);
+        
+        dispatch(
+          notify({
+            id: "success",
+            message: "Account created successfully with Google!",
+            status: "success",
+          })
+        );
+      } else {
+        dispatch(
+          notify({
+            id: "success",
+            message: "Welcome back!",
+            status: "success",
+          })
+        );
+      }
+      
+      dispatch(dismissNotification("loading"));
+      dispatch(loginSuccess(user, '/dashboard'));
+      
+      if (navigate) {
+        navigate('/dashboard');
+      }
+      
+    } catch (error) {
+      console.error('Google signup error:', error);
+      
+      let errorMessage = 'Failed to sign up with Google. Please try again.';
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Signup cancelled. Please try again.';
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup blocked by browser. Please allow popups and try again.';
+      } else if (error.code === 'auth/account-exists-with-different-credential') {
+        errorMessage = 'An account with this email already exists with a different sign-in method.';
+      }
+      
+      dispatch(
+        notify({
+          id: "error",
+          message: errorMessage,
+          status: "error",
+        })
+      );
+      dispatch(dismissNotification("loading"));
+      dispatch(loginFailure(error.message));
+    }
+  };
 };

@@ -19,7 +19,8 @@ import SocialLogins from './SocialLogins';
 import { FaShieldAlt } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { signupUser } from '../../../../redux/auth';
+import { signupUser, signupWithGoogle } from '../../../../redux/auth';
+import { notify } from 'reapop';
 const { StringType, BooleanType } = Schema.Types;
 
 const businessTypes = [
@@ -30,13 +31,51 @@ const businessTypes = [
   { label: 'Other', value: 'other' },
 ];
 
+// Password validation regex patterns
+const passwordPatterns = {
+  length: /.{8,}/,
+  uppercase: /[A-Z]/,
+  lowercase: /[a-z]/,
+  number: /[0-9]/,
+  special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/
+};
+
+// Custom password validation function
+const validatePassword = (value) => {
+  const errors = [];
+  
+  if (!passwordPatterns.length.test(value)) {
+    errors.push('At least 8 characters');
+  }
+  if (!passwordPatterns.uppercase.test(value)) {
+    errors.push('One uppercase letter');
+  }
+  if (!passwordPatterns.lowercase.test(value)) {
+    errors.push('One lowercase letter');
+  }
+  if (!passwordPatterns.number.test(value)) {
+    errors.push('One number');
+  }
+  if (!passwordPatterns.special.test(value)) {
+    errors.push('One special character');
+  }
+  
+  return errors;
+};
+
 const model = Schema.Model({
   firstName: StringType().isRequired('First name is required.'),
   lastName: StringType().isRequired('Last name is required.'),
   phone: StringType().isRequired('Phone number is required.'),
   businessName: StringType().isRequired('Business name is required.'),
   email: StringType().isEmail('Please enter a valid email address.').isRequired('Email is required.'),
-  password: StringType().minLength(6, 'Password must be at least 6 characters.').isRequired('Password is required.'),
+  password: StringType()
+    .minLength(8, 'Password must be at least 8 characters.')
+    .addRule((value) => {
+      const errors = validatePassword(value);
+      return errors.length === 0;
+    }, 'Password must meet all security requirements.')
+    .isRequired('Password is required.'),
   confirmPassword: StringType()
     .addRule((value, data) => value === data.password, 'Passwords do not match.')
     .isRequired('Please confirm your password.'),
@@ -44,6 +83,7 @@ const model = Schema.Model({
   agree: BooleanType().isRequired('You must agree to the Terms of Service and Privacy Policy.'),
   marketing: BooleanType().isRequired('You must agree to receive updates and promotional emails from MicroFin.')
 });
+
 const Field = React.forwardRef((props, ref) => {
   const { name, message, label, accepter, error, ...rest } = props;
   return (
@@ -54,7 +94,8 @@ const Field = React.forwardRef((props, ref) => {
     </Form.Group>
   );
 });
-export default function Signup({ onSocialLogin, onSignInLinkClick }) {
+
+export default function Signup() {
   const { theme } = useTheme();
   const themeVars = getThemeVars(theme);
   const [formValue, setFormValue] = useState({
@@ -73,10 +114,25 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
   const [error, setError] = useState('');
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState([]);
   const formRef = useRef();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const auth = useSelector(state => state.auth);
+
+  // Password strength checker
+  const checkPasswordStrength = (password) => {
+    const checks = [];
+    
+    if (passwordPatterns.length.test(password)) checks.push('length');
+    if (passwordPatterns.uppercase.test(password)) checks.push('uppercase');
+    if (passwordPatterns.lowercase.test(password)) checks.push('lowercase');
+    if (passwordPatterns.number.test(password)) checks.push('number');
+    if (passwordPatterns.special.test(password)) checks.push('special');
+    
+    setPasswordStrength(checks);
+  };
+
   const handleSubmit = (e) => {
     if (!formRef.current.check()) return;
     if (!formValue.agree) {
@@ -95,15 +151,141 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
         // Error is handled by Redux, but you can set local error if needed
       });
   };
-  const handleGoogle = () => alert('Google sign up (demo)');
-  const handleMicrosoft = () => alert('Microsoft sign up (demo)');
+
+  const handleGoogle = () => {
+    dispatch(signupWithGoogle(navigate));
+  };
+
+  const handleMicrosoft = () => {
+    dispatch(    notify({
+      id: "microsoft-unavailable",
+      message: "Microsoft authentication is not available at the moment. Please use email signup or Google authentication.",
+      status: "warning",
+      dismissible: true,
+      dismissAfter: 5000
+    }));
+  };
+
   // Optionally clear backend error on input change
   const handleFormChange = (val) => {
     setFormValue(val);
+    
+    // Check password strength when password changes
+    if (val.password !== formValue.password) {
+      checkPasswordStrength(val.password);
+    }
+    
     if (auth.error) {
       // Optionally dispatch an action to clear error, or just ignore
       // dispatch(clearAuthError());
     }
+  };
+
+  // Password strength indicator component
+  const PasswordStrengthIndicator = () => {
+    if (!formValue.password) return null;
+    
+    const totalChecks = 5;
+    const completedChecks = passwordStrength.length;
+    const strengthPercentage = (completedChecks / totalChecks) * 100;
+    
+    let strengthColor = '#ff4444'; // Red
+    let strengthText = 'Very Weak';
+    
+    if (strengthPercentage >= 80) {
+      strengthColor = '#00c851'; // Green
+      strengthText = 'Strong';
+    } else if (strengthPercentage >= 60) {
+      strengthColor = '#ffbb33'; // Orange
+      strengthText = 'Good';
+    } else if (strengthPercentage >= 40) {
+      strengthColor = '#ff8800'; // Dark Orange
+      strengthText = 'Fair';
+    } else if (strengthPercentage >= 20) {
+      strengthColor = '#ff4444'; // Red
+      strengthText = 'Weak';
+    }
+    
+    return (
+      <div style={{ marginTop: 8 }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: 8
+        }}>
+          <span style={{ fontSize: 12, color: themeVars.textSecondary }}>
+            Password Strength: <strong style={{ color: strengthColor }}>{strengthText}</strong>
+          </span>
+          <div style={{ 
+            width: 60, 
+            height: 4, 
+            background: '#e0e0e0', 
+            borderRadius: 2,
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${strengthPercentage}%`,
+              height: '100%',
+              background: strengthColor,
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+        </div>
+        
+        <div style={{ fontSize: 11, color: themeVars.textSecondary }}>
+          <div style={{ marginBottom: 4 }}>Requirements:</div>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 1fr', 
+            gap: 4,
+            fontSize: 10
+          }}>
+            <div style={{ 
+              color: passwordStrength.includes('length') ? '#00c851' : '#999',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
+            }}>
+              ✓ At least 8 characters
+            </div>
+            <div style={{ 
+              color: passwordStrength.includes('uppercase') ? '#00c851' : '#999',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
+            }}>
+              ✓ One uppercase letter
+            </div>
+            <div style={{ 
+              color: passwordStrength.includes('lowercase') ? '#00c851' : '#999',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
+            }}>
+              ✓ One lowercase letter
+            </div>
+            <div style={{ 
+              color: passwordStrength.includes('number') ? '#00c851' : '#999',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4
+            }}>
+              ✓ One number
+            </div>
+            <div style={{ 
+              color: passwordStrength.includes('special') ? '#00c851' : '#999',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              gridColumn: '1 / -1'
+            }}>
+              ✓ One special character
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -174,7 +356,13 @@ export default function Signup({ onSocialLogin, onSignInLinkClick }) {
       </Form.Group>
       <Form.Group>
           <Form.ControlLabel>Password</Form.ControlLabel>
-          <Form.Control name="password" type="password" placeholder="Create a strong password" autoComplete="new-password" />
+          <Form.Control 
+            name="password" 
+            type="password" 
+            placeholder="Create a strong password" 
+            autoComplete="new-password" 
+          />
+          <PasswordStrengthIndicator />
       </Form.Group>
       <Form.Group>
           <Form.ControlLabel>Confirm Password</Form.ControlLabel>
