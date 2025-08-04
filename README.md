@@ -1,10 +1,42 @@
 ## 👥 Collaborators
 
-Thanks to all the amazing collaborators who have contributed to this project!
+Thanks to the people powering this project:
 
-<a href="https://github.com/hanu7674/microfin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=hanu7674/microfin" />
-</a>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/hanu7674">
+        <img src="https://github.com/hanu7674.png?size=100" width="100" width="100" style="border-radius:50%;" alt="alice"/><br/>
+        <sub><b>HANUMANTHA REDDY LINGALA</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/srk9909">
+        <img src="https://github.com/srk9909.png?size=100" width="100" alt="alice"/><br/>
+        <sub><b>PORANDLA SHIVARAMA KRISHNA</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/lakshettimanideep26-ctrl">
+        <img src="https://github.com/lakshettimanideep26-ctrl.png?size=100" width="100" alt="bob"/><br/>
+        <sub><b>LAKSHETTI MANIDEEP</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/chanduthombarapu">
+        <img src="https://github.com/chanduthombarapu.png?size=100" width="100" alt="charlie"/><br/>
+        <sub><b>THOMBARAPU CHANDU
+</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/pavanbogadi">
+        <img src="https://github.com/pavanbogadi.png?size=100" width="100" alt="alice"/><br/>
+        <sub><b>PAVAN KUMAR BOGADI</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ---
 *Generated with [contrib.rocks](https://contrib.rocks)*
