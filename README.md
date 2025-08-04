@@ -1,3 +1,15 @@
+## 👥 Collaborators
+
+Thanks to all the amazing collaborators who have contributed to this project!
+
+<a href="https://github.com/hanu7674/microfin/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=hanu7674/microfin" />
+</a>
+
+---
+*Generated with [contrib.rocks](https://contrib.rocks)*
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
